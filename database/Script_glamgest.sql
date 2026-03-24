@@ -4,6 +4,8 @@ CREATE DATABASE glamgest_db;
 
 USE glamgest_db;
 
+SELECT * FROM roles;
+
 -- ROLES
 
 CREATE TABLE roles (
@@ -12,7 +14,7 @@ CREATE TABLE roles (
     description VARCHAR(150)
 );
 
-INSERT INTO roles (name, description) VALUES ('ADMIN', 'System administrator with full access');
+-- INSERT INTO roles (name, description) VALUES ('ADMIN', 'System administrator with full access');
 
 -- USERS
 
@@ -27,6 +29,23 @@ CREATE TABLE users (
     CONSTRAINT fk_users_roles
         FOREIGN KEY (role_id) REFERENCES roles(role_id)
 );
+
+/*
+INSERT INTO users (
+    name,
+    email,
+    password,
+    role_id,
+    active
+)
+VALUES (
+    'Angie Sosa',
+    'angie@email.com',
+    '$2a$10$exampleEncryptedPassword',
+    1,
+    1
+);
+*/
 
 -- CLIENTS
 

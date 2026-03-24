@@ -21,7 +21,7 @@ public class UserServiceImpl implements GetUserByIdUseCase {
 
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + id));
-
+        
         return new UserResponseDTO(
                 user.getId(),
                 user.getName(),

@@ -12,6 +12,8 @@ CREATE TABLE roles (
     description VARCHAR(150)
 );
 
+INSERT INTO roles (name, description) VALUES ('ADMIN', 'System administrator with full access');
+
 -- USERS
 
 CREATE TABLE users (

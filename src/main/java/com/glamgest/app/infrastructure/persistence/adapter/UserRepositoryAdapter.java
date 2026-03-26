@@ -2,7 +2,7 @@ package com.glamgest.app.infrastructure.persistence.adapter;
 
 import com.glamgest.app.domain.model.User;
 import com.glamgest.app.domain.repository.UserRepository;
-import com.glamgest.app.infrastructure.persistence.entity.UserEntity;
+import com.glamgest.app.infrastructure.persistence.entity.Users;
 import com.glamgest.app.infrastructure.persistence.repository.JpaUserRepository;
 import org.springframework.stereotype.Repository;
 
@@ -20,14 +20,14 @@ public class UserRepositoryAdapter implements UserRepository {
     @Override
     public Optional<User> findById(Integer id) {
 
-        Optional<UserEntity> entityOpt = jpaRepository.findById(id);
+        Optional<Users> entityOpt = jpaRepository.findById(id);
 
         return entityOpt.map(entity -> new User(
-                entity.getId(),
+                entity.getUserId(),
                 entity.getName(),
                 entity.getEmail(),
                 entity.getPassword(),
-                entity.getRoleId(),
+                entity.getRoleId().getRoleId(),
                 entity.getActive()));
     }
 }

@@ -1,10 +1,11 @@
-CREATE DATABASE glamgest_db;
+#CREATE DATABASE glamgest_db;
 
 #DROP DATABASE glamgest_db;
 
 USE glamgest_db;
 
-SELECT * FROM roles;
+#SELECT * FROM roles;
+#SELECT * FROM users;
 
 -- ROLES
 
@@ -24,7 +25,7 @@ CREATE TABLE users (
     email VARCHAR(100) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
     role_id INT NOT NULL,
-    active TINYINT DEFAULT 1,
+    active BIT(1) DEFAULT b'1',
 
     CONSTRAINT fk_users_roles
         FOREIGN KEY (role_id) REFERENCES roles(role_id)
@@ -63,7 +64,7 @@ CREATE TABLE employees (
     employee_id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     phone VARCHAR(20),
-    active TINYINT DEFAULT 1
+    active BIT(1) DEFAULT b'1'
 );
 
 -- SERVICES
@@ -74,7 +75,7 @@ CREATE TABLE services (
     description TEXT,
     price INT NOT NULL,
     duration_minutes INT,
-    active TINYINT DEFAULT 1
+    active BIT(1) DEFAULT b'1'
 );
 
 -- APPOINTMENTS

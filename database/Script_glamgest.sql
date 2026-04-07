@@ -25,7 +25,7 @@ CREATE TABLE users (
     email VARCHAR(100) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
     role_id INT NOT NULL,
-    active BIT(1) DEFAULT b'1',
+    active BIT(1) DEFAULT b'1' NOT NULL,
 
     CONSTRAINT fk_users_roles
         FOREIGN KEY (role_id) REFERENCES roles(role_id)

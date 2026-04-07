@@ -1,21 +1,28 @@
 package com.glamgest.app.application.dto;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 public class UserRequestDTO {
 
+    @NotBlank
     private String name;
+
+    @NotBlank
+    @Email
     private String email;
+
+    @NotBlank
     private String password;
+
+    @NotNull
     private Integer roleId;
-    private Boolean active;
 
-    public UserRequestDTO() {}
+    @NotNull
+    private Boolean active = true;
 
-    public UserRequestDTO(String name, String email, String password, Integer roleId, Boolean active) {
-        this.name = name;
-        this.email = email;
-        this.password = password;
-        this.roleId = roleId;
-        this.active = active;
+    public UserRequestDTO() {
     }
 
     public String getName() {

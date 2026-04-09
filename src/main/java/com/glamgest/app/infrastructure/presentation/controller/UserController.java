@@ -4,6 +4,7 @@ import com.glamgest.app.application.dto.UserRequestDTO;
 import com.glamgest.app.application.dto.UserResponseDTO;
 import com.glamgest.app.application.dto.UserUpdateDTO;
 import com.glamgest.app.application.usecase.*;
+import com.glamgest.app.infrastructure.presentation.helper.BuilderHelper;
 
 import jakarta.validation.Valid;
 
@@ -40,7 +41,7 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getById(@PathVariable Integer id) {
-        return GlobalRegistrationExceptionHandler.buildResponse(getUserByIdUseCase.execute(id), "usuarios obtenidos", HttpStatus.OK, true);
+        return BuilderHelper.buildResponse(getUserByIdUseCase.execute(id), "usuarios obtenidos", HttpStatus.OK, true);
     }
 
     @PostMapping

@@ -52,27 +52,32 @@ public class UserController {
         }
 
         UserResponseDTO createdUser = createUserUseCase.execute(userRequestDTO);
-        return ResponseEntity.ok(createdUser);
+        return BuilderHelper.buildResponse(createdUser, "usuario creado", HttpStatus.CREATED, true);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserResponseDTO> updateUser(@PathVariable Integer id,
-            @RequestBody UserUpdateDTO userUpdateDTO) {
+    public ResponseEntity<?> updateUser(@PathVariable Integer id,
+            @Valid @RequestBody UserUpdateDTO userUpdateDTO,
+            BindingResult result) {
+        if (result.hasFieldErrors()) {
+            return this.validation(result);
+        }
+
         userUpdateDTO.setId(id);
         UserResponseDTO updatedUser = updateUserUseCase.execute(userUpdateDTO);
-        return ResponseEntity.ok(updatedUser);
+        return BuilderHelper.buildResponse(updatedUser, "usuario actualizado", HttpStatus.OK, true);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Integer id) {
+    public ResponseEntity<?> deleteUser(@PathVariable Integer id) {
         deleteUserUseCase.execute(id);
-        return ResponseEntity.noContent().build();
+        return BuilderHelper.buildResponse(null, "usuario eliminado", HttpStatus.NO_CONTENT, true);
     }
 
     @GetMapping
-    public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
+    public ResponseEntity<?> getAllUsers() {
         List<UserResponseDTO> users = getAllUsersUseCase.execute();
-        return ResponseEntity.ok(users);
+        return BuilderHelper.buildResponse(users, "usuarios obtenidos", HttpStatus.OK, true);
     }
 
     private ResponseEntity<?> validation(BindingResult result) {

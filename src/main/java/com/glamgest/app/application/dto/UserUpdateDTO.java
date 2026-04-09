@@ -1,15 +1,32 @@
 package com.glamgest.app.application.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import jakarta.validation.constraints.*;
+
 public class UserUpdateDTO {
 
-    private Integer id;
+    @JsonIgnore
+    private int id;
+
+    @NotBlank
     private String name;
+
+    @NotBlank
+    @Email
     private String email;
+
+    @NotBlank
     private String password;
+
+    @NotNull
     private Integer roleId;
+
+    @NotNull
     private Boolean active;
 
-    public UserUpdateDTO() {}
+    public UserUpdateDTO() {
+    }
 
     public UserUpdateDTO(Integer id, String name, String email, String password, Integer roleId, Boolean active) {
         this.id = id;

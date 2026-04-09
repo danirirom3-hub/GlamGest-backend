@@ -9,6 +9,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import com.glamgest.app.common.exception.DuplicateEmailException;
+import com.glamgest.app.common.exception.DuplicateRoleNameException;
 import com.glamgest.app.common.exception.ResourceNotFoundException;
 import com.glamgest.app.common.exception.RoleNotFoundException;
 import com.glamgest.app.infrastructure.presentation.helper.BuilderHelper;
@@ -23,6 +24,7 @@ public class GlobalRegistrationExceptionHandler {
 
     @ExceptionHandler({
             DuplicateEmailException.class,
+            DuplicateRoleNameException.class,
             HttpMessageNotReadableException.class,
             MethodArgumentTypeMismatchException.class, })
     ResponseEntity<?> throwBadRequest(Exception ex) {

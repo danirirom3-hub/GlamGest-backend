@@ -19,7 +19,7 @@ public class Roles implements Serializable {
     private String name;
     @Column(name = "description")
     private String description;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "roleId")
+    @OneToMany(mappedBy = "roleId")
     private List<Users> usersList;
 
     public Roles() {

@@ -9,6 +9,7 @@ import com.glamgest.app.common.exception.RoleNotFoundException;
 import com.glamgest.app.domain.model.User;
 import com.glamgest.app.domain.repository.RoleRepository;
 import com.glamgest.app.domain.repository.UserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -16,10 +17,12 @@ public class UpdateUserService implements UpdateUserUseCase {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UpdateUserService(UserRepository userRepository, RoleRepository roleRepository) {
+    public UpdateUserService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -42,7 +45,7 @@ public class UpdateUserService implements UpdateUserUseCase {
                 userUpdateDTO.getId(),
                 userUpdateDTO.getName(),
                 userUpdateDTO.getEmail(),
-                userUpdateDTO.getPassword(),
+                passwordEncoder.encode(userUpdateDTO.getPassword()),
                 roleId,
                 userUpdateDTO.getActive()
         );

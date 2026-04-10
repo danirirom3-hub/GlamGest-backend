@@ -1,9 +1,13 @@
 package com.glamgest.app.infrastructure.presentation.controller;
 
-import com.glamgest.app.application.dto.RoleRequestDTO;
-import com.glamgest.app.application.dto.RoleResponseDTO;
-import com.glamgest.app.application.dto.RoleUpdateDTO;
-import com.glamgest.app.application.usecase.*;
+import com.glamgest.app.application.dto.role.RoleRequestDTO;
+import com.glamgest.app.application.dto.role.RoleResponseDTO;
+import com.glamgest.app.application.dto.role.RoleUpdateDTO;
+import com.glamgest.app.application.usecase.role.CreateRoleUseCase;
+import com.glamgest.app.application.usecase.role.DeleteRoleUseCase;
+import com.glamgest.app.application.usecase.role.GetAllRolesUseCase;
+import com.glamgest.app.application.usecase.role.GetRoleByIdUseCase;
+import com.glamgest.app.application.usecase.role.UpdateRoleUseCase;
 import com.glamgest.app.infrastructure.presentation.helper.BuilderHelper;
 
 import jakarta.validation.Valid;

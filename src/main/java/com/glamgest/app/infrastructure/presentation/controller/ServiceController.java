@@ -1,13 +1,13 @@
 package com.glamgest.app.infrastructure.presentation.controller;
 
-import com.glamgest.app.application.dto.ServiceRequestDTO;
-import com.glamgest.app.application.dto.ServiceResponseDTO;
-import com.glamgest.app.application.dto.ServiceUpdateDTO;
-import com.glamgest.app.application.usecase.CreateServiceUseCase;
-import com.glamgest.app.application.usecase.DeleteServiceUseCase;
-import com.glamgest.app.application.usecase.GetAllServicesUseCase;
-import com.glamgest.app.application.usecase.GetServiceByIdUseCase;
-import com.glamgest.app.application.usecase.UpdateServiceUseCase;
+import com.glamgest.app.application.dto.service.ServiceRequestDTO;
+import com.glamgest.app.application.dto.service.ServiceResponseDTO;
+import com.glamgest.app.application.dto.service.ServiceUpdateDTO;
+import com.glamgest.app.application.usecase.service.CreateServiceUseCase;
+import com.glamgest.app.application.usecase.service.DeleteServiceUseCase;
+import com.glamgest.app.application.usecase.service.GetAllServicesUseCase;
+import com.glamgest.app.application.usecase.service.GetServiceByIdUseCase;
+import com.glamgest.app.application.usecase.service.UpdateServiceUseCase;
 import com.glamgest.app.infrastructure.presentation.helper.BuilderHelper;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;

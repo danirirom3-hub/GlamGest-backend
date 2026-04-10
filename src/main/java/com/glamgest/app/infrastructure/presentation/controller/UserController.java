@@ -1,9 +1,13 @@
 package com.glamgest.app.infrastructure.presentation.controller;
 
-import com.glamgest.app.application.dto.UserRequestDTO;
-import com.glamgest.app.application.dto.UserResponseDTO;
-import com.glamgest.app.application.dto.UserUpdateDTO;
-import com.glamgest.app.application.usecase.*;
+import com.glamgest.app.application.dto.user.UserRequestDTO;
+import com.glamgest.app.application.dto.user.UserResponseDTO;
+import com.glamgest.app.application.dto.user.UserUpdateDTO;
+import com.glamgest.app.application.usecase.user.CreateUserUseCase;
+import com.glamgest.app.application.usecase.user.DeleteUserUseCase;
+import com.glamgest.app.application.usecase.user.GetAllUsersUseCase;
+import com.glamgest.app.application.usecase.user.GetUserByIdUseCase;
+import com.glamgest.app.application.usecase.user.UpdateUserUseCase;
 import com.glamgest.app.infrastructure.presentation.helper.BuilderHelper;
 
 import jakarta.validation.Valid;

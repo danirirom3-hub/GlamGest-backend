@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
+import com.glamgest.app.common.exception.DuplicateClientEmailException;
+import com.glamgest.app.common.exception.DuplicateClientPhoneException;
 import com.glamgest.app.common.exception.DuplicateEmailException;
 import com.glamgest.app.common.exception.DuplicateEmployeePhoneException;
 import com.glamgest.app.common.exception.DuplicateRoleNameException;
@@ -26,6 +28,8 @@ public class GlobalRegistrationExceptionHandler {
     @ExceptionHandler({
             DuplicateEmailException.class,
             DuplicateEmployeePhoneException.class,
+            DuplicateClientEmailException.class,
+            DuplicateClientPhoneException.class,
             DuplicateRoleNameException.class,
             HttpMessageNotReadableException.class,
             MethodArgumentTypeMismatchException.class, })

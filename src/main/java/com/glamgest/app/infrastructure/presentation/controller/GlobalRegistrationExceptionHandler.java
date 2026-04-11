@@ -3,6 +3,7 @@ package com.glamgest.app.infrastructure.presentation.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
@@ -32,7 +33,8 @@ public class GlobalRegistrationExceptionHandler {
             DuplicateClientPhoneException.class,
             DuplicateRoleNameException.class,
             HttpMessageNotReadableException.class,
-            MethodArgumentTypeMismatchException.class, })
+            MethodArgumentTypeMismatchException.class,
+            BadCredentialsException.class })
     ResponseEntity<?> throwBadRequest(Exception ex) {
         return this.throwErrorMessage(ex, HttpStatus.BAD_REQUEST);
     }

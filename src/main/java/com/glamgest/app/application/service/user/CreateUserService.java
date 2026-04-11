@@ -41,6 +41,7 @@ public class CreateUserService implements CreateUserUseCase {
                 userRequestDTO.getEmail(),
                 passwordEncoder.encode(userRequestDTO.getPassword()),
                 roleId,
+                roleRepository.findById(roleId).orElseThrow(() -> new RoleNotFoundException("Role not found")).getName(),
                 userRequestDTO.getActive()
         );
 
@@ -51,6 +52,7 @@ public class CreateUserService implements CreateUserUseCase {
                 savedUser.getName(),
                 savedUser.getEmail(),
                 savedUser.getRoleId(),
+                savedUser.getRoleName(),
                 savedUser.getActive()
         );
     }

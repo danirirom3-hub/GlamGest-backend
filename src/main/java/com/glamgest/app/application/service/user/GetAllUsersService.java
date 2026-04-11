@@ -25,6 +25,7 @@ public class GetAllUsersService implements GetAllUsersUseCase {
                         user.getName(),
                         user.getEmail(),
                         user.getRoleId(),
+                        user.getRoleName(),
                         user.getActive()))
                 .collect(Collectors.toList());
     }

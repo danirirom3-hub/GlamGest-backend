@@ -26,6 +26,7 @@ public class GetUserByIdService implements GetUserByIdUseCase {
                 user.getName(),
                 user.getEmail(),
                 user.getRoleId(),
+                user.getRoleName(),
                 user.getActive());
     }
 }

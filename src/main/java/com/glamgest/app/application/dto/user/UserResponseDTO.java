@@ -6,15 +6,17 @@ public class UserResponseDTO {
     private String name;
     private String email;
     private Integer roleId;
+    private String roleName;
     private Boolean active;
 
     public UserResponseDTO(Integer id, String name, String email,
-            Integer roleId, Boolean active) {
+            Integer roleId, String roleName, Boolean active) {
 
         this.id = id;
         this.name = name;
         this.email = email;
         this.roleId = roleId;
+        this.roleName = roleName;
         this.active = active;
     }
 
@@ -32,6 +34,10 @@ public class UserResponseDTO {
 
     public Integer getRoleId() {
         return roleId;
+    }
+
+    public String getRoleName() {
+        return roleName;
     }
 
     public Boolean getActive() {

@@ -31,6 +31,7 @@ public class UserRepositoryAdapter implements UserRepository {
                 entity.getEmail(),
                 entity.getPassword(),
                 entity.getRoleId().getRoleId(),
+                entity.getRoleId().getName(),
                 entity.getActive()));
     }
 
@@ -43,6 +44,7 @@ public class UserRepositoryAdapter implements UserRepository {
                         entity.getEmail(),
                         entity.getPassword(),
                         entity.getRoleId().getRoleId(),
+                        entity.getRoleId().getName(),
                         entity.getActive()));
     }
 
@@ -74,6 +76,7 @@ public class UserRepositoryAdapter implements UserRepository {
                 savedEntity.getEmail(),
                 savedEntity.getPassword(),
                 savedEntity.getRoleId().getRoleId(),
+                savedEntity.getRoleId().getName(),
                 savedEntity.getActive());
     }
 
@@ -91,6 +94,7 @@ public class UserRepositoryAdapter implements UserRepository {
                         entity.getEmail(),
                         entity.getPassword(),
                         entity.getRoleId().getRoleId(),
+                        entity.getRoleId().getName(),
                         entity.getActive()))
                 .collect(Collectors.toList());
     }

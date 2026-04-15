@@ -11,6 +11,8 @@ import com.glamgest.app.domain.repository.ClientRepository;
 import com.glamgest.app.domain.repository.EmployeeRepository;
 import com.glamgest.app.domain.repository.ServiceRepository;
 import com.glamgest.app.domain.repository.UserRepository;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @org.springframework.stereotype.Service
 public class CreateAppointmentService implements CreateAppointmentUseCase {
@@ -38,7 +40,6 @@ public class CreateAppointmentService implements CreateAppointmentUseCase {
         Integer clientId = appointmentRequestDTO.getClientId();
         Integer employeeId = appointmentRequestDTO.getEmployeeId();
         Integer serviceId = appointmentRequestDTO.getServiceId();
-        Integer userId = appointmentRequestDTO.getUserId();
 
         clientRepository.findById(clientId)
                 .orElseThrow(() -> new ResourceNotFoundException("Client not found with id " + clientId));
@@ -46,8 +47,16 @@ public class CreateAppointmentService implements CreateAppointmentUseCase {
                 .orElseThrow(() -> new ResourceNotFoundException("Employee not found with id " + employeeId));
         serviceRepository.findById(serviceId)
                 .orElseThrow(() -> new ResourceNotFoundException("Service not found with id " + serviceId));
-        userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + userId));
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || authentication.getName() == null) {
+            throw new ResourceNotFoundException("Authenticated user not found");
+        }
+
+        String userEmail = authentication.getName();
+        Integer userId = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with email " + userEmail))
+                .getId();
 
         Appointment appointment = new Appointment();
         appointment.setAppointmentDatetime(appointmentRequestDTO.getAppointmentDatetime());

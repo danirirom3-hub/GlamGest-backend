@@ -19,9 +19,6 @@ public class AppointmentRequestDTO {
     @NotNull(message = "El id del servicio es obligatorio")
     private Integer serviceId;
 
-    @NotNull(message = "El id del usuario es obligatorio")
-    private Integer userId;
-
     public AppointmentRequestDTO() {
     }
 
@@ -63,13 +60,5 @@ public class AppointmentRequestDTO {
 
     public void setServiceId(Integer serviceId) {
         this.serviceId = serviceId;
-    }
-
-    public Integer getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Integer userId) {
-        this.userId = userId;
     }
 }

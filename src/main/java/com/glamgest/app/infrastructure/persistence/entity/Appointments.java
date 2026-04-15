@@ -23,26 +23,34 @@ public class Appointments implements Serializable {
     @Basic(optional = false)
     @Column(name = "appointment_id")
     private Integer appointmentId;
+
     @Basic(optional = false)
     @Column(name = "appointment_datetime")
     @Temporal(TemporalType.TIMESTAMP)
     private Date appointmentDatetime;
+
     @Column(name = "status")
     private String status;
+
     @Column(name = "notes", columnDefinition = "TEXT")
     private String notes;
+
     @JoinColumn(name = "client_id", referencedColumnName = "client_id")
     @ManyToOne(optional = false)
     private Clients clientId;
+
     @JoinColumn(name = "employee_id", referencedColumnName = "employee_id")
     @ManyToOne(optional = false)
     private Employees employeeId;
+
     @JoinColumn(name = "service_id", referencedColumnName = "service_id")
     @ManyToOne(optional = false)
     private Services serviceId;
+
     @JoinColumn(name = "user_id", referencedColumnName = "user_id")
     @ManyToOne(optional = false)
     private Users userId;
+    
     @OneToMany(mappedBy = "appointmentId")
     private List<SaleDetails> saleDetailsList;
 

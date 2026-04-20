@@ -32,6 +32,17 @@ public class Sales implements Serializable {
     @ManyToOne(optional = false)
     private Users userId;
 
+    @Column(name = "payment_type")
+    private String paymentType;
+
+    public String getPaymentType() {
+        return paymentType;
+    }
+
+    public void setPaymentType(String status) {
+        this.paymentType = status;
+    }
+
     public Sales() {
     }
 

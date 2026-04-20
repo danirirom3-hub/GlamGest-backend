@@ -6,7 +6,12 @@ USE glamgest_db;
 
 #SELECT * FROM roles;
 #SELECT * FROM users;
-
+#SELECT * FROM clients;
+#SELECT * FROM services;
+#SELECT * FROM appointments;
+#SELECT * FROM employees;
+#SELECT * FROM employees;
+#SELECT * FROM employees;
 -- ROLES
 
 CREATE TABLE roles (
@@ -28,7 +33,7 @@ CREATE TABLE users (
     active BIT(1) DEFAULT b'1' NOT NULL,
 
     CONSTRAINT fk_users_roles
-        FOREIGN KEY (role_id) REFERENCES roles(role_id)
+        FOREIGN KEY (role_id) REFERENCES roles(role_id) ON DELETE RESTRICT ON UPDATE RESTRICT
 );
 
 /*
@@ -110,6 +115,7 @@ CREATE TABLE sales (
     client_id INT NOT NULL,
     user_id INT NOT NULL,
     sale_datetime DATETIME DEFAULT CURRENT_TIMESTAMP,
+    payment_type VARCHAR(30) NOT NULL,
     total INT NOT NULL,
 
     CONSTRAINT fk_sales_clients

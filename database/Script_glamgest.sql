@@ -10,8 +10,8 @@ USE glamgest_db;
 #SELECT * FROM services;
 #SELECT * FROM appointments;
 #SELECT * FROM employees;
-#SELECT * FROM employees;
-#SELECT * FROM employees;
+#SELECT * FROM sales;
+#SELECT * FROM sale_details;
 -- ROLES
 
 CREATE TABLE roles (

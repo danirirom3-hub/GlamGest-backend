@@ -42,7 +42,7 @@ public class CreateUserService implements CreateUserUseCase {
                 passwordEncoder.encode(userRequestDTO.getPassword()),
                 roleId,
                 roleRepository.findById(roleId).orElseThrow(() -> new RoleNotFoundException("Role not found")).getName(),
-                userRequestDTO.getActive()
+                true
         );
 
         User savedUser = userRepository.save(user);

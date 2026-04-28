@@ -41,10 +41,6 @@ public class UpdateServiceService implements UpdateServiceUseCase {
             existingService.setDurationMinutes(serviceUpdateDTO.getDurationMinutes());
         }
 
-        if (serviceUpdateDTO.getActive() != null) {
-            existingService.setActive(serviceUpdateDTO.getActive());
-        }
-
         Service updatedService = serviceRepository.save(existingService);
 
         ServiceResponseDTO response = new ServiceResponseDTO();

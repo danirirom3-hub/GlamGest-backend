@@ -22,17 +22,19 @@ public class UserRepositoryAdapter implements UserRepository {
 
     @Override
     public Optional<User> findById(Integer id) {
-
         Optional<Users> entityOpt = jpaRepository.findById(id);
-
-        return entityOpt.map(entity -> new User(
-                entity.getUserId(),
-                entity.getName(),
-                entity.getEmail(),
-                entity.getPassword(),
-                entity.getRoleId().getRoleId(),
-                entity.getRoleId().getName(),
-                entity.getActive()));
+        
+        // Filter out soft-deleted users (active = false)
+        return entityOpt
+                .filter(entity -> entity.getActive() != null && entity.getActive())
+                .map(entity -> new User(
+                        entity.getUserId(),
+                        entity.getName(),
+                        entity.getEmail(),
+                        entity.getPassword(),
+                        entity.getRoleId().getRoleId(),
+                        entity.getRoleId().getName(),
+                        entity.getActive()));
     }
 
     @Override
@@ -82,12 +84,13 @@ public class UserRepositoryAdapter implements UserRepository {
 
     @Override
     public void deleteById(Integer id) {
-        jpaRepository.deleteById(id);
+        jpaRepository.softDelete(id);
     }
 
     @Override
     public List<User> findAll() {
         return jpaRepository.findAll().stream()
+                .filter(entity -> entity.getActive() != null && entity.getActive())
                 .map(entity -> new User(
                         entity.getUserId(),
                         entity.getName(),

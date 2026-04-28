@@ -10,9 +10,6 @@ public class EmployeeRequestDTO {
 
     private String phone;
 
-    @NotNull
-    private Boolean active = true;
-
     public EmployeeRequestDTO() {
     }
 
@@ -30,13 +27,5 @@ public class EmployeeRequestDTO {
 
     public void setPhone(String phone) {
         this.phone = phone;
-    }
-
-    public Boolean getActive() {
-        return active;
-    }
-
-    public void setActive(Boolean active) {
-        this.active = active;
     }
 }

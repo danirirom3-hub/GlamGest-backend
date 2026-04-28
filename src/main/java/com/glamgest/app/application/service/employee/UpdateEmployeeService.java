@@ -36,7 +36,7 @@ public class UpdateEmployeeService implements UpdateEmployeeUseCase {
                 employeeUpdateDTO.getId(),
                 employeeUpdateDTO.getName(),
                 employeeUpdateDTO.getPhone(),
-                employeeUpdateDTO.getActive()
+                existingEmployee.getActive()
         );
 
         Employee updatedEmployee = employeeRepository.save(employee);

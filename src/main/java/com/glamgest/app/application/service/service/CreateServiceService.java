@@ -28,7 +28,7 @@ public class CreateServiceService implements CreateServiceUseCase {
         service.setDescription(serviceRequestDTO.getDescription());
         service.setPrice(serviceRequestDTO.getPrice());
         service.setDurationMinutes(serviceRequestDTO.getDurationMinutes());
-        service.setActive(serviceRequestDTO.getActive());
+        service.setActive(true);
 
         Service savedService = serviceRepository.save(service);
 

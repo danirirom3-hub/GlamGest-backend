@@ -28,19 +28,22 @@ public class ServiceRepositoryAdapter implements ServiceRepository {
 
     @Override
     public Optional<Service> findById(Integer id) {
-        return jpaServiceRepository.findById(id).map(this::toModel);
+        return jpaServiceRepository.findById(id)
+                .filter(entity -> entity.getActive() != null && entity.getActive())
+                .map(this::toModel);
     }
 
     @Override
     public List<Service> findAll() {
         return jpaServiceRepository.findAll().stream()
+                .filter(entity -> entity.getActive() != null && entity.getActive())
                 .map(this::toModel)
                 .collect(Collectors.toList());
     }
 
     @Override
     public void deleteById(Integer id) {
-        jpaServiceRepository.deleteById(id);
+        jpaServiceRepository.softDelete(id);
     }
 
     @Override

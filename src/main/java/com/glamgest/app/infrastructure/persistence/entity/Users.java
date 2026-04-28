@@ -11,7 +11,7 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "users", catalog = "glamgest_db", schema = "")
 @NamedQueries({
-        @NamedQuery(name = "Users.findAll", query = "SELECT u FROM Users u") })
+        @NamedQuery(name = "Users.findAll", query = "SELECT u FROM Users u WHERE u.active = true") })
 public class Users implements Serializable {
 
     private static final long serialVersionUID = 1L;

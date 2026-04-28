@@ -27,7 +27,7 @@ public class CreateEmployeeService implements CreateEmployeeUseCase {
                 null,
                 employeeRequestDTO.getName(),
                 employeeRequestDTO.getPhone(),
-                employeeRequestDTO.getActive()
+                true
         );
 
         Employee savedEmployee = employeeRepository.save(employee);

@@ -22,19 +22,15 @@ public class UserUpdateDTO {
     @NotNull
     private Integer roleId;
 
-    @NotNull
-    private Boolean active;
-
     public UserUpdateDTO() {
     }
 
-    public UserUpdateDTO(Integer id, String name, String email, String password, Integer roleId, Boolean active) {
+    public UserUpdateDTO(Integer id, String name, String email, String password, Integer roleId) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.password = password;
         this.roleId = roleId;
-        this.active = active;
     }
 
     public Integer getId() {
@@ -75,13 +71,5 @@ public class UserUpdateDTO {
 
     public void setRoleId(Integer roleId) {
         this.roleId = roleId;
-    }
-
-    public Boolean getActive() {
-        return active;
-    }
-
-    public void setActive(Boolean active) {
-        this.active = active;
     }
 }

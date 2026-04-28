@@ -19,9 +19,6 @@ public class UserRequestDTO {
     @NotNull
     private Integer roleId;
 
-    @NotNull
-    private Boolean active = true;
-
     public UserRequestDTO() {
     }
 
@@ -55,13 +52,5 @@ public class UserRequestDTO {
 
     public void setRoleId(Integer roleId) {
         this.roleId = roleId;
-    }
-
-    public Boolean getActive() {
-        return active;
-    }
-
-    public void setActive(Boolean active) {
-        this.active = active;
     }
 }

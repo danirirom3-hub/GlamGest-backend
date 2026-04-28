@@ -15,9 +15,6 @@ public class EmployeeUpdateDTO {
 
     private String phone;
 
-    @NotNull
-    private Boolean active;
-
     public EmployeeUpdateDTO() {
     }
 
@@ -43,13 +40,5 @@ public class EmployeeUpdateDTO {
 
     public void setPhone(String phone) {
         this.phone = phone;
-    }
-
-    public Boolean getActive() {
-        return active;
-    }
-
-    public void setActive(Boolean active) {
-        this.active = active;
     }
 }

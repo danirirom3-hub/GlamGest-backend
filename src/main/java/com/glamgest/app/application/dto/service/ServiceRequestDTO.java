@@ -19,9 +19,6 @@ public class ServiceRequestDTO {
     @Min(value = 1, message = "Duration must be at least 1 minute")
     private Integer durationMinutes;
 
-    @NotNull(message = "Active status is required")
-    private Boolean active;
-
     // Getters and Setters
     public String getName() {
         return name;
@@ -53,13 +50,5 @@ public class ServiceRequestDTO {
 
     public void setDurationMinutes(Integer durationMinutes) {
         this.durationMinutes = durationMinutes;
-    }
-
-    public Boolean getActive() {
-        return active;
-    }
-
-    public void setActive(Boolean active) {
-        this.active = active;
     }
 }

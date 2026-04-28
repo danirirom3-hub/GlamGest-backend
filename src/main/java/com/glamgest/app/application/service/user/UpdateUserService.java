@@ -48,7 +48,7 @@ public class UpdateUserService implements UpdateUserUseCase {
                 passwordEncoder.encode(userUpdateDTO.getPassword()),
                 roleId,
                 roleRepository.findById(roleId).orElseThrow(() -> new RoleNotFoundException("Role not found")).getName(),
-                userUpdateDTO.getActive()
+                existingUser.getActive()
         );
 
         User updatedUser = userRepository.save(user);

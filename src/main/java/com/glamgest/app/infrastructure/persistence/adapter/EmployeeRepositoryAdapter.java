@@ -22,6 +22,7 @@ public class EmployeeRepositoryAdapter implements EmployeeRepository {
     @Override
     public Optional<Employee> findById(Integer id) {
         return jpaEmployeeRepository.findById(id)
+                .filter(entity -> entity.getActive() != null && entity.getActive())
                 .map(entity -> new Employee(
                         entity.getEmployeeId(),
                         entity.getName(),
@@ -32,6 +33,7 @@ public class EmployeeRepositoryAdapter implements EmployeeRepository {
     @Override
     public Optional<Employee> findByPhone(String phone) {
         return jpaEmployeeRepository.findByPhone(phone)
+                .filter(entity -> entity.getActive() != null && entity.getActive())
                 .map(entity -> new Employee(
                         entity.getEmployeeId(),
                         entity.getName(),
@@ -65,12 +67,13 @@ public class EmployeeRepositoryAdapter implements EmployeeRepository {
 
     @Override
     public void deleteById(Integer id) {
-        jpaEmployeeRepository.deleteById(id);
+        jpaEmployeeRepository.softDelete(id);
     }
 
     @Override
     public List<Employee> findAll() {
         return jpaEmployeeRepository.findAll().stream()
+                .filter(entity -> entity.getActive() != null && entity.getActive())
                 .map(entity -> new Employee(
                         entity.getEmployeeId(),
                         entity.getName(),

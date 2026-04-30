@@ -10,6 +10,10 @@ import com.glamgest.app.infrastructure.persistence.entity.Users;
 import com.glamgest.app.infrastructure.persistence.repository.JpaAppointmentRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 @Repository
 public class AppointmentRepositoryAdapter implements AppointmentRepository {
 
@@ -20,10 +24,28 @@ public class AppointmentRepositoryAdapter implements AppointmentRepository {
     }
 
     @Override
+    public Optional<Appointment> findById(Integer id) {
+        Optional<Appointments> entityOpt = jpaAppointmentRepository.findById(id);
+        return entityOpt.map(this::toModel);
+    }
+
+    @Override
     public Appointment save(Appointment appointment) {
         Appointments entity = toEntity(appointment);
         Appointments saved = jpaAppointmentRepository.save(entity);
         return toModel(saved);
+    }
+
+    @Override
+    public void deleteById(Integer id) {
+        jpaAppointmentRepository.deleteById(id);
+    }
+
+    @Override
+    public List<Appointment> findAll() {
+        return jpaAppointmentRepository.findAll().stream()
+                .map(this::toModel)
+                .collect(Collectors.toList());
     }
 
     private Appointments toEntity(Appointment appointment) {

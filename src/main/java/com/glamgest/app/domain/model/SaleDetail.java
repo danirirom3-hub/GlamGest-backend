@@ -1,7 +1,9 @@
-package com.glamgest.app.application.dto.sale;
+package com.glamgest.app.domain.model;
 
-public class SaleDetailResponseDTO {
+public class SaleDetail {
 
+    private Integer id;
+    private Integer saleId;
     private Integer appointmentId;
     private Integer employeeId;
     private Integer serviceId;
@@ -9,17 +11,35 @@ public class SaleDetailResponseDTO {
     private Integer unitPrice;
     private Integer subtotal;
 
-    public SaleDetailResponseDTO() {
+    public SaleDetail() {
     }
 
-    public SaleDetailResponseDTO(Integer appointmentId, Integer employeeId, Integer serviceId,
-                                Integer quantity, Integer unitPrice, Integer subtotal) {
+    public SaleDetail(Integer id, Integer saleId, Integer appointmentId, Integer employeeId, Integer serviceId,
+            Integer quantity, Integer unitPrice, Integer subtotal) {
+        this.id = id;
+        this.saleId = saleId;
         this.appointmentId = appointmentId;
         this.employeeId = employeeId;
         this.serviceId = serviceId;
         this.quantity = quantity;
         this.unitPrice = unitPrice;
         this.subtotal = subtotal;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Integer getSaleId() {
+        return saleId;
+    }
+
+    public void setSaleId(Integer saleId) {
+        this.saleId = saleId;
     }
 
     public Integer getAppointmentId() {

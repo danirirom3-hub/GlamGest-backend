@@ -1,9 +1,9 @@
-package com.glamgest.app.application.dto.sale;
+package com.glamgest.app.domain.model;
 
 import java.util.Date;
 import java.util.List;
 
-public class SaleResponseDTO {
+public class Sale {
 
     private Integer id;
     private Date saleDatetime;
@@ -11,13 +11,22 @@ public class SaleResponseDTO {
     private String paymentType;
     private Integer clientId;
     private Integer userId;
-    private List<SaleDetailResponseDTO> saleDetails;
+    private List<SaleDetail> saleDetails;
 
-    public SaleResponseDTO() {
+    public Sale() {
     }
 
-    public SaleResponseDTO(Integer id, Date saleDatetime, Integer total, String paymentType,
-                          Integer clientId, Integer userId, List<SaleDetailResponseDTO> saleDetails) {
+    public Sale(Integer id, Date saleDatetime, Integer total, String paymentType, Integer clientId, Integer userId) {
+        this.id = id;
+        this.saleDatetime = saleDatetime;
+        this.total = total;
+        this.paymentType = paymentType;
+        this.clientId = clientId;
+        this.userId = userId;
+    }
+
+    public Sale(Integer id, Date saleDatetime, Integer total, String paymentType, Integer clientId, Integer userId,
+            List<SaleDetail> saleDetails) {
         this.id = id;
         this.saleDatetime = saleDatetime;
         this.total = total;
@@ -75,11 +84,11 @@ public class SaleResponseDTO {
         this.userId = userId;
     }
 
-    public List<SaleDetailResponseDTO> getSaleDetails() {
+    public List<SaleDetail> getSaleDetails() {
         return saleDetails;
     }
 
-    public void setSaleDetails(List<SaleDetailResponseDTO> saleDetails) {
+    public void setSaleDetails(List<SaleDetail> saleDetails) {
         this.saleDetails = saleDetails;
     }
 }

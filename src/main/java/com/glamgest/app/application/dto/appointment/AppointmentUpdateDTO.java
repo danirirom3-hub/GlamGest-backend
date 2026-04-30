@@ -1,31 +1,30 @@
 package com.glamgest.app.application.dto.appointment;
 
+import jakarta.validation.constraints.NotNull;
 import java.util.Date;
 
-public class AppointmentResponseDTO {
+public class AppointmentUpdateDTO {
 
+    @NotNull(message = "El id de la cita es obligatorio")
     private Integer id;
+
+    @NotNull(message = "La fecha de la cita es obligatoria")
     private Date appointmentDatetime;
+
     private String status;
+
     private String notes;
+
+    @NotNull(message = "El id del cliente es obligatorio")
     private Integer clientId;
+
+    @NotNull(message = "El id del empleado es obligatorio")
     private Integer employeeId;
+
+    @NotNull(message = "El id del servicio es obligatorio")
     private Integer serviceId;
-    private Integer userId;
 
-    public AppointmentResponseDTO() {
-    }
-
-    public AppointmentResponseDTO(Integer id, Date appointmentDatetime, String status, String notes,
-                                  Integer clientId, Integer employeeId, Integer serviceId, Integer userId) {
-        this.id = id;
-        this.appointmentDatetime = appointmentDatetime;
-        this.status = status;
-        this.notes = notes;
-        this.clientId = clientId;
-        this.employeeId = employeeId;
-        this.serviceId = serviceId;
-        this.userId = userId;
+    public AppointmentUpdateDTO() {
     }
 
     public Integer getId() {
@@ -82,13 +81,5 @@ public class AppointmentResponseDTO {
 
     public void setServiceId(Integer serviceId) {
         this.serviceId = serviceId;
-    }
-
-    public Integer getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Integer userId) {
-        this.userId = userId;
     }
 }

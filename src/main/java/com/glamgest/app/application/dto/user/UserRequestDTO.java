@@ -6,14 +6,14 @@ import jakarta.validation.constraints.NotNull;
 
 public class UserRequestDTO {
 
-    @NotBlank
+    @NotBlank(message = "User name is required")
     private String name;
 
-    @NotBlank
-    @Email
+    @NotBlank(message = "User email is required")
+    @Email(message = "User email must be valid")
     private String email;
 
-    @NotBlank
+    @NotBlank(message = "User password is required")
     private String password;
 
     @NotNull

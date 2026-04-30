@@ -6,14 +6,14 @@ import jakarta.validation.constraints.Pattern;
 
 public class ClientRequestDTO {
 
-    @NotBlank(message = "Client name is required")
+    @NotBlank
     private String name;
 
-    @NotBlank(message = "Client email is required")
-    @Email(message = "Client email must be valid")
+    @NotBlank
+    @Email
     private String email;
 
-    @NotBlank(message = "Client phone is required")
+    @NotBlank
     @Pattern(regexp = "^\\+?[0-9\\-\\s]{7,20}$", message = "Client phone must contain only numbers, spaces, dashes and may start with +")
     private String phone;
 

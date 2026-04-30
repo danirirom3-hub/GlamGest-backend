@@ -1,13 +1,13 @@
 package com.glamgest.app.application.dto.employee;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 
 public class EmployeeRequestDTO {
 
-    @NotBlank
+    @NotBlank(message = "Employee name is required")
     private String name;
 
+    @NotBlank(message = "Employee phone is required")
     private String phone;
 
     public EmployeeRequestDTO() {

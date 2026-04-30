@@ -4,9 +4,10 @@ import jakarta.validation.constraints.NotBlank;
 
 public class RoleRequestDTO {
 
-    @NotBlank
+    @NotBlank(message = "Role name is required")
     private String name;
-
+    
+    @NotBlank(message = "Role description is required")
     private String description;
 
     public RoleRequestDTO() {

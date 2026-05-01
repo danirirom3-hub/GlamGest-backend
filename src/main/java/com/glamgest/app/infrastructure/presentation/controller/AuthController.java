@@ -1,12 +1,9 @@
 package com.glamgest.app.infrastructure.presentation.controller;
 
 import com.glamgest.app.application.dto.auth.LoginRequestDTO;
-import com.glamgest.app.application.dto.auth.LoginResponseDTO;
 import com.glamgest.app.application.usecase.auth.LoginUseCase;
 import com.glamgest.app.infrastructure.presentation.helper.BuilderHelper;
-
 import jakarta.validation.Valid;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

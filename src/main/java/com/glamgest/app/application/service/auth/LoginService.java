@@ -3,6 +3,8 @@ package com.glamgest.app.application.service.auth;
 import com.glamgest.app.application.dto.auth.LoginRequestDTO;
 import com.glamgest.app.application.dto.auth.LoginResponseDTO;
 import com.glamgest.app.application.usecase.auth.LoginUseCase;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -11,6 +13,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class LoginService implements LoginUseCase {
+
+    private static final Logger logger = LoggerFactory.getLogger(LoginService.class);
 
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
@@ -22,6 +26,8 @@ public class LoginService implements LoginUseCase {
 
     @Override
     public LoginResponseDTO execute(LoginRequestDTO loginRequestDTO) {
+        logger.info("Intentando autenticar usuario: {}", loginRequestDTO.email());
+
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequestDTO.email(),
@@ -31,6 +37,8 @@ public class LoginService implements LoginUseCase {
 
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String token = jwtService.generateToken(userDetails);
+
+        logger.info("Usuario autenticado exitosamente: {}", loginRequestDTO.email());
 
         return new LoginResponseDTO(token);
     }

@@ -2,6 +2,7 @@ package com.glamgest.app.application.service.appointment;
 
 import com.glamgest.app.application.dto.appointment.AppointmentRequestDTO;
 import com.glamgest.app.application.dto.appointment.AppointmentResponseDTO;
+import com.glamgest.app.application.service.email.EmailClientService;
 import com.glamgest.app.common.constant.Constant;
 import com.glamgest.app.common.exception.ResourceNotFoundException;
 import com.glamgest.app.domain.model.Appointment;
@@ -40,13 +41,15 @@ class CreateAppointmentServiceTest {
         EmployeeRepository employeeRepository = mock(EmployeeRepository.class);
         ServiceRepository serviceRepository = mock(ServiceRepository.class);
         UserRepository userRepository = mock(UserRepository.class);
+        EmailClientService emailClientService = mock(EmailClientService.class);
 
         CreateAppointmentService service = new CreateAppointmentService(
                 appointmentRepository,
                 clientRepository,
                 employeeRepository,
                 serviceRepository,
-                userRepository
+                userRepository,
+                emailClientService
         );
 
         AppointmentRequestDTO request = new AppointmentRequestDTO();
@@ -107,13 +110,15 @@ class CreateAppointmentServiceTest {
         EmployeeRepository employeeRepository = mock(EmployeeRepository.class);
         ServiceRepository serviceRepository = mock(ServiceRepository.class);
         UserRepository userRepository = mock(UserRepository.class);
+        EmailClientService emailClientService = mock(EmailClientService.class);
 
         CreateAppointmentService service = new CreateAppointmentService(
                 appointmentRepository,
                 clientRepository,
                 employeeRepository,
                 serviceRepository,
-                userRepository
+                userRepository,
+                emailClientService
         );
 
         AppointmentRequestDTO request = new AppointmentRequestDTO();
@@ -135,13 +140,15 @@ class CreateAppointmentServiceTest {
         EmployeeRepository employeeRepository = mock(EmployeeRepository.class);
         ServiceRepository serviceRepository = mock(ServiceRepository.class);
         UserRepository userRepository = mock(UserRepository.class);
+        EmailClientService emailClientService = mock(EmailClientService.class);
 
         CreateAppointmentService service = new CreateAppointmentService(
                 appointmentRepository,
                 clientRepository,
                 employeeRepository,
                 serviceRepository,
-                userRepository
+                userRepository,
+                emailClientService
         );
 
         AppointmentRequestDTO request = new AppointmentRequestDTO();

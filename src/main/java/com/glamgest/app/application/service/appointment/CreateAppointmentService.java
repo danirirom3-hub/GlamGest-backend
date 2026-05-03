@@ -3,36 +3,46 @@ package com.glamgest.app.application.service.appointment;
 import com.glamgest.app.common.constant.Constant;
 import com.glamgest.app.application.dto.appointment.AppointmentRequestDTO;
 import com.glamgest.app.application.dto.appointment.AppointmentResponseDTO;
+import com.glamgest.app.application.dto.email.EmailRequestDTO;
 import com.glamgest.app.application.usecase.appointment.CreateAppointmentUseCase;
 import com.glamgest.app.common.exception.ResourceNotFoundException;
 import com.glamgest.app.domain.model.Appointment;
+import com.glamgest.app.domain.model.Client;
 import com.glamgest.app.domain.repository.AppointmentRepository;
 import com.glamgest.app.domain.repository.ClientRepository;
 import com.glamgest.app.domain.repository.EmployeeRepository;
 import com.glamgest.app.domain.repository.ServiceRepository;
 import com.glamgest.app.domain.repository.UserRepository;
+import com.glamgest.app.application.service.email.EmailClientService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 @org.springframework.stereotype.Service
 public class CreateAppointmentService implements CreateAppointmentUseCase {
 
+    private static final Logger logger = LoggerFactory.getLogger(CreateAppointmentService.class);
+
     private final AppointmentRepository appointmentRepository;
     private final ClientRepository clientRepository;
     private final EmployeeRepository employeeRepository;
     private final ServiceRepository serviceRepository;
     private final UserRepository userRepository;
+    private final EmailClientService emailClientService;
 
     public CreateAppointmentService(AppointmentRepository appointmentRepository,
             ClientRepository clientRepository,
             EmployeeRepository employeeRepository,
             ServiceRepository serviceRepository,
-            UserRepository userRepository) {
+            UserRepository userRepository,
+            EmailClientService emailClientService) {
         this.appointmentRepository = appointmentRepository;
         this.clientRepository = clientRepository;
         this.employeeRepository = employeeRepository;
         this.serviceRepository = serviceRepository;
         this.userRepository = userRepository;
+        this.emailClientService = emailClientService;
     }
 
     @Override
@@ -41,7 +51,7 @@ public class CreateAppointmentService implements CreateAppointmentUseCase {
         Integer employeeId = appointmentRequestDTO.getEmployeeId();
         Integer serviceId = appointmentRequestDTO.getServiceId();
 
-        clientRepository.findById(clientId)
+        Client client = clientRepository.findById(clientId)
                 .orElseThrow(() -> new ResourceNotFoundException("Client not found with id " + clientId));
         employeeRepository.findById(employeeId)
                 .orElseThrow(() -> new ResourceNotFoundException("Employee not found with id " + employeeId));
@@ -69,6 +79,14 @@ public class CreateAppointmentService implements CreateAppointmentUseCase {
 
         Appointment saved = appointmentRepository.save(appointment);
 
+        // Enviar correo al cliente
+        try {
+            sendConfirmationEmail(client, saved);
+        } catch (Exception e) {
+            logger.error("Error al enviar correo de confirmación al cliente: {}", e.getMessage(), e);
+            // No lanzamos excepción para que la cita se cree aún si hay error en email
+        }
+
         AppointmentResponseDTO response = new AppointmentResponseDTO();
         response.setId(saved.getId());
         response.setAppointmentDatetime(saved.getAppointmentDatetime());
@@ -80,5 +98,38 @@ public class CreateAppointmentService implements CreateAppointmentUseCase {
         response.setUserId(saved.getUserId());
 
         return response;
+    }
+
+    /**
+     * Envía un correo de confirmación al cliente cuando se crea una cita
+     */
+    private void sendConfirmationEmail(Client client, Appointment appointment) {
+        if (client == null || client.getEmail() == null || client.getEmail().isEmpty()) {
+            logger.warn("No se puede enviar correo: cliente sin email");
+            return;
+        }
+
+        String subject = "Confirmación de tu cita en GlamGest";
+        String body = String.format(
+                "Hola %s,\n\n" +
+                        "Tu cita ha sido registrada exitosamente en GlamGest.\n\n" +
+                        "Fecha y Hora: %s\n" +
+                        "Estado: %s\n" +
+                        "Notas: %s\n\n" +
+                        "Gracias por elegirnos.\n" +
+                        "GlamGest Team",
+                client.getName(),
+                appointment.getAppointmentDatetime(),
+                appointment.getStatus(),
+                appointment.getNotes() != null ? appointment.getNotes() : "N/A"
+        );
+
+        EmailRequestDTO emailRequest = new EmailRequestDTO(
+                client.getEmail(),
+                subject,
+                body
+        );
+
+        emailClientService.sendEmail(emailRequest);
     }
 }

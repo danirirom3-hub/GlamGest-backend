@@ -1,2 +1,736 @@
-2026-05-17 11:14:38 [main] INFO  c.glamgest.app.GlamgestApplication - Starting GlamgestApplication using Java 21.0.1 with PID 4444 (C:\Users\danie\OneDrive\Escritorio\Daniela\Universidad\GlamGest-backend\target\classes started by danie in C:\Users\danie\OneDrive\Escritorio\Daniela\Universidad\GlamGest-backend)
-2026-05-17 11:14:38 [main] INFO  c.glamgest.app.GlamgestApplication - No active profile set, falling back to 1 default profile: "default"
+2026-05-18 10:33:41 [main] INFO  c.glamgest.app.GlamgestApplication - Starting GlamgestApplication using Java 21.0.1 with PID 5672 (C:\Users\danie\OneDrive\Escritorio\Daniela\Universidad\GlamGest-backend\target\classes started by danie in C:\Users\danie\OneDrive\Escritorio\Daniela\Universidad\GlamGest-backend)
+2026-05-18 10:33:41 [main] INFO  c.glamgest.app.GlamgestApplication - No active profile set, falling back to 1 default profile: "default"
+2026-05-18 10:33:43 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-05-18 10:33:43 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 127 ms. Found 8 JPA repository interfaces.
+2026-05-18 10:33:44 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2026-05-18 10:33:44 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-05-18 10:33:44 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.52]
+2026-05-18 10:33:44 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-05-18 10:33:44 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 2575 ms
+2026-05-18 10:33:44 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-05-18 10:33:44 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.44.Final
+2026-05-18 10:33:44 [main] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-05-18 10:33:45 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-05-18 10:33:45 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-05-18 10:33:45 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@32caae19
+2026-05-18 10:33:45 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-05-18 10:33:45 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-05-18 10:33:45 [main] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0.45
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-05-18 10:33:46 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-05-18 10:33:46 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-05-18 10:33:47 [main] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-05-18 10:33:48 [main] WARN  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
+2026-05-18 10:33:48 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-05-18 10:33:48 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2026-05-18 10:33:48 [main] INFO  c.glamgest.app.GlamgestApplication - Started GlamgestApplication in 7.617 seconds (process running for 7.952)
+2026-05-18 10:33:48 [main] INFO  c.glamgest.app.GlamgestApplication - Aplicación GlamGest iniciada exitosamente.
+2026-05-18 10:33:59 [http-nio-8080-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-05-18 10:33:59 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-05-18 10:33:59 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 0 ms
+2026-05-18 10:34:00 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.user_id,
+        u1_0.active,
+        u1_0.email,
+        u1_0.name,
+        u1_0.password,
+        u1_0.role_id 
+    from
+        glamgest_db.users u1_0 
+    where
+        u1_0.email=? 
+        and u1_0.active=1
+2026-05-18 10:34:00 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.role_id,
+        r1_0.description,
+        r1_0.name 
+    from
+        glamgest_db.roles r1_0 
+    where
+        r1_0.role_id=?
+2026-05-18 10:34:00 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        s1_0.service_id,
+        s1_0.active,
+        s1_0.description,
+        s1_0.duration_minutes,
+        s1_0.name,
+        s1_0.price 
+    from
+        glamgest_db.services s1_0
+2026-05-18 13:12:25 [HikariPool-1:housekeeper] WARN  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=2h18m9s289ms368µs800ns).
+2026-05-18 14:15:54 [main] INFO  c.glamgest.app.GlamgestApplication - Starting GlamgestApplication using Java 21.0.1 with PID 13848 (C:\Users\danie\OneDrive\Escritorio\Daniela\Universidad\GlamGest-backend\target\classes started by danie in C:\Users\danie\OneDrive\Escritorio\Daniela\Universidad\GlamGest-backend)
+2026-05-18 14:15:54 [main] INFO  c.glamgest.app.GlamgestApplication - No active profile set, falling back to 1 default profile: "default"
+2026-05-18 14:15:56 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-05-18 14:15:56 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 158 ms. Found 8 JPA repository interfaces.
+2026-05-18 14:15:57 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2026-05-18 14:15:57 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-05-18 14:15:57 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.52]
+2026-05-18 14:15:57 [main] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-05-18 14:15:57 [main] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 3492 ms
+2026-05-18 14:15:58 [main] INFO  o.h.jpa.internal.util.LogHelper - HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-05-18 14:15:58 [main] INFO  org.hibernate.Version - HHH000412: Hibernate ORM core version 6.6.44.Final
+2026-05-18 14:15:58 [main] INFO  o.h.c.i.RegionFactoryInitiator - HHH000026: Second-level cache disabled
+2026-05-18 14:15:58 [main] INFO  o.s.o.j.p.SpringPersistenceUnitInfo - No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-05-18 14:15:58 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-05-18 14:15:59 [main] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@722b3ba2
+2026-05-18 14:15:59 [main] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-05-18 14:15:59 [main] WARN  org.hibernate.orm.deprecation - HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-05-18 14:15:59 [main] INFO  o.hibernate.orm.connections.pooling - HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0.45
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-05-18 14:16:00 [main] INFO  o.h.e.t.j.p.i.JtaPlatformInitiator - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-05-18 14:16:01 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-05-18 14:16:01 [main] INFO  o.s.d.j.r.query.QueryEnhancerFactory - Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-05-18 14:16:02 [main] WARN  o.s.s.c.a.a.c.InitializeUserDetailsBeanManagerConfigurer$InitializeUserDetailsManagerConfigurer - Global AuthenticationManager configured with an AuthenticationProvider bean. UserDetailsService beans will not be used by Spring Security for automatically configuring username/password login. Consider removing the AuthenticationProvider bean. Alternatively, consider using the UserDetailsService in a manually instantiated DaoAuthenticationProvider. If the current configuration is intentional, to turn off this warning, increase the logging level of 'org.springframework.security.config.annotation.authentication.configuration.InitializeUserDetailsBeanManagerConfigurer' to ERROR
+2026-05-18 14:16:02 [main] WARN  o.s.b.a.o.j.JpaBaseConfiguration$JpaWebConfiguration - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-05-18 14:16:03 [main] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2026-05-18 14:16:03 [main] INFO  c.glamgest.app.GlamgestApplication - Started GlamgestApplication in 10.108 seconds (process running for 10.744)
+2026-05-18 14:16:03 [main] INFO  c.glamgest.app.GlamgestApplication - Aplicación GlamGest iniciada exitosamente.
+2026-05-18 14:16:14 [http-nio-8080-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-05-18 14:16:14 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-05-18 14:16:14 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 2 ms
+2026-05-18 14:16:14 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.user_id,
+        u1_0.active,
+        u1_0.email,
+        u1_0.name,
+        u1_0.password,
+        u1_0.role_id 
+    from
+        glamgest_db.users u1_0 
+    where
+        u1_0.email=? 
+        and u1_0.active=1
+2026-05-18 14:16:14 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.role_id,
+        r1_0.description,
+        r1_0.name 
+    from
+        glamgest_db.roles r1_0 
+    where
+        r1_0.role_id=?
+2026-05-18 14:16:14 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        s1_0.service_id,
+        s1_0.active,
+        s1_0.description,
+        s1_0.duration_minutes,
+        s1_0.name,
+        s1_0.price 
+    from
+        glamgest_db.services s1_0
+2026-05-18 14:16:50 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.user_id,
+        u1_0.active,
+        u1_0.email,
+        u1_0.name,
+        u1_0.password,
+        u1_0.role_id 
+    from
+        glamgest_db.users u1_0 
+    where
+        u1_0.email=? 
+        and u1_0.active=1
+2026-05-18 14:16:50 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.role_id,
+        r1_0.description,
+        r1_0.name 
+    from
+        glamgest_db.roles r1_0 
+    where
+        r1_0.role_id=?
+2026-05-18 14:16:50 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        c1_0.client_id,
+        c1_0.email,
+        c1_0.name,
+        c1_0.phone,
+        c1_0.registration_date 
+    from
+        glamgest_db.clients c1_0
+2026-05-18 14:16:50 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.user_id,
+        u1_0.active,
+        u1_0.email,
+        u1_0.name,
+        u1_0.password,
+        u1_0.role_id 
+    from
+        glamgest_db.users u1_0 
+    where
+        u1_0.email=? 
+        and u1_0.active=1
+2026-05-18 14:16:50 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.role_id,
+        r1_0.description,
+        r1_0.name 
+    from
+        glamgest_db.roles r1_0 
+    where
+        r1_0.role_id=?
+2026-05-18 14:16:50 [http-nio-8080-exec-6] DEBUG org.hibernate.SQL - 
+    select
+        e1_0.employee_id,
+        e1_0.active,
+        e1_0.name,
+        e1_0.phone 
+    from
+        glamgest_db.employees e1_0
+2026-05-18 14:16:50 [http-nio-8080-exec-8] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.user_id,
+        u1_0.active,
+        u1_0.email,
+        u1_0.name,
+        u1_0.password,
+        u1_0.role_id 
+    from
+        glamgest_db.users u1_0 
+    where
+        u1_0.email=? 
+        and u1_0.active=1
+2026-05-18 14:16:50 [http-nio-8080-exec-8] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.role_id,
+        r1_0.description,
+        r1_0.name 
+    from
+        glamgest_db.roles r1_0 
+    where
+        r1_0.role_id=?
+2026-05-18 14:16:50 [http-nio-8080-exec-8] DEBUG org.hibernate.SQL - 
+    select
+        s1_0.service_id,
+        s1_0.active,
+        s1_0.description,
+        s1_0.duration_minutes,
+        s1_0.name,
+        s1_0.price 
+    from
+        glamgest_db.services s1_0
+2026-05-18 14:16:50 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.user_id,
+        u1_0.active,
+        u1_0.email,
+        u1_0.name,
+        u1_0.password,
+        u1_0.role_id 
+    from
+        glamgest_db.users u1_0 
+    where
+        u1_0.email=? 
+        and u1_0.active=1
+2026-05-18 14:16:50 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.role_id,
+        r1_0.description,
+        r1_0.name 
+    from
+        glamgest_db.roles r1_0 
+    where
+        r1_0.role_id=?
+2026-05-18 14:16:50 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        a1_0.appointment_id,
+        a1_0.appointment_datetime,
+        a1_0.client_id,
+        a1_0.employee_id,
+        a1_0.notes,
+        a1_0.service_id,
+        a1_0.status,
+        a1_0.user_id 
+    from
+        glamgest_db.appointments a1_0
+2026-05-18 14:16:50 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        c1_0.client_id,
+        c1_0.email,
+        c1_0.name,
+        c1_0.phone,
+        c1_0.registration_date 
+    from
+        glamgest_db.clients c1_0 
+    where
+        c1_0.client_id=?
+2026-05-18 14:16:50 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        e1_0.employee_id,
+        e1_0.active,
+        e1_0.name,
+        e1_0.phone 
+    from
+        glamgest_db.employees e1_0 
+    where
+        e1_0.employee_id=?
+2026-05-18 14:16:50 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        s1_0.service_id,
+        s1_0.active,
+        s1_0.description,
+        s1_0.duration_minutes,
+        s1_0.name,
+        s1_0.price 
+    from
+        glamgest_db.services s1_0 
+    where
+        s1_0.service_id=?
+2026-05-18 14:16:50 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.user_id,
+        u1_0.active,
+        u1_0.email,
+        u1_0.name,
+        u1_0.password,
+        u1_0.role_id,
+        ri1_0.role_id,
+        ri1_0.description,
+        ri1_0.name 
+    from
+        glamgest_db.users u1_0 
+    join
+        glamgest_db.roles ri1_0 
+            on ri1_0.role_id=u1_0.role_id 
+    where
+        u1_0.user_id=?
+2026-05-18 14:16:50 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        s1_0.service_id,
+        s1_0.active,
+        s1_0.description,
+        s1_0.duration_minutes,
+        s1_0.name,
+        s1_0.price 
+    from
+        glamgest_db.services s1_0 
+    where
+        s1_0.service_id=?
+2026-05-18 14:16:50 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        c1_0.client_id,
+        c1_0.email,
+        c1_0.name,
+        c1_0.phone,
+        c1_0.registration_date 
+    from
+        glamgest_db.clients c1_0 
+    where
+        c1_0.client_id=?
+2026-05-18 14:16:50 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        s1_0.service_id,
+        s1_0.active,
+        s1_0.description,
+        s1_0.duration_minutes,
+        s1_0.name,
+        s1_0.price 
+    from
+        glamgest_db.services s1_0 
+    where
+        s1_0.service_id=?
+2026-05-18 14:16:50 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        c1_0.client_id,
+        c1_0.email,
+        c1_0.name,
+        c1_0.phone,
+        c1_0.registration_date 
+    from
+        glamgest_db.clients c1_0 
+    where
+        c1_0.client_id=?
+2026-05-18 14:16:50 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        s1_0.service_id,
+        s1_0.active,
+        s1_0.description,
+        s1_0.duration_minutes,
+        s1_0.name,
+        s1_0.price 
+    from
+        glamgest_db.services s1_0 
+    where
+        s1_0.service_id=?
+2026-05-18 14:16:50 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        c1_0.client_id,
+        c1_0.email,
+        c1_0.name,
+        c1_0.phone,
+        c1_0.registration_date 
+    from
+        glamgest_db.clients c1_0 
+    where
+        c1_0.client_id=?
+2026-05-18 14:16:50 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        s1_0.service_id,
+        s1_0.active,
+        s1_0.description,
+        s1_0.duration_minutes,
+        s1_0.name,
+        s1_0.price 
+    from
+        glamgest_db.services s1_0 
+    where
+        s1_0.service_id=?
+2026-05-18 14:16:50 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        e1_0.employee_id,
+        e1_0.active,
+        e1_0.name,
+        e1_0.phone 
+    from
+        glamgest_db.employees e1_0 
+    where
+        e1_0.employee_id=?
+2026-05-18 14:16:50 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        s1_0.service_id,
+        s1_0.active,
+        s1_0.description,
+        s1_0.duration_minutes,
+        s1_0.name,
+        s1_0.price 
+    from
+        glamgest_db.services s1_0 
+    where
+        s1_0.service_id=?
+2026-05-18 14:16:50 [http-nio-8080-exec-10] DEBUG org.hibernate.SQL - 
+    select
+        c1_0.client_id,
+        c1_0.email,
+        c1_0.name,
+        c1_0.phone,
+        c1_0.registration_date 
+    from
+        glamgest_db.clients c1_0 
+    where
+        c1_0.client_id=?
+2026-05-18 14:16:52 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.user_id,
+        u1_0.active,
+        u1_0.email,
+        u1_0.name,
+        u1_0.password,
+        u1_0.role_id 
+    from
+        glamgest_db.users u1_0 
+    where
+        u1_0.email=? 
+        and u1_0.active=1
+2026-05-18 14:16:52 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.user_id,
+        u1_0.active,
+        u1_0.email,
+        u1_0.name,
+        u1_0.password,
+        u1_0.role_id 
+    from
+        glamgest_db.users u1_0 
+    where
+        u1_0.email=? 
+        and u1_0.active=1
+2026-05-18 14:16:52 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.user_id,
+        u1_0.active,
+        u1_0.email,
+        u1_0.name,
+        u1_0.password,
+        u1_0.role_id 
+    from
+        glamgest_db.users u1_0 
+    where
+        u1_0.email=? 
+        and u1_0.active=1
+2026-05-18 14:16:52 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.role_id,
+        r1_0.description,
+        r1_0.name 
+    from
+        glamgest_db.roles r1_0 
+    where
+        r1_0.role_id=?
+2026-05-18 14:16:52 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.role_id,
+        r1_0.description,
+        r1_0.name 
+    from
+        glamgest_db.roles r1_0 
+    where
+        r1_0.role_id=?
+2026-05-18 14:16:52 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.role_id,
+        r1_0.description,
+        r1_0.name 
+    from
+        glamgest_db.roles r1_0 
+    where
+        r1_0.role_id=?
+2026-05-18 14:16:52 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.user_id,
+        u1_0.active,
+        u1_0.email,
+        u1_0.name,
+        u1_0.password,
+        u1_0.role_id 
+    from
+        glamgest_db.users u1_0 
+    where
+        u1_0.email=? 
+        and u1_0.active=1
+2026-05-18 14:16:52 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.role_id,
+        r1_0.description,
+        r1_0.name 
+    from
+        glamgest_db.roles r1_0 
+    where
+        r1_0.role_id=?
+2026-05-18 14:16:52 [http-nio-8080-exec-2] DEBUG org.hibernate.SQL - 
+    select
+        s1_0.service_id,
+        s1_0.active,
+        s1_0.description,
+        s1_0.duration_minutes,
+        s1_0.name,
+        s1_0.price 
+    from
+        glamgest_db.services s1_0
+2026-05-18 14:16:52 [http-nio-8080-exec-3] DEBUG org.hibernate.SQL - 
+    select
+        e1_0.employee_id,
+        e1_0.active,
+        e1_0.name,
+        e1_0.phone 
+    from
+        glamgest_db.employees e1_0
+2026-05-18 14:16:52 [http-nio-8080-exec-1] DEBUG org.hibernate.SQL - 
+    select
+        c1_0.client_id,
+        c1_0.email,
+        c1_0.name,
+        c1_0.phone,
+        c1_0.registration_date 
+    from
+        glamgest_db.clients c1_0
+2026-05-18 14:16:52 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        s1_0.sale_id,
+        s1_0.client_id,
+        s1_0.payment_type,
+        s1_0.sale_datetime,
+        s1_0.total,
+        s1_0.user_id 
+    from
+        glamgest_db.sales s1_0
+2026-05-18 14:16:52 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        c1_0.client_id,
+        c1_0.email,
+        c1_0.name,
+        c1_0.phone,
+        c1_0.registration_date 
+    from
+        glamgest_db.clients c1_0 
+    where
+        c1_0.client_id=?
+2026-05-18 14:16:52 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.user_id,
+        u1_0.active,
+        u1_0.email,
+        u1_0.name,
+        u1_0.password,
+        u1_0.role_id,
+        ri1_0.role_id,
+        ri1_0.description,
+        ri1_0.name 
+    from
+        glamgest_db.users u1_0 
+    join
+        glamgest_db.roles ri1_0 
+            on ri1_0.role_id=u1_0.role_id 
+    where
+        u1_0.user_id=?
+2026-05-18 14:16:52 [http-nio-8080-exec-5] DEBUG org.hibernate.SQL - 
+    select
+        c1_0.client_id,
+        c1_0.email,
+        c1_0.name,
+        c1_0.phone,
+        c1_0.registration_date 
+    from
+        glamgest_db.clients c1_0 
+    where
+        c1_0.client_id=?
+2026-05-18 14:19:14 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        u1_0.user_id,
+        u1_0.active,
+        u1_0.email,
+        u1_0.name,
+        u1_0.password,
+        u1_0.role_id 
+    from
+        glamgest_db.users u1_0 
+    where
+        u1_0.email=? 
+        and u1_0.active=1
+2026-05-18 14:19:15 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        r1_0.role_id,
+        r1_0.description,
+        r1_0.name 
+    from
+        glamgest_db.roles r1_0 
+    where
+        r1_0.role_id=?
+2026-05-18 14:19:15 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        s1_0.sale_id,
+        s1_0.client_id,
+        ci1_0.client_id,
+        ci1_0.email,
+        ci1_0.name,
+        ci1_0.phone,
+        ci1_0.registration_date,
+        s1_0.payment_type,
+        s1_0.sale_datetime,
+        s1_0.total,
+        s1_0.user_id,
+        ui1_0.user_id,
+        ui1_0.active,
+        ui1_0.email,
+        ui1_0.name,
+        ui1_0.password,
+        ui1_0.role_id,
+        ri1_0.role_id,
+        ri1_0.description,
+        ri1_0.name 
+    from
+        glamgest_db.sales s1_0 
+    join
+        glamgest_db.clients ci1_0 
+            on ci1_0.client_id=s1_0.client_id 
+    join
+        glamgest_db.users ui1_0 
+            on ui1_0.user_id=s1_0.user_id 
+    join
+        glamgest_db.roles ri1_0 
+            on ri1_0.role_id=ui1_0.role_id 
+    where
+        s1_0.sale_id=?
+2026-05-18 14:19:15 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL - 
+    select
+        sdl1_0.sale_id,
+        sdl1_0.detail_id,
+        ai1_0.appointment_id,
+        ai1_0.appointment_datetime,
+        ai1_0.client_id,
+        ci1_0.client_id,
+        ci1_0.email,
+        ci1_0.name,
+        ci1_0.phone,
+        ci1_0.registration_date,
+        ai1_0.employee_id,
+        ei1_0.employee_id,
+        ei1_0.active,
+        ei1_0.name,
+        ei1_0.phone,
+        ai1_0.notes,
+        ai1_0.service_id,
+        si1_0.service_id,
+        si1_0.active,
+        si1_0.description,
+        si1_0.duration_minutes,
+        si1_0.name,
+        si1_0.price,
+        ai1_0.status,
+        ai1_0.user_id,
+        ui1_0.user_id,
+        ui1_0.active,
+        ui1_0.email,
+        ui1_0.name,
+        ui1_0.password,
+        ui1_0.role_id,
+        sdl1_0.employee_id,
+        ei2_0.employee_id,
+        ei2_0.active,
+        ei2_0.name,
+        ei2_0.phone,
+        sdl1_0.quantity,
+        sdl1_0.service_id,
+        si3_0.service_id,
+        si3_0.active,
+        si3_0.description,
+        si3_0.duration_minutes,
+        si3_0.name,
+        si3_0.price,
+        sdl1_0.subtotal,
+        sdl1_0.unit_price 
+    from
+        glamgest_db.sale_details sdl1_0 
+    left join
+        glamgest_db.appointments ai1_0 
+            on ai1_0.appointment_id=sdl1_0.appointment_id 
+    left join
+        glamgest_db.clients ci1_0 
+            on ci1_0.client_id=ai1_0.client_id 
+    left join
+        glamgest_db.employees ei1_0 
+            on ei1_0.employee_id=ai1_0.employee_id 
+    left join
+        glamgest_db.services si1_0 
+            on si1_0.service_id=ai1_0.service_id 
+    left join
+        glamgest_db.users ui1_0 
+            on ui1_0.user_id=ai1_0.user_id 
+    left join
+        glamgest_db.employees ei2_0 
+            on ei2_0.employee_id=sdl1_0.employee_id 
+    left join
+        glamgest_db.services si3_0 
+            on si3_0.service_id=sdl1_0.service_id 
+    where
+        sdl1_0.sale_id=?
+2026-05-18 14:19:15 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL - 
+    delete 
+    from
+        glamgest_db.sale_details 
+    where
+        detail_id=?
+2026-05-18 14:19:15 [http-nio-8080-exec-4] DEBUG org.hibernate.SQL - 
+    delete 
+    from
+        glamgest_db.sales 
+    where
+        sale_id=?

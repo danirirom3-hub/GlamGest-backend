@@ -19,19 +19,10 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
-<<<<<<< HEAD
       - name: Build and test project
         run: mvn clean verify
-=======
-      - name: Build project
-        run: mvn clean install -DskipTests
->>>>>>> 51408e4fe9d7e969b11538bbc8c522b9d34e13aa
 
       - name: SonarCloud Scan
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-<<<<<<< HEAD
         run: mvn sonar:sonar -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=danirirom3-hub -Dsonar.projectKey=danirirom3-hub_GlamGest-backend -Dsonar.token=${{ secrets.SONAR_TOKEN }}
-=======
-        run: mvn sonar:sonar -Dsonar.host.url=https://sonarcloud.io -Dsonar.organization=danirirom3-hub -Dsonar.projectKey=danirirom3-hub_GlamGest-backend -Dsonar.token=${{ secrets.SONAR_TOKEN }}
->>>>>>> 51408e4fe9d7e969b11538bbc8c522b9d34e13aa

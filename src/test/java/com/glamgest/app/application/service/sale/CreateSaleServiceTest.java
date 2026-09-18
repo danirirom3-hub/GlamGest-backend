@@ -58,11 +58,7 @@ class CreateSaleServiceTest {
         detailRequest.setServiceId(3);
         detailRequest.setEmployeeId(4);
         detailRequest.setQuantity(2);
-<<<<<<< HEAD
         detailRequest.setUnitPrice(7500);
-=======
-        detailRequest.setUnitPrice(5000);
->>>>>>> 51408e4fe9d7e969b11538bbc8c522b9d34e13aa
 
         request.setSaleDetails(List.of(detailRequest));
 
@@ -85,11 +81,7 @@ class CreateSaleServiceTest {
         SaleResponseDTO response = service.execute(request);
 
         assertEquals(99, response.getId());
-<<<<<<< HEAD
         assertEquals(15000, response.getTotal());
-=======
-        assertEquals(10000, response.getTotal());
->>>>>>> 51408e4fe9d7e969b11538bbc8c522b9d34e13aa
         assertEquals("CARD", response.getPaymentType());
         assertEquals(1, response.getClientId());
         assertEquals(2, response.getUserId());
@@ -98,13 +90,8 @@ class CreateSaleServiceTest {
         assertEquals(3, response.getSaleDetails().get(0).getServiceId());
         assertEquals(4, response.getSaleDetails().get(0).getEmployeeId());
         assertEquals(2, response.getSaleDetails().get(0).getQuantity());
-<<<<<<< HEAD
         assertEquals(7500, response.getSaleDetails().get(0).getUnitPrice());
         assertEquals(15000, response.getSaleDetails().get(0).getSubtotal());
-=======
-        assertEquals(5000, response.getSaleDetails().get(0).getUnitPrice());
-        assertEquals(10000, response.getSaleDetails().get(0).getSubtotal());
->>>>>>> 51408e4fe9d7e969b11538bbc8c522b9d34e13aa
     }
 
     @Test

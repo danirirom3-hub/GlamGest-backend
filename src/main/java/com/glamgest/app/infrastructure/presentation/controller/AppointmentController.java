@@ -64,11 +64,12 @@ public class AppointmentController {
     public ResponseEntity<?> updateAppointment(@PathVariable Integer id,
                                                @Valid @RequestBody AppointmentUpdateDTO appointmentUpdateDTO,
                                                BindingResult result) {
+        // El id proviene de la URL y debe estar disponible antes de validar el DTO.
+        appointmentUpdateDTO.setId(id);
         if (result.hasFieldErrors()) {
             return this.validation(result);
         }
 
-        appointmentUpdateDTO.setId(id);
         AppointmentResponseDTO response = updateAppointmentUseCase.execute(appointmentUpdateDTO);
         return BuilderHelper.buildResponse(response, "Cita actualizada", HttpStatus.OK, true);
     }

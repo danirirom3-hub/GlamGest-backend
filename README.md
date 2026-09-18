@@ -17,7 +17,7 @@ SPRING_DATASOURCE_URL=jdbc:mysql://localhost:3306/glamgest_db?useSSL=false&serve
 SPRING_DATASOURCE_USERNAME=glamgest_app
 SPRING_DATASOURCE_PASSWORD=<password>
 JWT_SECRET=<secret-con-al-menos-32-caracteres>
-CORS_ALLOWED_ORIGINS=http://localhost:3000
+CORS_ALLOWED_ORIGINS=http://localhost:4200
 SPRING_JPA_HIBERNATE_DDL_AUTO=validate
 ```
 

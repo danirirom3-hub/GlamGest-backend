@@ -35,7 +35,7 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final CustomUserDetailsService userDetailsService;
-    @Value("${CORS_ALLOWED_ORIGINS:http://localhost:3000}")
+    @Value("${CORS_ALLOWED_ORIGINS:http://localhost:4200,http://localhost:3000}")
     private String allowedOrigins;
 
     public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter, CustomUserDetailsService userDetailsService) {
@@ -59,7 +59,10 @@ public class SecurityConfig {
 
                         .requestMatchers("/api/clients/me").hasAuthority("CLIENT")
                         .requestMatchers("/api/clients/**").hasAnyAuthority("ADMIN", "EMPLOYEE")
+                        .requestMatchers(HttpMethod.GET, "/api/services", "/api/services/**").hasAnyAuthority("ADMIN", "EMPLOYEE", "CLIENT")
                         .requestMatchers("/api/services/**").hasAnyAuthority("ADMIN", "EMPLOYEE")
+                        .requestMatchers(HttpMethod.GET, "/api/employees", "/api/employees/**").hasAnyAuthority("ADMIN", "EMPLOYEE", "CLIENT")
+                        .requestMatchers("/api/employees/**").hasAnyAuthority("ADMIN", "EMPLOYEE")
                         .requestMatchers("/api/roles/**").hasAuthority("ADMIN")
                         .requestMatchers("/api/appointments/me").hasAuthority("CLIENT")
                         .requestMatchers(HttpMethod.GET, "/api/appointments").hasAnyAuthority("ADMIN", "EMPLOYEE")

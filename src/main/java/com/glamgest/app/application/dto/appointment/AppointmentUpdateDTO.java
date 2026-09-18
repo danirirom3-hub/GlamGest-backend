@@ -5,7 +5,6 @@ import java.util.Date;
 
 public class AppointmentUpdateDTO {
 
-    @NotNull(message = "El id de la cita es obligatorio")
     private Integer id;
 
     @NotNull(message = "La fecha de la cita es obligatoria")

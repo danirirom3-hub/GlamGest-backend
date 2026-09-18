@@ -7,6 +7,7 @@ import com.glamgest.app.application.usecase.client.CreateClientUseCase;
 import com.glamgest.app.application.usecase.client.DeleteClientUseCase;
 import com.glamgest.app.application.usecase.client.GetAllClientsUseCase;
 import com.glamgest.app.application.usecase.client.GetClientByIdUseCase;
+import com.glamgest.app.application.usecase.client.GetMyClientUseCase;
 import com.glamgest.app.application.usecase.client.UpdateClientUseCase;
 import com.glamgest.app.infrastructure.presentation.helper.BuilderHelper;
 import jakarta.validation.Valid;
@@ -28,17 +29,20 @@ public class ClientController {
     private final GetClientByIdUseCase getClientByIdUseCase;
     private final UpdateClientUseCase updateClientUseCase;
     private final DeleteClientUseCase deleteClientUseCase;
+    private final GetMyClientUseCase getMyClientUseCase;
 
     public ClientController(CreateClientUseCase createClientUseCase,
                             GetAllClientsUseCase getAllClientsUseCase,
                             GetClientByIdUseCase getClientByIdUseCase,
                             UpdateClientUseCase updateClientUseCase,
-                            DeleteClientUseCase deleteClientUseCase) {
+                            DeleteClientUseCase deleteClientUseCase,
+                            GetMyClientUseCase getMyClientUseCase) {
         this.createClientUseCase = createClientUseCase;
         this.getAllClientsUseCase = getAllClientsUseCase;
         this.getClientByIdUseCase = getClientByIdUseCase;
         this.updateClientUseCase = updateClientUseCase;
         this.deleteClientUseCase = deleteClientUseCase;
+        this.getMyClientUseCase = getMyClientUseCase;
     }
 
     @PostMapping
@@ -56,6 +60,11 @@ public class ClientController {
     public ResponseEntity<?> getAllClients() {
         List<ClientResponseDTO> clients = getAllClientsUseCase.execute();
         return BuilderHelper.buildResponse(clients, "Clientes obtenidos", HttpStatus.OK, true);
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<?> getMyClient() {
+        return BuilderHelper.buildResponse(getMyClientUseCase.execute(), "Mi perfil obtenido", HttpStatus.OK, true);
     }
 
     @GetMapping("/{id}")

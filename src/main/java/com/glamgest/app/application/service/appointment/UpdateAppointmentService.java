@@ -10,6 +10,10 @@ import com.glamgest.app.infrastructure.persistence.repository.JpaClientRepositor
 import com.glamgest.app.infrastructure.persistence.repository.JpaEmployeeRepository;
 import com.glamgest.app.infrastructure.persistence.repository.JpaServiceRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.context.SecurityContextHolder;
+import com.glamgest.app.domain.repository.ClientRepository;
+import com.glamgest.app.domain.repository.UserRepository;
 
 @Service
 public class UpdateAppointmentService implements UpdateAppointmentUseCase {
@@ -18,21 +22,29 @@ public class UpdateAppointmentService implements UpdateAppointmentUseCase {
     private final JpaClientRepository jpaClientRepository;
     private final JpaEmployeeRepository jpaEmployeeRepository;
     private final JpaServiceRepository jpaServiceRepository;
+    private final ClientRepository clientRepository;
+    private final UserRepository userRepository;
 
     public UpdateAppointmentService(AppointmentRepository appointmentRepository,
                                    JpaClientRepository jpaClientRepository,
                                    JpaEmployeeRepository jpaEmployeeRepository,
-                                   JpaServiceRepository jpaServiceRepository) {
+                                   JpaServiceRepository jpaServiceRepository,
+                                   ClientRepository clientRepository, UserRepository userRepository) {
         this.appointmentRepository = appointmentRepository;
         this.jpaClientRepository = jpaClientRepository;
         this.jpaEmployeeRepository = jpaEmployeeRepository;
         this.jpaServiceRepository = jpaServiceRepository;
+        this.clientRepository = clientRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
     public AppointmentResponseDTO execute(AppointmentUpdateDTO appointmentUpdateDTO) {
         Appointment existingAppointment = appointmentRepository.findById(appointmentUpdateDTO.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Appointment not found with id " + appointmentUpdateDTO.getId()));
+        if (isClient() && !ownsAppointment(existingAppointment)) {
+            throw new AccessDeniedException("No puede modificar esta cita");
+        }
 
         // Validate relationships
         if (!jpaClientRepository.existsById(appointmentUpdateDTO.getClientId())) {
@@ -46,12 +58,15 @@ public class UpdateAppointmentService implements UpdateAppointmentUseCase {
         }
 
         // Update appointment
+        Integer clientId = isClient() ? existingAppointment.getClientId() : appointmentUpdateDTO.getClientId();
+        String status = isClient() ? existingAppointment.getStatus()
+                : appointmentUpdateDTO.getStatus() != null ? appointmentUpdateDTO.getStatus() : existingAppointment.getStatus();
         Appointment updatedAppointment = new Appointment(
                 appointmentUpdateDTO.getId(),
                 appointmentUpdateDTO.getAppointmentDatetime(),
-                appointmentUpdateDTO.getStatus() != null ? appointmentUpdateDTO.getStatus() : existingAppointment.getStatus(),
+                status,
                 appointmentUpdateDTO.getNotes(),
-                appointmentUpdateDTO.getClientId(),
+                clientId,
                 appointmentUpdateDTO.getEmployeeId(),
                 appointmentUpdateDTO.getServiceId(),
                 existingAppointment.getUserId()
@@ -69,5 +84,16 @@ public class UpdateAppointmentService implements UpdateAppointmentUseCase {
                 saved.getServiceId(),
                 saved.getUserId()
         );
+    }
+
+    private boolean isClient() {
+        return SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
+                .anyMatch(a -> "CLIENT".equals(a.getAuthority()));
+    }
+
+    private boolean ownsAppointment(Appointment appointment) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Integer userId = userRepository.findByEmail(email).orElseThrow().getId();
+        return clientRepository.findByUserId(userId).map(c -> c.getId().equals(appointment.getClientId())).orElse(false);
     }
 }

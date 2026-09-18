@@ -41,13 +41,19 @@ public class UpdateUserService implements UpdateUserUseCase {
                     throw new DuplicateEmailException("Email already exists: " + userUpdateDTO.getEmail());
                 });
 
+        String roleName = roleRepository.findById(roleId)
+                .orElseThrow(() -> new RoleNotFoundException("Role not found")).getName();
+        if ("CLIENT".equals(roleName) && !"CLIENT".equals(existingUser.getRoleName())) {
+            throw new IllegalArgumentException("La conversión a CLIENT debe realizarse mediante el registro de cliente");
+        }
+
         User user = new User(
                 userUpdateDTO.getId(),
                 userUpdateDTO.getName(),
                 userUpdateDTO.getEmail(),
                 passwordEncoder.encode(userUpdateDTO.getPassword()),
                 roleId,
-                roleRepository.findById(roleId).orElseThrow(() -> new RoleNotFoundException("Role not found")).getName(),
+                roleName,
                 existingUser.getActive()
         );
 

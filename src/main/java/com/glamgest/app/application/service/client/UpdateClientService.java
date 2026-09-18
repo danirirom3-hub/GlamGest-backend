@@ -24,12 +24,12 @@ public class UpdateClientService implements UpdateClientUseCase {
         Client existingClient = clientRepository.findById(clientUpdateDTO.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Client not found with id " + clientUpdateDTO.getId()));
 
-        if (!existingClient.getEmail().equals(clientUpdateDTO.getEmail())
+        if (!java.util.Objects.equals(existingClient.getEmail(), clientUpdateDTO.getEmail())
                 && clientRepository.existsByEmail(clientUpdateDTO.getEmail())) {
             throw new DuplicateClientEmailException("Client email already exists: " + clientUpdateDTO.getEmail());
         }
 
-        if (!existingClient.getPhone().equals(clientUpdateDTO.getPhone())
+        if (!java.util.Objects.equals(existingClient.getPhone(), clientUpdateDTO.getPhone())
                 && clientRepository.existsByPhone(clientUpdateDTO.getPhone())) {
             throw new DuplicateClientPhoneException("Client phone already exists: " + clientUpdateDTO.getPhone());
         }
@@ -39,7 +39,7 @@ public class UpdateClientService implements UpdateClientUseCase {
                 clientUpdateDTO.getName(),
                 clientUpdateDTO.getEmail(),
                 clientUpdateDTO.getPhone(),
-                existingClient.getRegistrationDate()
+                existingClient.getRegistrationDate(), existingClient.getUserId()
         );
 
         Client updatedClient = clientRepository.save(clientToUpdate);

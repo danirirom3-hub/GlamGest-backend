@@ -7,9 +7,11 @@ import com.glamgest.app.common.exception.DuplicateClientEmailException;
 import com.glamgest.app.common.exception.DuplicateClientPhoneException;
 import com.glamgest.app.domain.model.Client;
 import com.glamgest.app.domain.repository.ClientRepository;
+import com.glamgest.app.domain.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Date;
 
@@ -19,9 +21,16 @@ public class CreateClientService implements CreateClientUseCase {
     private static final Logger logger = LoggerFactory.getLogger(CreateClientService.class);
 
     private final ClientRepository clientRepository;
+    private final UserRepository userRepository;
 
     public CreateClientService(ClientRepository clientRepository) {
+        this(clientRepository, null);
+    }
+
+    @Autowired
+    public CreateClientService(ClientRepository clientRepository, UserRepository userRepository) {
         this.clientRepository = clientRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -38,12 +47,23 @@ public class CreateClientService implements CreateClientUseCase {
             throw new DuplicateClientPhoneException("Client phone already exists: " + clientRequestDTO.getPhone());
         }
 
+        Integer userId = null;
+        if (userRepository != null) {
+            var existingUser = userRepository.findByEmail(clientRequestDTO.getEmail()).orElse(null);
+            if (existingUser != null) {
+                if (!"CLIENT".equals(existingUser.getRoleName())) {
+                    throw new DuplicateClientEmailException("El email pertenece a un usuario interno");
+                }
+                userId = existingUser.getId();
+            }
+        }
+
         Client client = new Client(
                 null,
                 clientRequestDTO.getName(),
                 clientRequestDTO.getEmail(),
                 clientRequestDTO.getPhone(),
-                new Date()
+                new Date(), userId
         );
 
         Client savedClient = clientRepository.save(client);

@@ -18,6 +18,8 @@ import com.glamgest.app.infrastructure.persistence.repository.JpaSalesRepository
 import com.glamgest.app.infrastructure.persistence.repository.JpaServiceRepository;
 import com.glamgest.app.infrastructure.persistence.repository.JpaUserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.Date;
 import java.util.List;
@@ -48,6 +50,7 @@ public class CreateSaleService implements CreateSaleUseCase {
     }
 
     @Override
+    @Transactional
     public SaleResponseDTO execute(SaleRequestDTO saleRequestDTO) {
         if (saleRequestDTO.getSaleDetails() == null || saleRequestDTO.getSaleDetails().isEmpty()) {
             throw new IllegalArgumentException("Sale must contain at least one sale detail");
@@ -57,8 +60,14 @@ public class CreateSaleService implements CreateSaleUseCase {
         sale.setSaleDatetime(new Date());
         sale.setClientId(jpaClientRepository.findById(saleRequestDTO.getClientId())
                 .orElseThrow(() -> new ResourceNotFoundException("Client not found with id " + saleRequestDTO.getClientId())));
-        sale.setUserId(jpaUserRepository.findById(saleRequestDTO.getUserId())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + saleRequestDTO.getUserId())));
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getName() != null) {
+            sale.setUserId(jpaUserRepository.findByEmail(authentication.getName())
+                    .orElseThrow(() -> new ResourceNotFoundException("Authenticated user not found")));
+        } else {
+            sale.setUserId(jpaUserRepository.findById(saleRequestDTO.getUserId())
+                    .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + saleRequestDTO.getUserId())));
+        }
         sale.setPaymentType(saleRequestDTO.getPaymentType());
 
         List<SaleDetails> saleDetails = saleRequestDTO.getSaleDetails().stream()
@@ -111,7 +120,8 @@ public class CreateSaleService implements CreateSaleUseCase {
         }
 
         int quantity = detailRequest.getQuantity() != null && detailRequest.getQuantity() > 0 ? detailRequest.getQuantity() : 1;
-        int unitPrice = detailRequest.getUnitPrice() != null && detailRequest.getUnitPrice() > 0
+        // A custom unit price is allowed; the catalog price is only the fallback.
+        int unitPrice = detailRequest.getUnitPrice() != null
                 ? detailRequest.getUnitPrice()
                 : service.getPrice();
 

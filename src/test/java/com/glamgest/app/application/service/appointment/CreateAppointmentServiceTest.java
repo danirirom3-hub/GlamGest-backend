@@ -2,6 +2,7 @@ package com.glamgest.app.application.service.appointment;
 
 import com.glamgest.app.application.dto.appointment.AppointmentRequestDTO;
 import com.glamgest.app.application.dto.appointment.AppointmentResponseDTO;
+import com.glamgest.app.application.service.email.EmailClientService;
 import com.glamgest.app.common.constant.Constant;
 import com.glamgest.app.common.exception.ResourceNotFoundException;
 import com.glamgest.app.domain.model.Appointment;
@@ -40,17 +41,19 @@ class CreateAppointmentServiceTest {
         EmployeeRepository employeeRepository = mock(EmployeeRepository.class);
         ServiceRepository serviceRepository = mock(ServiceRepository.class);
         UserRepository userRepository = mock(UserRepository.class);
+        EmailClientService emailClientService = mock(EmailClientService.class);
 
         CreateAppointmentService service = new CreateAppointmentService(
                 appointmentRepository,
                 clientRepository,
                 employeeRepository,
                 serviceRepository,
-                userRepository
+                userRepository,
+                emailClientService
         );
 
         AppointmentRequestDTO request = new AppointmentRequestDTO();
-        Date appointmentDate = new Date();
+        Date appointmentDate = new Date(System.currentTimeMillis() + 60_000);
         request.setAppointmentDatetime(appointmentDate);
         request.setNotes("Test notes");
         request.setClientId(1);
@@ -58,8 +61,12 @@ class CreateAppointmentServiceTest {
         request.setServiceId(3);
 
         when(clientRepository.findById(1)).thenReturn(Optional.of(mock(com.glamgest.app.domain.model.Client.class)));
-        when(employeeRepository.findById(2)).thenReturn(Optional.of(mock(com.glamgest.app.domain.model.Employee.class)));
-        when(serviceRepository.findById(3)).thenReturn(Optional.of(mock(com.glamgest.app.domain.model.Service.class)));
+        var employee = mock(com.glamgest.app.domain.model.Employee.class);
+        when(employee.getActive()).thenReturn(true);
+        when(employeeRepository.findById(2)).thenReturn(Optional.of(employee));
+        var serviceModel = mock(com.glamgest.app.domain.model.Service.class);
+        when(serviceModel.getActive()).thenReturn(true);
+        when(serviceRepository.findById(3)).thenReturn(Optional.of(serviceModel));
 
         Authentication authentication = mock(Authentication.class);
         when(authentication.getName()).thenReturn("user@example.com");
@@ -107,13 +114,15 @@ class CreateAppointmentServiceTest {
         EmployeeRepository employeeRepository = mock(EmployeeRepository.class);
         ServiceRepository serviceRepository = mock(ServiceRepository.class);
         UserRepository userRepository = mock(UserRepository.class);
+        EmailClientService emailClientService = mock(EmailClientService.class);
 
         CreateAppointmentService service = new CreateAppointmentService(
                 appointmentRepository,
                 clientRepository,
                 employeeRepository,
                 serviceRepository,
-                userRepository
+                userRepository,
+                emailClientService
         );
 
         AppointmentRequestDTO request = new AppointmentRequestDTO();
@@ -135,13 +144,15 @@ class CreateAppointmentServiceTest {
         EmployeeRepository employeeRepository = mock(EmployeeRepository.class);
         ServiceRepository serviceRepository = mock(ServiceRepository.class);
         UserRepository userRepository = mock(UserRepository.class);
+        EmailClientService emailClientService = mock(EmailClientService.class);
 
         CreateAppointmentService service = new CreateAppointmentService(
                 appointmentRepository,
                 clientRepository,
                 employeeRepository,
                 serviceRepository,
-                userRepository
+                userRepository,
+                emailClientService
         );
 
         AppointmentRequestDTO request = new AppointmentRequestDTO();

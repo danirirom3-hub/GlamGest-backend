@@ -54,6 +54,12 @@ public class AppointmentController {
         return BuilderHelper.buildResponse(appointments, "Citas obtenidas", HttpStatus.OK, true);
     }
 
+    @GetMapping("/me")
+    public ResponseEntity<?> getMyAppointments() {
+        return BuilderHelper.buildResponse(getAllAppointmentsUseCase.executeForCurrentClient(),
+                "Mis citas obtenidas", HttpStatus.OK, true);
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<?> updateAppointment(@PathVariable Integer id,
                                                @Valid @RequestBody AppointmentUpdateDTO appointmentUpdateDTO,

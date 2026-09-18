@@ -7,4 +7,6 @@ import java.util.List;
 public interface GetAllAppointmentsUseCase {
 
     List<AppointmentResponseDTO> execute();
+
+    List<AppointmentResponseDTO> executeForCurrentClient();
 }

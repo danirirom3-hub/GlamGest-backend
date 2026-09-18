@@ -48,6 +48,13 @@ public class AppointmentRepositoryAdapter implements AppointmentRepository {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<Appointment> findAllByClientId(Integer clientId) {
+        return jpaAppointmentRepository.findByClientId_ClientId(clientId).stream()
+                .map(this::toModel)
+                .collect(Collectors.toList());
+    }
+
     private Appointments toEntity(Appointment appointment) {
         Appointments entity = new Appointments();
         if (appointment.getId() != null) {

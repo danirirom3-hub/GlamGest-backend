@@ -9,6 +9,7 @@ import com.glamgest.app.common.exception.ResourceNotFoundException;
 import com.glamgest.app.domain.model.Sale;
 import com.glamgest.app.domain.repository.SaleRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,6 +24,7 @@ public class UpdateSaleService implements UpdateSaleUseCase {
     }
 
     @Override
+    @Transactional
     public SaleResponseDTO execute(SaleUpdateDTO saleUpdateDTO) {
         Sale existingSale = saleRepository.findById(saleUpdateDTO.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Sale not found with id " + saleUpdateDTO.getId()));

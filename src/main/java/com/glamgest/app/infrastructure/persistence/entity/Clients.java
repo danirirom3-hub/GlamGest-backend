@@ -31,6 +31,9 @@ public class Clients implements Serializable {
     @Column(name = "registration_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date registrationDate;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", referencedColumnName = "user_id", unique = true)
+    private Users userId;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "clientId")
     private List<Appointments> appointmentsList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "clientId")
@@ -86,6 +89,14 @@ public class Clients implements Serializable {
 
     public void setRegistrationDate(Date registrationDate) {
         this.registrationDate = registrationDate;
+    }
+
+    public Users getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Users userId) {
+        this.userId = userId;
     }
 
     public List<Appointments> getAppointmentsList() {

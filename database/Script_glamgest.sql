@@ -17,10 +17,14 @@ USE glamgest_db;
 CREATE TABLE roles (
     role_id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(50) NOT NULL,
-    description VARCHAR(150)
+    description VARCHAR(150),
+    CONSTRAINT uq_roles_name UNIQUE (name)
 );
 
--- INSERT INTO roles (name, description) VALUES ('ADMIN', 'System administrator with full access');
+INSERT INTO roles (name, description) VALUES
+    ('ADMIN', 'System administrator with full access'),
+    ('EMPLOYEE', 'Employee with operational access'),
+    ('CLIENT', 'Customer with access to own profile and appointments');
 
 -- USERS
 
@@ -60,7 +64,11 @@ CREATE TABLE clients (
     name VARCHAR(100) NOT NULL,
     phone VARCHAR(20),
     email VARCHAR(100),
-    registration_date DATETIME DEFAULT CURRENT_TIMESTAMP
+    registration_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    user_id INT NULL,
+    CONSTRAINT uq_clients_email UNIQUE (email),
+    CONSTRAINT uq_clients_user UNIQUE (user_id),
+    CONSTRAINT fk_clients_user FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE SET NULL
 );
 
 -- WORKERS
@@ -69,7 +77,8 @@ CREATE TABLE employees (
     employee_id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     phone VARCHAR(20),
-    active BIT(1) DEFAULT b'1'
+    active BIT(1) DEFAULT b'1',
+    CONSTRAINT uq_employees_phone UNIQUE (phone)
 );
 
 -- SERVICES
@@ -80,7 +89,8 @@ CREATE TABLE services (
     description TEXT,
     price INT NOT NULL,
     duration_minutes INT,
-    active BIT(1) DEFAULT b'1'
+    active BIT(1) DEFAULT b'1',
+    CONSTRAINT uq_services_name UNIQUE (name)
 );
 
 -- APPOINTMENTS

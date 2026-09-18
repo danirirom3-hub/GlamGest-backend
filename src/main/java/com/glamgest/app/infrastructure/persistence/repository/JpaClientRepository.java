@@ -13,6 +13,8 @@ public interface JpaClientRepository extends JpaRepository<Clients, Integer> {
 
     Optional<Clients> findByPhone(String phone);
 
+    Optional<Clients> findByUserId_UserId(Integer userId);
+
     boolean existsByEmail(String email);
 
     boolean existsByPhone(String phone);

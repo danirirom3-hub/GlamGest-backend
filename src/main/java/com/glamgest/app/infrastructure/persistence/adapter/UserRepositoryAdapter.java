@@ -78,7 +78,7 @@ public class UserRepositoryAdapter implements UserRepository {
                 savedEntity.getEmail(),
                 savedEntity.getPassword(),
                 savedEntity.getRoleId().getRoleId(),
-                savedEntity.getRoleId().getName(),
+                user.getRoleName() != null ? user.getRoleName() : savedEntity.getRoleId().getName(),
                 savedEntity.getActive());
     }
 

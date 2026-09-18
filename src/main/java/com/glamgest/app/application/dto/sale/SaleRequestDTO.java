@@ -1,6 +1,7 @@
 package com.glamgest.app.application.dto.sale;
 
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.Valid;
 import java.util.List;
 
 public class SaleRequestDTO {
@@ -14,6 +15,7 @@ public class SaleRequestDTO {
     private String paymentType;
 
     @NotNull(message = "La lista de detalles de venta es obligatoria")
+    @Valid
     private List<SaleDetailRequestDTO> saleDetails;
 
     public Integer getClientId() {

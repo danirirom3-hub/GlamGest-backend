@@ -10,7 +10,6 @@ public class AppointmentRequestDTO {
 
     private String notes;
 
-    @NotNull(message = "El id del cliente es obligatorio")
     private Integer clientId;
 
     @NotNull(message = "El id del empleado es obligatorio")

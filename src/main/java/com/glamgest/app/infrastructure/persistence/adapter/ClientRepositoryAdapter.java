@@ -3,6 +3,7 @@ package com.glamgest.app.infrastructure.persistence.adapter;
 import com.glamgest.app.domain.model.Client;
 import com.glamgest.app.domain.repository.ClientRepository;
 import com.glamgest.app.infrastructure.persistence.entity.Clients;
+import com.glamgest.app.infrastructure.persistence.entity.Users;
 import com.glamgest.app.infrastructure.persistence.repository.JpaClientRepository;
 import org.springframework.stereotype.Repository;
 
@@ -41,6 +42,10 @@ public class ClientRepositoryAdapter implements ClientRepository {
         return jpaClientRepository.findByPhone(phone).map(this::toModel);
     }
 
+    public Optional<Client> findByUserId(Integer userId) {
+        return jpaClientRepository.findByUserId_UserId(userId).map(this::toModel);
+    }
+
     @Override
     public boolean existsByEmail(String email) {
         return jpaClientRepository.existsByEmail(email);
@@ -70,6 +75,9 @@ public class ClientRepositoryAdapter implements ClientRepository {
         entity.setEmail(client.getEmail());
         entity.setPhone(client.getPhone());
         entity.setRegistrationDate(client.getRegistrationDate());
+        if (client.getUserId() != null) {
+            entity.setUserId(new Users(client.getUserId()));
+        }
         return entity;
     }
 
@@ -79,7 +87,8 @@ public class ClientRepositoryAdapter implements ClientRepository {
                 entity.getName(),
                 entity.getEmail(),
                 entity.getPhone(),
-                entity.getRegistrationDate()
+                entity.getRegistrationDate(),
+                entity.getUserId() != null ? entity.getUserId().getUserId() : null
         );
     }
 }

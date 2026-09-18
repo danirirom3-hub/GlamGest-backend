@@ -1,0 +1,161 @@
+CREATE DATABASE glamgest_db;
+
+#DROP DATABASE glamgest_db;
+
+USE glamgest_db;
+
+#SELECT * FROM roles;
+#SELECT * FROM users;
+#SELECT * FROM clients;
+#SELECT * FROM services;
+#SELECT * FROM appointments;
+#SELECT * FROM employees;
+#SELECT * FROM sales;
+#SELECT * FROM sale_details;
+-- ROLES
+
+CREATE TABLE roles (
+    role_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50) NOT NULL,
+    description VARCHAR(150) NOT NULL,
+    CONSTRAINT uq_roles_name UNIQUE (name)
+);
+
+INSERT INTO roles (name, description) VALUES
+    ('ADMIN', 'System administrator with full access'),
+    ('EMPLOYEE', 'Employee with operational access'),
+    ('CLIENT', 'Customer with access to own profile and appointments');
+
+-- USERS
+
+CREATE TABLE users (
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    role_id INT NOT NULL,
+    active BIT(1) DEFAULT b'1' NOT NULL,
+
+    CONSTRAINT fk_users_roles
+        FOREIGN KEY (role_id) REFERENCES roles(role_id) ON DELETE RESTRICT ON UPDATE RESTRICT
+);
+
+/*
+INSERT INTO users (
+    name,
+    email,
+    password,
+    role_id,
+    active
+)
+VALUES (
+    'Angie Sosa',
+    'angie@email.com',
+    '$2a$10$exampleEncryptedPassword',
+    1,
+    1
+);
+*/
+
+-- CLIENTS
+
+CREATE TABLE clients (
+    client_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    phone VARCHAR(20),
+    email VARCHAR(100) NOT NULL,
+    registration_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    user_id INT NULL,
+    CONSTRAINT uq_clients_email UNIQUE (email),
+    CONSTRAINT uq_clients_user UNIQUE (user_id),
+    CONSTRAINT fk_clients_user FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE SET NULL
+);
+
+-- WORKERS
+
+CREATE TABLE employees (
+    employee_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    phone VARCHAR(20) NOT NULL,
+    active BIT(1) DEFAULT b'1',
+    CONSTRAINT uq_employees_phone UNIQUE (phone)
+);
+
+-- SERVICES
+
+CREATE TABLE services (
+    service_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    description TEXT,
+    price INT NOT NULL,
+    duration_minutes INT,
+    active BIT(1) DEFAULT b'1',
+    CONSTRAINT uq_services_name UNIQUE (name)
+);
+
+-- APPOINTMENTS
+
+CREATE TABLE appointments (
+    appointment_id INT AUTO_INCREMENT PRIMARY KEY,
+    client_id INT NOT NULL,
+    employee_id INT NOT NULL,
+    user_id INT NOT NULL,
+    service_id INT NOT NULL,
+    appointment_datetime DATETIME NOT NULL,
+    status VARCHAR(30),
+    notes TEXT,
+
+    CONSTRAINT fk_appointments_clients
+        FOREIGN KEY (client_id) REFERENCES clients(client_id),
+
+    CONSTRAINT fk_appointments_employees
+        FOREIGN KEY (employee_id) REFERENCES employees(employee_id),
+
+    CONSTRAINT fk_appointments_users
+        FOREIGN KEY (user_id) REFERENCES users(user_id),
+
+    CONSTRAINT fk_appointments_services
+        FOREIGN KEY (service_id) REFERENCES services(service_id)
+);
+
+-- SALES
+
+CREATE TABLE sales (
+    sale_id INT AUTO_INCREMENT PRIMARY KEY,
+    client_id INT NOT NULL,
+    user_id INT NOT NULL,
+    sale_datetime DATETIME DEFAULT CURRENT_TIMESTAMP,
+    payment_type VARCHAR(30) NOT NULL,
+    total INT NOT NULL,
+
+    CONSTRAINT fk_sales_clients
+        FOREIGN KEY (client_id) REFERENCES clients(client_id),
+
+    CONSTRAINT fk_sales_users
+        FOREIGN KEY (user_id) REFERENCES users(user_id)
+);
+
+-- SALE DETAILS
+
+CREATE TABLE sale_details (
+    detail_id INT AUTO_INCREMENT PRIMARY KEY,
+    appointment_id INT NULL,
+    sale_id INT NOT NULL,
+    service_id INT NOT NULL,
+    employee_id INT NOT NULL,
+    quantity INT DEFAULT 1,
+    unit_price INT NOT NULL,
+    subtotal INT,
+
+    CONSTRAINT fk_sale_details_appointments
+        FOREIGN KEY (appointment_id) REFERENCES appointments(appointment_id),
+
+    CONSTRAINT fk_sale_details_sales
+        FOREIGN KEY (sale_id) REFERENCES sales(sale_id),
+
+    CONSTRAINT fk_sale_details_services
+        FOREIGN KEY (service_id) REFERENCES services(service_id),
+
+    CONSTRAINT fk_sale_details_workers
+        FOREIGN KEY (employee_id) REFERENCES employees(employee_id)
+);

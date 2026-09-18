@@ -9,6 +9,7 @@ public class Client {
     private String email;
     private String phone;
     private Date registrationDate;
+    private Integer userId;
 
     public Client() {
     }
@@ -19,6 +20,11 @@ public class Client {
         this.email = email;
         this.phone = phone;
         this.registrationDate = registrationDate;
+    }
+
+    public Client(Integer id, String name, String email, String phone, Date registrationDate, Integer userId) {
+        this(id, name, email, phone, registrationDate);
+        this.userId = userId;
     }
 
     public Integer getId() {
@@ -59,5 +65,13 @@ public class Client {
 
     public void setRegistrationDate(Date registrationDate) {
         this.registrationDate = registrationDate;
+    }
+
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 }

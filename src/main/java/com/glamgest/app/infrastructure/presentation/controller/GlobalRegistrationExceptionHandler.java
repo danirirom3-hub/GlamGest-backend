@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.NoHandlerFoundException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.security.access.AccessDeniedException;
 
 import com.glamgest.app.common.exception.DuplicateClientEmailException;
 import com.glamgest.app.common.exception.DuplicateClientPhoneException;
@@ -33,10 +35,26 @@ public class GlobalRegistrationExceptionHandler {
             DuplicateClientPhoneException.class,
             DuplicateRoleNameException.class,
             HttpMessageNotReadableException.class,
-            MethodArgumentTypeMismatchException.class,
-            BadCredentialsException.class })
+             MethodArgumentTypeMismatchException.class })
     ResponseEntity<?> throwBadRequest(Exception ex) {
         return this.throwErrorMessage(ex, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    ResponseEntity<?> unauthorized(Exception ex) {
+        return this.throwErrorMessage(new Exception("Credenciales inválidas"), HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    ResponseEntity<?> validation(MethodArgumentNotValidException ex) {
+        var errors = new java.util.LinkedHashMap<String, String>();
+        ex.getBindingResult().getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
+        return BuilderHelper.buildResponse(errors, "Datos inválidos", HttpStatus.BAD_REQUEST, false);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    ResponseEntity<?> forbidden(Exception ex) {
+        return this.throwErrorMessage(new Exception("No tiene permisos para realizar esta operación"), HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler({ RuntimeException.class, Exception.class })

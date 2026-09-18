@@ -14,4 +14,6 @@ public interface AppointmentRepository {
     void deleteById(Integer id);
 
     List<Appointment> findAll();
+
+    List<Appointment> findAllByClientId(Integer clientId);
 }

@@ -21,6 +21,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 import java.util.Arrays;
+import org.springframework.beans.factory.annotation.Value;
 
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.web.cors.CorsConfiguration;
@@ -34,6 +35,8 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final CustomUserDetailsService userDetailsService;
+    @Value("${CORS_ALLOWED_ORIGINS:http://localhost:3000}")
+    private String allowedOrigins;
 
     public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter, CustomUserDetailsService userDetailsService) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
@@ -48,16 +51,20 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**").permitAll()
 
-                        .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/users").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.GET,"/api/users").hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE,"/api/users").hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.PUT,"/api/users").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE,"/api/users/**").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.PUT,"/api/users/**").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.GET,"/api/users/**").hasAuthority("ADMIN")
 
+                        .requestMatchers("/api/clients/me").hasAuthority("CLIENT")
                         .requestMatchers("/api/clients/**").hasAnyAuthority("ADMIN", "EMPLOYEE")
                         .requestMatchers("/api/services/**").hasAnyAuthority("ADMIN", "EMPLOYEE")
                         .requestMatchers("/api/roles/**").hasAuthority("ADMIN")
-                        .requestMatchers("/api/appointments/**").hasAuthority("ADMIN")
+                        .requestMatchers("/api/appointments/me").hasAuthority("CLIENT")
+                        .requestMatchers(HttpMethod.GET, "/api/appointments").hasAnyAuthority("ADMIN", "EMPLOYEE")
+                        .requestMatchers("/api/appointments/**").hasAnyAuthority("ADMIN", "EMPLOYEE", "CLIENT")
+                        .requestMatchers("/api/sales/**").hasAnyAuthority("ADMIN", "EMPLOYEE")
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -89,10 +96,10 @@ public class SecurityConfig {
 	@Bean
 	CorsConfigurationSource configurationSource() {
 		CorsConfiguration config = new CorsConfiguration();
-		config.setAllowedOriginPatterns(Arrays.asList("*"));
-		config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
-		config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
-		config.setAllowCredentials(true);
+		config.setAllowedOriginPatterns(Arrays.asList(allowedOrigins.split(",")));
+		config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+		config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept"));
+		config.setAllowCredentials(false);
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", config);
 		return source;

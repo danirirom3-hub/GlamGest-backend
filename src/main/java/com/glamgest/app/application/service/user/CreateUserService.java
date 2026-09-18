@@ -35,13 +35,19 @@ public class CreateUserService implements CreateUserUseCase {
             throw new RoleNotFoundException("Role not found with id " + roleId);
         }
 
+        String roleName = roleRepository.findById(roleId)
+                .orElseThrow(() -> new RoleNotFoundException("Role not found")).getName();
+        if ("CLIENT".equals(roleName)) {
+            throw new IllegalArgumentException("Los clientes deben registrarse mediante /api/auth/register");
+        }
+
         User user = new User(
                 null,
                 userRequestDTO.getName(),
                 userRequestDTO.getEmail(),
                 passwordEncoder.encode(userRequestDTO.getPassword()),
                 roleId,
-                roleRepository.findById(roleId).orElseThrow(() -> new RoleNotFoundException("Role not found")).getName(),
+                roleName,
                 true
         );
 

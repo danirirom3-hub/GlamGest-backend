@@ -10,6 +10,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import com.glamgest.app.domain.model.User;
+import com.glamgest.app.domain.repository.ClientRepository;
+import com.glamgest.app.domain.repository.UserRepository;
 
 @Service
 public class LoginService implements LoginUseCase {
@@ -18,19 +22,29 @@ public class LoginService implements LoginUseCase {
 
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
+    private final UserRepository userRepository;
+    private final ClientRepository clientRepository;
 
     public LoginService(AuthenticationManager authenticationManager, JwtService jwtService) {
+        this(authenticationManager, jwtService, null, null);
+    }
+
+    @Autowired
+    public LoginService(AuthenticationManager authenticationManager, JwtService jwtService,
+                        UserRepository userRepository, ClientRepository clientRepository) {
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
+        this.userRepository = userRepository;
+        this.clientRepository = clientRepository;
     }
 
     @Override
     public LoginResponseDTO execute(LoginRequestDTO loginRequestDTO) {
-        logger.info("Intentando autenticar usuario: {}", loginRequestDTO.email());
+        String email = loginRequestDTO.email().trim().toLowerCase();
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        loginRequestDTO.email(),
+                        email,
                         loginRequestDTO.password()
                 )
         );
@@ -38,8 +52,20 @@ public class LoginService implements LoginUseCase {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String token = jwtService.generateToken(userDetails);
 
-        logger.info("Usuario autenticado exitosamente: {}", loginRequestDTO.email());
+        String role = userDetails.getAuthorities().stream().findFirst()
+                .map(a -> a.getAuthority()).orElse(null);
+        Integer userId = null;
+        Integer clientId = null;
+        if (userRepository != null) {
+            User user = userRepository.findByEmail(email).orElse(null);
+            if (user != null) {
+                userId = user.getId();
+                if (clientRepository != null) {
+                    clientId = clientRepository.findByUserId(user.getId()).map(c -> c.getId()).orElse(null);
+                }
+            }
+        }
 
-        return new LoginResponseDTO(token);
+        return new LoginResponseDTO(token, "Bearer", role, userId, clientId);
     }
 }

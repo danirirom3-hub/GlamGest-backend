@@ -1,25 +1,44 @@
 spring:
   datasource:
     # Corregido: Se agregó '_db' para coincidir con tu MySQL Workbench
+<<<<<<< HEAD
     url: ${SPRING_DATASOURCE_URL}
     username: ${SPRING_DATASOURCE_USERNAME}
     password: ${SPRING_DATASOURCE_PASSWORD}
+=======
+    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3306/glamgest_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true}
+    username: ${SPRING_DATASOURCE_USERNAME:root}
+    password: ${SPRING_DATASOURCE_PASSWORD:Jonny2020}
+>>>>>>> 51408e4fe9d7e969b11538bbc8c522b9d34e13aa
     driver-class-name: com.mysql.cj.jdbc.Driver
   
   jpa:
     hibernate:
       # Mantenemos 'update' para que reconozca tus tablas actuales
+<<<<<<< HEAD
       ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO:validate}
     show-sql: ${SPRING_JPA_SHOW_SQL:false}
+=======
+      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO:update}
+    show-sql: ${SPRING_JPA_SHOW_SQL:true}
+>>>>>>> 51408e4fe9d7e969b11538bbc8c522b9d34e13aa
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
         format_sql: true
+<<<<<<< HEAD
   open-in-view: false
+=======
+>>>>>>> 51408e4fe9d7e969b11538bbc8c522b9d34e13aa
 
 jwt:
-  secret: ${JWT_SECRET}
-  expiration: ${JWT_EXPIRATION}
+  # Secreto seguro para Spring Security
+  secret: ${JWT_SECRET:esta_es_una_clave_secreta_muy_larga_y_segura_para_el_proyecto_glamgest_2026}
+  expiration: ${JWT_EXPIRATION:3600000}
+
+email:
+  service:
+    url: ${EMAIL_SERVICE_URL:http://localhost:8081/api/email/send}
 
 email:
   service:

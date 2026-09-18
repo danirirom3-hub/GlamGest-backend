@@ -55,6 +55,16 @@ public class CreateAppointmentService implements CreateAppointmentUseCase {
         Integer employeeId = appointmentRequestDTO.getEmployeeId();
         Integer serviceId = appointmentRequestDTO.getServiceId();
 
+<<<<<<< HEAD
+=======
+        Client client = clientRepository.findById(clientId)
+                .orElseThrow(() -> new ResourceNotFoundException("Client not found with id " + clientId));
+        employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new ResourceNotFoundException("Employee not found with id " + employeeId));
+        serviceRepository.findById(serviceId)
+                .orElseThrow(() -> new ResourceNotFoundException("Service not found with id " + serviceId));
+
+>>>>>>> 51408e4fe9d7e969b11538bbc8c522b9d34e13aa
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || authentication.getName() == null) {
             throw new ResourceNotFoundException("Authenticated user not found");

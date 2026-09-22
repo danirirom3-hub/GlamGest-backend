@@ -35,6 +35,9 @@ public class Appointments implements Serializable {
     @Column(name = "notes", columnDefinition = "TEXT")
     private String notes;
 
+    @Column(name = "duration_minutes")
+    private Integer durationMinutes;
+
     @JoinColumn(name = "client_id", referencedColumnName = "client_id")
     @ManyToOne(optional = false)
     private Clients clientId;
@@ -97,6 +100,10 @@ public class Appointments implements Serializable {
     public void setNotes(String notes) {
         this.notes = notes;
     }
+
+    public Integer getDurationMinutes() { return durationMinutes; }
+
+    public void setDurationMinutes(Integer durationMinutes) { this.durationMinutes = durationMinutes; }
 
     public Clients getClientId() {
         return clientId;

@@ -12,6 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import java.util.Optional;
 
 class CreateServiceServiceTest {
 
@@ -55,5 +56,27 @@ class CreateServiceServiceTest {
         when(serviceRepository.existsByName("Corte de cabello")).thenReturn(true);
 
         assertThrows(DuplicateServiceNameException.class, () -> service.execute(request));
+    }
+
+    @Test
+    void execute_whenInactiveServiceHasSameName_reactivatesExistingId() {
+        ServiceRepository serviceRepository = mock(ServiceRepository.class);
+        CreateServiceService service = new CreateServiceService(serviceRepository);
+        ServiceRequestDTO request = new ServiceRequestDTO();
+        request.setName("Cepillado");
+        request.setDescription("Cepillado profesional");
+        request.setPrice(50000);
+        request.setDurationMinutes(60);
+
+        Service inactive = new Service(12, "Cepillado", "Antiguo", 40000, 45, false);
+        when(serviceRepository.existsByName("Cepillado")).thenReturn(false);
+        when(serviceRepository.findByNameIncludingInactive("Cepillado")).thenReturn(Optional.of(inactive));
+        when(serviceRepository.save(any(Service.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        ServiceResponseDTO response = service.execute(request);
+
+        assertEquals(12, response.getId());
+        assertEquals(true, response.getActive());
+        assertEquals(60, response.getDurationMinutes());
     }
 }

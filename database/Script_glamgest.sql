@@ -115,6 +115,7 @@ CREATE TABLE appointments (
     user_id INT NOT NULL,
     service_id INT NOT NULL,
     appointment_datetime DATETIME NOT NULL,
+    duration_minutes INT NULL,
     status VARCHAR(30),
     notes TEXT,
 

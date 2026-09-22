@@ -10,11 +10,17 @@ public interface ServiceRepository {
 
     Optional<Service> findById(Integer id);
 
+    Optional<Service> findByIdIncludingInactive(Integer id);
+
     List<Service> findAll();
+
+    List<Service> findAllIncludingInactive();
 
     void deleteById(Integer id);
 
     boolean existsByName(String name);
 
     Optional<Service> findByName(String name);
+
+    Optional<Service> findByNameIncludingInactive(String name);
 }

@@ -16,4 +16,6 @@ public interface AppointmentRepository {
     List<Appointment> findAll();
 
     List<Appointment> findAllByClientId(Integer clientId);
+
+    List<Appointment> findAllByEmployeeId(Integer employeeId);
 }

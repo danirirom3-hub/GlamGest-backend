@@ -23,6 +23,13 @@ public class GetAllServicesService implements GetAllServicesUseCase {
         return services.stream().map(this::toResponseDTO).collect(Collectors.toList());
     }
 
+    @Override
+    public List<ServiceResponseDTO> executeIncludingInactive() {
+        return serviceRepository.findAllIncludingInactive().stream()
+                .map(this::toResponseDTO)
+                .collect(Collectors.toList());
+    }
+
     private ServiceResponseDTO toResponseDTO(Service service) {
         ServiceResponseDTO dto = new ServiceResponseDTO();
         dto.setId(service.getId());

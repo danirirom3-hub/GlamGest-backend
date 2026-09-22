@@ -10,6 +10,7 @@ import com.glamgest.app.domain.repository.ServiceRepository;
 import com.glamgest.app.domain.repository.CategoryRepository;
 import com.glamgest.app.common.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import com.glamgest.app.common.validation.DurationRules;
 
 @org.springframework.stereotype.Service
 public class UpdateServiceService implements UpdateServiceUseCase {
@@ -29,12 +30,13 @@ public class UpdateServiceService implements UpdateServiceUseCase {
 
     @Override
     public ServiceResponseDTO execute(Integer id, ServiceUpdateDTO serviceUpdateDTO) {
-        Service existingService = serviceRepository.findById(id)
+        Service existingService = serviceRepository.findByIdIncludingInactive(id)
                 .orElseThrow(() -> new ServiceNotFoundException("Service not found with id: " + id));
 
         if (serviceUpdateDTO.getName() != null && !serviceUpdateDTO.getName().equals(existingService.getName())) {
-            if (serviceRepository.existsByName(serviceUpdateDTO.getName())) {
-                throw new DuplicateServiceNameException("Service name already exists: " + serviceUpdateDTO.getName());
+            Service sameName = serviceRepository.findByNameIncludingInactive(serviceUpdateDTO.getName()).orElse(null);
+            if (sameName != null && !sameName.getId().equals(id)) {
+                throw new DuplicateServiceNameException("Ya existe un servicio con ese nombre.");
             }
             existingService.setName(serviceUpdateDTO.getName());
         }
@@ -48,16 +50,23 @@ public class UpdateServiceService implements UpdateServiceUseCase {
         }
 
         if (serviceUpdateDTO.getDurationMinutes() != null) {
+            DurationRules.validate(serviceUpdateDTO.getDurationMinutes());
             existingService.setDurationMinutes(serviceUpdateDTO.getDurationMinutes());
         }
 
-        if (serviceUpdateDTO.getCategoryId() != null) {
+        if (serviceUpdateDTO.isCategoryIdSet() && serviceUpdateDTO.getCategoryId() != null) {
             if (categoryRepository == null) {
                 throw new ResourceNotFoundException("Category repository is not available");
             }
             existingService.setCategoryId(categoryRepository.findById(serviceUpdateDTO.getCategoryId())
                     .orElseThrow(() -> new ResourceNotFoundException("Category not found with id: " + serviceUpdateDTO.getCategoryId()))
                     .getId());
+        } else if (serviceUpdateDTO.isCategoryIdSet()) {
+            existingService.setCategoryId(null);
+        }
+
+        if (serviceUpdateDTO.getActive() != null) {
+            existingService.setActive(serviceUpdateDTO.getActive());
         }
 
         Service updatedService = serviceRepository.save(existingService);

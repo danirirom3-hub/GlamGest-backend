@@ -6,6 +6,8 @@ import com.glamgest.app.application.dto.appointment.AppointmentResponseDTO;
 import com.glamgest.app.application.dto.email.EmailRequestDTO;
 import com.glamgest.app.application.usecase.appointment.CreateAppointmentUseCase;
 import com.glamgest.app.common.exception.ResourceNotFoundException;
+import com.glamgest.app.common.exception.ScheduleConflictException;
+import com.glamgest.app.common.validation.DurationRules;
 import com.glamgest.app.domain.model.Appointment;
 import com.glamgest.app.domain.model.Client;
 import com.glamgest.app.domain.repository.AppointmentRepository;
@@ -92,6 +94,10 @@ public class CreateAppointmentService implements CreateAppointmentUseCase {
         if (appointmentRequestDTO.getAppointmentDatetime().before(new Date())) {
             throw new IllegalArgumentException("La fecha de la cita debe ser futura");
         }
+        Integer durationMinutes = appointmentRequestDTO.getDurationMinutes() != null
+                ? DurationRules.validate(appointmentRequestDTO.getDurationMinutes())
+                : DurationRules.validate(service.getDurationMinutes());
+        ensureNoOverlap(employeeId, appointmentRequestDTO.getAppointmentDatetime(), durationMinutes, null);
 
         Appointment appointment = new Appointment();
         appointment.setAppointmentDatetime(appointmentRequestDTO.getAppointmentDatetime());
@@ -101,6 +107,7 @@ public class CreateAppointmentService implements CreateAppointmentUseCase {
         appointment.setEmployeeId(employeeId);
         appointment.setServiceId(serviceId);
         appointment.setUserId(userId);
+        appointment.setDurationMinutes(durationMinutes);
 
         Appointment saved = appointmentRepository.save(appointment);
 
@@ -121,8 +128,36 @@ public class CreateAppointmentService implements CreateAppointmentUseCase {
         response.setEmployeeId(saved.getEmployeeId());
         response.setServiceId(saved.getServiceId());
         response.setUserId(saved.getUserId());
+        response.setDurationMinutes(saved.getDurationMinutes());
 
         return response;
+    }
+
+    private void ensureNoOverlap(Integer employeeId, Date start, Integer durationMinutes, Integer appointmentId) {
+        long endMillis = start.getTime() + durationMinutes.longValue() * 60_000L;
+        for (Appointment existing : appointmentRepository.findAllByEmployeeId(employeeId)) {
+            if (appointmentId != null && appointmentId.equals(existing.getId())) {
+                continue;
+            }
+            if ("CANCELLED".equalsIgnoreCase(existing.getStatus())
+                    || "NO_SHOW".equalsIgnoreCase(existing.getStatus())) {
+                continue;
+            }
+            Integer existingDuration = existing.getDurationMinutes();
+            if (existingDuration == null && existing.getServiceId() != null) {
+                existingDuration = serviceRepository.findById(existing.getServiceId())
+                        .map(com.glamgest.app.domain.model.Service::getDurationMinutes)
+                        .orElse(null);
+            }
+            if (existingDuration == null) {
+                continue;
+            }
+            long existingStart = existing.getAppointmentDatetime().getTime();
+            long existingEnd = existingStart + existingDuration.longValue() * 60_000L;
+            if (start.getTime() < existingEnd && endMillis > existingStart) {
+                throw new ScheduleConflictException("El empleado ya tiene una cita en ese horario.");
+            }
+        }
     }
 
     /**

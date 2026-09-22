@@ -6,6 +6,7 @@ import com.glamgest.app.infrastructure.persistence.entity.Services;
 import com.glamgest.app.infrastructure.persistence.entity.Categories;
 import com.glamgest.app.infrastructure.persistence.repository.JpaServiceRepository;
 import org.springframework.stereotype.Component;
+import com.glamgest.app.common.validation.DurationRules;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,6 +23,9 @@ public class ServiceRepositoryAdapter implements ServiceRepository {
 
     @Override
     public Service save(Service service) {
+        if (service.getId() == null || service.getDurationMinutes() != null) {
+            DurationRules.validate(service.getDurationMinutes());
+        }
         Services entity = toEntity(service);
         Services saved = jpaServiceRepository.save(entity);
         return toModel(saved);
@@ -35,9 +39,21 @@ public class ServiceRepositoryAdapter implements ServiceRepository {
     }
 
     @Override
+    public Optional<Service> findByIdIncludingInactive(Integer id) {
+        return jpaServiceRepository.findByIdIncludingInactive(id).map(this::toModel);
+    }
+
+    @Override
     public List<Service> findAll() {
         return jpaServiceRepository.findAll().stream()
                 .filter(entity -> entity.getActive() != null && entity.getActive())
+                .map(this::toModel)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Service> findAllIncludingInactive() {
+        return jpaServiceRepository.findAll().stream()
                 .map(this::toModel)
                 .collect(Collectors.toList());
     }
@@ -56,6 +72,11 @@ public class ServiceRepositoryAdapter implements ServiceRepository {
     public Optional<Service> findByName(String name) {
         Services entity = jpaServiceRepository.findByName(name);
         return entity != null ? Optional.of(toModel(entity)) : Optional.empty();
+    }
+
+    @Override
+    public Optional<Service> findByNameIncludingInactive(String name) {
+        return jpaServiceRepository.findByNameIncludingInactive(name).map(this::toModel);
     }
 
     private Services toEntity(Service model) {

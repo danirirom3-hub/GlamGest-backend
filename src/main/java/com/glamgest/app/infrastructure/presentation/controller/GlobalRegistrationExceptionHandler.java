@@ -22,6 +22,9 @@ import com.glamgest.app.common.exception.OperationNotAllowedException;
 import com.glamgest.app.common.exception.InvalidAppointmentStatusException;
 import com.glamgest.app.common.exception.InvalidDashboardPeriodException;
 import com.glamgest.app.common.exception.DuplicateCategoryNameException;
+import com.glamgest.app.common.exception.InvalidDurationException;
+import com.glamgest.app.common.exception.ScheduleConflictException;
+import com.glamgest.app.common.exception.DuplicateServiceNameException;
 import com.glamgest.app.infrastructure.presentation.helper.BuilderHelper;
 
 @RestControllerAdvice
@@ -42,10 +45,16 @@ public class GlobalRegistrationExceptionHandler {
             InvalidAppointmentStatusException.class,
             InvalidDashboardPeriodException.class,
             DuplicateCategoryNameException.class,
+            InvalidDurationException.class,
             HttpMessageNotReadableException.class,
              MethodArgumentTypeMismatchException.class })
     ResponseEntity<?> throwBadRequest(Exception ex) {
         return this.throwErrorMessage(ex, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(DuplicateServiceNameException.class)
+    ResponseEntity<?> duplicateService(Exception ex) {
+        return this.throwErrorMessage(ex, HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(BadCredentialsException.class)
@@ -58,6 +67,11 @@ public class GlobalRegistrationExceptionHandler {
         var errors = new java.util.LinkedHashMap<String, String>();
         ex.getBindingResult().getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
         return BuilderHelper.buildResponse(errors, "Datos inválidos", HttpStatus.BAD_REQUEST, false);
+    }
+
+    @ExceptionHandler(ScheduleConflictException.class)
+    ResponseEntity<?> conflict(Exception ex) {
+        return this.throwErrorMessage(ex, HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(AccessDeniedException.class)

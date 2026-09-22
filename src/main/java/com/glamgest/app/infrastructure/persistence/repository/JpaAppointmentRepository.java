@@ -12,6 +12,8 @@ import java.time.LocalDateTime;
 public interface JpaAppointmentRepository extends JpaRepository<Appointments, Integer> {
     List<Appointments> findByClientId_ClientId(Integer clientId);
 
+    List<Appointments> findByEmployeeId_EmployeeId(Integer employeeId);
+
     @Query("SELECT COUNT(a) FROM Appointments a WHERE a.appointmentDatetime >= :from AND a.appointmentDatetime < :to")
     long countBetween(@Param("from") LocalDateTime from, @Param("to") LocalDateTime to);
 

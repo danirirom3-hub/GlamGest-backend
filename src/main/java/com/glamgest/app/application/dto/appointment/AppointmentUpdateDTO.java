@@ -1,6 +1,7 @@
 package com.glamgest.app.application.dto.appointment;
 
 import jakarta.validation.constraints.NotNull;
+import com.glamgest.app.common.validation.DurationMinutes;
 import java.util.Date;
 
 public class AppointmentUpdateDTO {
@@ -22,6 +23,9 @@ public class AppointmentUpdateDTO {
 
     @NotNull(message = "El id del servicio es obligatorio")
     private Integer serviceId;
+
+    @DurationMinutes
+    private Integer durationMinutes;
 
     public AppointmentUpdateDTO() {
     }
@@ -81,4 +85,8 @@ public class AppointmentUpdateDTO {
     public void setServiceId(Integer serviceId) {
         this.serviceId = serviceId;
     }
+
+    public Integer getDurationMinutes() { return durationMinutes; }
+
+    public void setDurationMinutes(Integer durationMinutes) { this.durationMinutes = durationMinutes; }
 }

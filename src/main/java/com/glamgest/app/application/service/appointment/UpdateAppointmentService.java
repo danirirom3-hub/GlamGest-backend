@@ -15,6 +15,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import com.glamgest.app.domain.repository.ClientRepository;
 import com.glamgest.app.domain.repository.UserRepository;
 import com.glamgest.app.common.constant.AppointmentStatusRules;
+import com.glamgest.app.common.exception.ScheduleConflictException;
+import com.glamgest.app.common.validation.DurationRules;
+
+import java.util.Date;
 
 @Service
 public class UpdateAppointmentService implements UpdateAppointmentUseCase {
@@ -56,10 +60,9 @@ public class UpdateAppointmentService implements UpdateAppointmentUseCase {
                 .filter(employee -> !Boolean.FALSE.equals(employee.getActive())).isEmpty()) {
             throw new ResourceNotFoundException("Employee not found with id " + appointmentUpdateDTO.getEmployeeId());
         }
-        if (jpaServiceRepository.findById(appointmentUpdateDTO.getServiceId())
-                .filter(service -> !Boolean.FALSE.equals(service.getActive())).isEmpty()) {
-            throw new ResourceNotFoundException("Service not found with id " + appointmentUpdateDTO.getServiceId());
-        }
+        var serviceEntity = jpaServiceRepository.findById(appointmentUpdateDTO.getServiceId())
+                .filter(service -> !Boolean.FALSE.equals(service.getActive()))
+                .orElseThrow(() -> new ResourceNotFoundException("Service not found with id " + appointmentUpdateDTO.getServiceId()));
 
         // Update appointment
         Integer clientId = isClient() ? existingAppointment.getClientId() : appointmentUpdateDTO.getClientId();
@@ -68,6 +71,18 @@ public class UpdateAppointmentService implements UpdateAppointmentUseCase {
         if (status != null) {
             status = AppointmentStatusRules.validate(status);
             AppointmentStatusRules.ensureTransition(existingAppointment.getStatus(), status);
+        }
+        if (appointmentUpdateDTO.getAppointmentDatetime().before(new Date())) {
+            throw new IllegalArgumentException("La fecha de la cita debe ser futura");
+        }
+        Integer durationMinutes = appointmentUpdateDTO.getDurationMinutes() != null
+                ? DurationRules.validate(appointmentUpdateDTO.getDurationMinutes())
+                : existingAppointment.getDurationMinutes() != null
+                    ? DurationRules.validate(existingAppointment.getDurationMinutes())
+                    : DurationRules.validate(serviceEntity.getDurationMinutes());
+        if (!"CANCELLED".equalsIgnoreCase(status) && !"NO_SHOW".equalsIgnoreCase(status)) {
+            ensureNoOverlap(appointmentUpdateDTO.getEmployeeId(), appointmentUpdateDTO.getAppointmentDatetime(),
+                    durationMinutes, appointmentUpdateDTO.getId());
         }
         Appointment updatedAppointment = new Appointment(
                 appointmentUpdateDTO.getId(),
@@ -79,10 +94,11 @@ public class UpdateAppointmentService implements UpdateAppointmentUseCase {
                 appointmentUpdateDTO.getServiceId(),
                 existingAppointment.getUserId()
         );
+        updatedAppointment.setDurationMinutes(durationMinutes);
 
         Appointment saved = appointmentRepository.save(updatedAppointment);
 
-        return new AppointmentResponseDTO(
+        AppointmentResponseDTO response = new AppointmentResponseDTO(
                 saved.getId(),
                 saved.getAppointmentDatetime(),
                 saved.getStatus(),
@@ -92,6 +108,33 @@ public class UpdateAppointmentService implements UpdateAppointmentUseCase {
                 saved.getServiceId(),
                 saved.getUserId()
         );
+        response.setDurationMinutes(saved.getDurationMinutes());
+        return response;
+    }
+
+    private void ensureNoOverlap(Integer employeeId, Date start, Integer durationMinutes, Integer appointmentId) {
+        long endMillis = start.getTime() + durationMinutes.longValue() * 60_000L;
+        for (Appointment existing : appointmentRepository.findAllByEmployeeId(employeeId)) {
+            if (appointmentId.equals(existing.getId())
+                    || "CANCELLED".equalsIgnoreCase(existing.getStatus())
+                    || "NO_SHOW".equalsIgnoreCase(existing.getStatus())) {
+                continue;
+            }
+            Integer existingDuration = existing.getDurationMinutes();
+            if (existingDuration == null && existing.getServiceId() != null) {
+                existingDuration = jpaServiceRepository.findById(existing.getServiceId())
+                        .map(service -> service.getDurationMinutes())
+                        .orElse(null);
+            }
+            if (existingDuration == null) {
+                continue;
+            }
+            long existingStart = existing.getAppointmentDatetime().getTime();
+            long existingEnd = existingStart + existingDuration.longValue() * 60_000L;
+            if (start.getTime() < existingEnd && endMillis > existingStart) {
+                throw new ScheduleConflictException("El empleado ya tiene una cita en ese horario.");
+            }
+        }
     }
 
     private boolean isClient() {

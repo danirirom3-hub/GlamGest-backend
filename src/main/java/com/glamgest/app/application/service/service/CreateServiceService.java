@@ -8,6 +8,7 @@ import com.glamgest.app.domain.model.Service;
 import com.glamgest.app.domain.repository.ServiceRepository;
 import com.glamgest.app.domain.repository.CategoryRepository;
 import com.glamgest.app.common.exception.ResourceNotFoundException;
+import com.glamgest.app.common.validation.DurationRules;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
@@ -29,11 +30,17 @@ public class CreateServiceService implements CreateServiceUseCase {
 
     @Override
     public ServiceResponseDTO execute(ServiceRequestDTO serviceRequestDTO) {
+        DurationRules.validate(serviceRequestDTO.getDurationMinutes());
         if (serviceRepository.existsByName(serviceRequestDTO.getName())) {
-            throw new DuplicateServiceNameException("Service name already exists: " + serviceRequestDTO.getName());
+            throw new DuplicateServiceNameException("Ya existe un servicio activo con ese nombre.");
         }
-
-        Service service = new Service();
+        Service service = serviceRepository.findByNameIncludingInactive(serviceRequestDTO.getName()).orElse(null);
+        if (service != null && Boolean.TRUE.equals(service.getActive())) {
+            throw new DuplicateServiceNameException("Ya existe un servicio activo con ese nombre.");
+        }
+        if (service == null) {
+            service = new Service();
+        }
         service.setName(serviceRequestDTO.getName());
         service.setDescription(serviceRequestDTO.getDescription());
         service.setPrice(serviceRequestDTO.getPrice());

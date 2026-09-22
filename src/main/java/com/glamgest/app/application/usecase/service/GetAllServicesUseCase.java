@@ -7,4 +7,6 @@ import com.glamgest.app.application.dto.service.ServiceResponseDTO;
 public interface GetAllServicesUseCase {
 
     List<ServiceResponseDTO> execute();
+
+    List<ServiceResponseDTO> executeIncludingInactive();
 }

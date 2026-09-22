@@ -13,6 +13,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
 
@@ -48,6 +49,13 @@ public class ServiceController {
     public ResponseEntity<?> getAllServices() {
         List<ServiceResponseDTO> services = getAllServicesUseCase.execute();
         return BuilderHelper.buildResponse(services, "Services retrieved successfully", HttpStatus.OK, true);
+    }
+
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @GetMapping("/admin")
+    public ResponseEntity<?> getAllServicesForAdmin() {
+        List<ServiceResponseDTO> services = getAllServicesUseCase.executeIncludingInactive();
+        return BuilderHelper.buildResponse(services, "All services retrieved successfully", HttpStatus.OK, true);
     }
 
     @GetMapping("/{id}")

@@ -61,8 +61,10 @@ public class ChangeAppointmentStatusService implements ChangeAppointmentStatusUs
     }
 
     private AppointmentResponseDTO toResponse(Appointment appointment) {
-        return new AppointmentResponseDTO(appointment.getId(), appointment.getAppointmentDatetime(),
+        AppointmentResponseDTO response = new AppointmentResponseDTO(appointment.getId(), appointment.getAppointmentDatetime(),
                 appointment.getStatus(), appointment.getNotes(), appointment.getClientId(),
                 appointment.getEmployeeId(), appointment.getServiceId(), appointment.getUserId());
+        response.setDurationMinutes(appointment.getDurationMinutes());
+        return response;
     }
 }

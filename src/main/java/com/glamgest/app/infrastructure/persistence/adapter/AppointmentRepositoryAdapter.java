@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import com.glamgest.app.common.exception.OperationNotAllowedException;
+import com.glamgest.app.common.validation.DurationRules;
 
 @Repository
 public class AppointmentRepositoryAdapter implements AppointmentRepository {
@@ -32,6 +33,9 @@ public class AppointmentRepositoryAdapter implements AppointmentRepository {
 
     @Override
     public Appointment save(Appointment appointment) {
+        if (appointment.getDurationMinutes() != null) {
+            DurationRules.validate(appointment.getDurationMinutes());
+        }
         Appointments entity = toEntity(appointment);
         Appointments saved = jpaAppointmentRepository.save(entity);
         return toModel(saved);
@@ -56,6 +60,13 @@ public class AppointmentRepositoryAdapter implements AppointmentRepository {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<Appointment> findAllByEmployeeId(Integer employeeId) {
+        return jpaAppointmentRepository.findByEmployeeId_EmployeeId(employeeId).stream()
+                .map(this::toModel)
+                .collect(Collectors.toList());
+    }
+
     private Appointments toEntity(Appointment appointment) {
         Appointments entity = new Appointments();
         if (appointment.getId() != null) {
@@ -64,6 +75,7 @@ public class AppointmentRepositoryAdapter implements AppointmentRepository {
         entity.setAppointmentDatetime(appointment.getAppointmentDatetime());
         entity.setStatus(appointment.getStatus());
         entity.setNotes(appointment.getNotes());
+        entity.setDurationMinutes(appointment.getDurationMinutes());
 
         if (appointment.getClientId() != null) {
             entity.setClientId(new Clients(appointment.getClientId()));
@@ -87,6 +99,7 @@ public class AppointmentRepositoryAdapter implements AppointmentRepository {
         appointment.setAppointmentDatetime(entity.getAppointmentDatetime());
         appointment.setStatus(entity.getStatus());
         appointment.setNotes(entity.getNotes());
+        appointment.setDurationMinutes(entity.getDurationMinutes());
         appointment.setClientId(entity.getClientId() != null ? entity.getClientId().getClientId() : null);
         appointment.setEmployeeId(entity.getEmployeeId() != null ? entity.getEmployeeId().getEmployeeId() : null);
         appointment.setServiceId(entity.getServiceId() != null ? entity.getServiceId().getServiceId() : null);

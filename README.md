@@ -21,7 +21,7 @@ CORS_ALLOWED_ORIGINS=http://localhost:4200
 SPRING_JPA_HIBERNATE_DDL_AUTO=validate
 ```
 
-Crear la base de datos con `glamgest_db.sql`. Para una base existente, limpiar duplicados de email y aplicar `database/migration/V2__link_clients_to_users.sql` antes de activar `validate`.
+Crear la base de datos con `glamgest_db.sql`. Para una base existente, limpiar duplicados de email y aplicar las migraciones de `database/migration` en orden antes de activar `validate`.
 
 ## Autenticación de clientes
 
@@ -49,3 +49,42 @@ Las pruebas usan H2 y se ejecutan con:
 ```text
 ./mvnw test
 ```
+
+## Duración de servicios y citas
+
+`services.duration_minutes` es la duración base y debe ser mayor que cero y múltiplo de 15. Las nuevas duraciones válidas son `15`, `30`, `45`, `60`, `75`, etc.
+
+Las citas guardan su duración efectiva en `appointments.duration_minutes`. Si el campo no se envía al crear una cita, se copia la duración base del servicio. Una duración enviada para una cita no modifica el servicio.
+
+Ejemplo de cita con duración personalizada:
+
+```json
+{
+  "appointmentDatetime": "2026-09-25T10:00:00",
+  "clientId": 1,
+  "employeeId": 2,
+  "serviceId": 3,
+  "durationMinutes": 90,
+  "notes": "Cabello largo"
+}
+```
+
+La duración de cada cita también debe ser múltiplo de 15. El backend rechaza solapamientos del mismo empleado con HTTP `409`; las citas `CANCELLED` y `NO_SHOW` no bloquean horarios.
+
+Para bases existentes, ejecutar `database/migration/V5__add_appointment_effective_duration.sql`. La migración reporta duraciones de servicios inválidas y no modifica silenciosamente datos históricos.
+
+## Reactivación de servicios
+
+`DELETE /api/services/{id}` desactiva el servicio sin eliminarlo físicamente. Para reactivarlo o actualizarlo, usar `PUT /api/services/{id}`; la búsqueda incluye servicios inactivos.
+
+Los administradores pueden consultar activos e inactivos con `GET /api/services/admin`. El listado normal de `GET /api/services` continúa devolviendo únicamente servicios activos.
+
+Ejemplo de reactivación:
+
+```json
+{
+  "active": true
+}
+```
+
+Al crear un servicio con un nombre que ya pertenece a un servicio inactivo, el backend actualiza y reactiva el mismo registro conservando su identificador. Si el nombre pertenece a un servicio activo, devuelve `409 Conflict`.

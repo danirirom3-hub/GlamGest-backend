@@ -2,6 +2,7 @@
 package com.glamgest.app.application.dto.service;
 
 import jakarta.validation.constraints.Min;
+import com.glamgest.app.common.validation.DurationMinutes;
 
 public class ServiceUpdateDTO {
 
@@ -12,10 +13,12 @@ public class ServiceUpdateDTO {
     @Min(value = 0, message = "Price must be greater than or equal to 0")
     private Integer price;
 
-    @Min(value = 1, message = "Duration must be at least 1 minute")
+    @DurationMinutes
     private Integer durationMinutes;
 
     private Integer categoryId;
+    private Boolean active;
+    private boolean categoryIdSet;
 
     // Getters and Setters
     public String getName() {
@@ -52,5 +55,14 @@ public class ServiceUpdateDTO {
 
     public Integer getCategoryId() { return categoryId; }
 
-    public void setCategoryId(Integer categoryId) { this.categoryId = categoryId; }
+    public void setCategoryId(Integer categoryId) {
+        this.categoryId = categoryId;
+        this.categoryIdSet = true;
+    }
+
+    public Boolean getActive() { return active; }
+
+    public void setActive(Boolean active) { this.active = active; }
+
+    public boolean isCategoryIdSet() { return categoryIdSet; }
 }

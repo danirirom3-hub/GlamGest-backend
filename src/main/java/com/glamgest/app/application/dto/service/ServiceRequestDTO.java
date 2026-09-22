@@ -1,9 +1,10 @@
 
 package com.glamgest.app.application.dto.service;
 
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Min;
+import com.glamgest.app.common.validation.DurationMinutes;
 
 public class ServiceRequestDTO {
 
@@ -16,7 +17,8 @@ public class ServiceRequestDTO {
     @Min(value = 0, message = "Price must be greater than or equal to 0")
     private Integer price;
 
-    @Min(value = 1, message = "Duration must be at least 1 minute")
+    @DurationMinutes
+    @NotNull(message = "Duration is required")
     private Integer durationMinutes;
 
     private Integer categoryId;

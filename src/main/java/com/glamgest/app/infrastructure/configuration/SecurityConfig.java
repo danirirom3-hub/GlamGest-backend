@@ -60,6 +60,7 @@ public class SecurityConfig {
 
                         .requestMatchers("/api/clients/me").hasAuthority("CLIENT")
                         .requestMatchers("/api/clients/**").hasAnyAuthority("ADMIN", "EMPLOYEE")
+                        .requestMatchers(HttpMethod.GET, "/api/services/admin").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/services", "/api/services/**").hasAnyAuthority("ADMIN", "EMPLOYEE", "CLIENT")
                         .requestMatchers("/api/services/**").hasAnyAuthority("ADMIN", "EMPLOYEE")
                         .requestMatchers(HttpMethod.GET, "/api/employees", "/api/employees/**").hasAnyAuthority("ADMIN", "EMPLOYEE", "CLIENT")

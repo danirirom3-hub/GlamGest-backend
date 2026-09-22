@@ -7,15 +7,22 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.Optional;
 
 @Repository
 public interface JpaServiceRepository extends JpaRepository<Services, Integer> {
+
+    @Query("SELECT s FROM Services s WHERE s.serviceId = :id")
+    Optional<Services> findByIdIncludingInactive(@Param("id") Integer id);
 
     @Query("SELECT COUNT(s) > 0 FROM Services s WHERE s.name = :name AND s.active = true")
     boolean existsByName(@Param("name") String name);
 
     @Query("SELECT s FROM Services s WHERE s.name = :name AND s.active = true")
     Services findByName(@Param("name") String name);
+
+    @Query("SELECT s FROM Services s WHERE LOWER(s.name) = LOWER(:name)")
+    Optional<Services> findByNameIncludingInactive(@Param("name") String name);
 
     @Modifying
     @Transactional

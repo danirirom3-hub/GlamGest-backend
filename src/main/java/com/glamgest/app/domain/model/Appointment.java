@@ -12,6 +12,7 @@ public class Appointment {
     private Integer employeeId;
     private Integer serviceId;
     private Integer userId;
+    private Integer durationMinutes;
 
     public Appointment() {
     }
@@ -91,4 +92,8 @@ public class Appointment {
     public void setUserId(Integer userId) {
         this.userId = userId;
     }
+
+    public Integer getDurationMinutes() { return durationMinutes; }
+
+    public void setDurationMinutes(Integer durationMinutes) { this.durationMinutes = durationMinutes; }
 }

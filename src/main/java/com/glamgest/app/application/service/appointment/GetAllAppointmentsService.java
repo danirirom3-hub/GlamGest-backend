@@ -43,15 +43,19 @@ public class GetAllAppointmentsService implements GetAllAppointmentsUseCase {
 
     private List<AppointmentResponseDTO> toResponse(List<com.glamgest.app.domain.model.Appointment> appointments) {
         return appointments.stream()
-                .map(appointment -> new AppointmentResponseDTO(
-                        appointment.getId(),
-                        appointment.getAppointmentDatetime(),
-                        appointment.getStatus(),
-                        appointment.getNotes(),
-                        appointment.getClientId(),
-                        appointment.getEmployeeId(),
-                        appointment.getServiceId(),
-                        appointment.getUserId()))
+                .map(appointment -> {
+                    AppointmentResponseDTO response = new AppointmentResponseDTO(
+                            appointment.getId(),
+                            appointment.getAppointmentDatetime(),
+                            appointment.getStatus(),
+                            appointment.getNotes(),
+                            appointment.getClientId(),
+                            appointment.getEmployeeId(),
+                            appointment.getServiceId(),
+                            appointment.getUserId());
+                    response.setDurationMinutes(appointment.getDurationMinutes());
+                    return response;
+                })
                 .collect(Collectors.toList());
     }
 }

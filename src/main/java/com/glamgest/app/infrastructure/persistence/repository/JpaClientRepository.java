@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
+import java.time.LocalDateTime;
 
 import java.util.Optional;
 
@@ -30,6 +31,9 @@ public interface JpaClientRepository extends JpaRepository<Clients, Integer> {
 
     @Query("SELECT c FROM Clients c WHERE c.active = true")
     java.util.List<Clients> findAllActive();
+
+    @Query("SELECT COUNT(c) FROM Clients c WHERE c.registrationDate >= :from AND c.registrationDate < :to")
+    long countRegisteredBetween(@Param("from") LocalDateTime from, @Param("to") LocalDateTime to);
 
     @Modifying
     @Transactional

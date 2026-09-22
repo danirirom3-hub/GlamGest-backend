@@ -164,3 +164,9 @@ CREATE TABLE sale_details (
     CONSTRAINT fk_sale_details_workers
         FOREIGN KEY (employee_id) REFERENCES employees(employee_id)
 );
+
+CREATE INDEX idx_sales_status_datetime ON sales(status, sale_datetime);
+CREATE INDEX idx_appointments_datetime ON appointments(appointment_datetime);
+CREATE INDEX idx_appointments_status_datetime ON appointments(status, appointment_datetime);
+CREATE INDEX idx_sale_details_service ON sale_details(service_id);
+CREATE INDEX idx_sale_details_employee ON sale_details(employee_id);

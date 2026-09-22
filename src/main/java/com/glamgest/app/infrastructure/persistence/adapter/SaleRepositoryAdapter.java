@@ -40,7 +40,12 @@ public class SaleRepositoryAdapter implements SaleRepository {
 
     @Override
     public void deleteById(Integer id) {
-        jpaSalesRepository.deleteById(id);
+        voidById(id);
+    }
+
+    @Override
+    public void voidById(Integer id) {
+        jpaSalesRepository.voidSale(id);
     }
 
     @Override
@@ -58,6 +63,9 @@ public class SaleRepositoryAdapter implements SaleRepository {
         entity.setSaleDatetime(sale.getSaleDatetime());
         entity.setTotal(sale.getTotal());
         entity.setPaymentType(sale.getPaymentType());
+        entity.setStatus(sale.getStatus() == null ? com.glamgest.app.common.constant.Constant.SALE_STATUS_ACTIVE : sale.getStatus());
+        entity.setVoidedAt(sale.getVoidedAt());
+        entity.setVoidReason(sale.getVoidReason());
 
         if (sale.getClientId() != null) {
             entity.setClientId(new Clients(sale.getClientId()));
@@ -92,7 +100,7 @@ public class SaleRepositoryAdapter implements SaleRepository {
                         detail.getEmployeeId() != null ? detail.getEmployeeId().getEmployeeId() : null,
                         detail.getServiceId() != null ? detail.getServiceId().getServiceId() : null,
                         detail.getQuantity(), detail.getUnitPrice(), detail.getSubtotal())).collect(Collectors.toList());
-        return new Sale(
+        Sale sale = new Sale(
                 entity.getSaleId(),
                 entity.getSaleDatetime(),
                 entity.getTotal(),
@@ -101,5 +109,9 @@ public class SaleRepositoryAdapter implements SaleRepository {
                 entity.getUserId() != null ? entity.getUserId().getUserId() : null,
                 details
         );
+        sale.setStatus(entity.getStatus() == null ? com.glamgest.app.common.constant.Constant.SALE_STATUS_ACTIVE : entity.getStatus());
+        sale.setVoidedAt(entity.getVoidedAt());
+        sale.setVoidReason(entity.getVoidReason());
+        return sale;
     }
 }

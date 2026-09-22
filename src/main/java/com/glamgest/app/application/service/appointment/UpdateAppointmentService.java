@@ -14,6 +14,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import com.glamgest.app.domain.repository.ClientRepository;
 import com.glamgest.app.domain.repository.UserRepository;
+import com.glamgest.app.common.constant.AppointmentStatusRules;
 
 @Service
 public class UpdateAppointmentService implements UpdateAppointmentUseCase {
@@ -47,13 +48,16 @@ public class UpdateAppointmentService implements UpdateAppointmentUseCase {
         }
 
         // Validate relationships
-        if (!jpaClientRepository.existsById(appointmentUpdateDTO.getClientId())) {
+        if (jpaClientRepository.findById(appointmentUpdateDTO.getClientId())
+                .filter(client -> !Boolean.FALSE.equals(client.getActive())).isEmpty()) {
             throw new ResourceNotFoundException("Client not found with id " + appointmentUpdateDTO.getClientId());
         }
-        if (!jpaEmployeeRepository.existsById(appointmentUpdateDTO.getEmployeeId())) {
+        if (jpaEmployeeRepository.findById(appointmentUpdateDTO.getEmployeeId())
+                .filter(employee -> !Boolean.FALSE.equals(employee.getActive())).isEmpty()) {
             throw new ResourceNotFoundException("Employee not found with id " + appointmentUpdateDTO.getEmployeeId());
         }
-        if (!jpaServiceRepository.existsById(appointmentUpdateDTO.getServiceId())) {
+        if (jpaServiceRepository.findById(appointmentUpdateDTO.getServiceId())
+                .filter(service -> !Boolean.FALSE.equals(service.getActive())).isEmpty()) {
             throw new ResourceNotFoundException("Service not found with id " + appointmentUpdateDTO.getServiceId());
         }
 
@@ -61,6 +65,10 @@ public class UpdateAppointmentService implements UpdateAppointmentUseCase {
         Integer clientId = isClient() ? existingAppointment.getClientId() : appointmentUpdateDTO.getClientId();
         String status = isClient() ? existingAppointment.getStatus()
                 : appointmentUpdateDTO.getStatus() != null ? appointmentUpdateDTO.getStatus() : existingAppointment.getStatus();
+        if (status != null) {
+            status = AppointmentStatusRules.validate(status);
+            AppointmentStatusRules.ensureTransition(existingAppointment.getStatus(), status);
+        }
         Appointment updatedAppointment = new Appointment(
                 appointmentUpdateDTO.getId(),
                 appointmentUpdateDTO.getAppointmentDatetime(),

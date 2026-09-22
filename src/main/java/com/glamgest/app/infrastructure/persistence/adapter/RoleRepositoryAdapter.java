@@ -22,6 +22,7 @@ public class RoleRepositoryAdapter implements RoleRepository {
     @Override
     public Optional<Role> findById(Integer id) {
         return jpaRoleRepository.findById(id)
+                .filter(entity -> entity.getActive() != null && entity.getActive())
                 .map(entity -> new Role(entity.getRoleId(), entity.getName(), entity.getDescription()));
     }
 
@@ -33,7 +34,7 @@ public class RoleRepositoryAdapter implements RoleRepository {
 
     @Override
     public boolean existsById(Integer id) {
-        return jpaRoleRepository.existsById(id);
+        return findById(id).isPresent();
     }
 
     @Override
@@ -49,6 +50,7 @@ public class RoleRepositoryAdapter implements RoleRepository {
         }
         entity.setName(role.getName());
         entity.setDescription(role.getDescription());
+        entity.setActive(true);
 
         Roles savedEntity = jpaRoleRepository.save(entity);
 
@@ -57,12 +59,12 @@ public class RoleRepositoryAdapter implements RoleRepository {
 
     @Override
     public void deleteById(Integer id) {
-        jpaRoleRepository.deleteById(id);
+        jpaRoleRepository.softDelete(id);
     }
 
     @Override
     public List<Role> findAll() {
-        return jpaRoleRepository.findAll().stream()
+        return jpaRoleRepository.findAllActive().stream()
                 .map(entity -> new Role(entity.getRoleId(), entity.getName(), entity.getDescription()))
                 .collect(Collectors.toList());
     }

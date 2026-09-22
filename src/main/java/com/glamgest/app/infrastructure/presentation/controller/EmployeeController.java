@@ -75,7 +75,7 @@ public class EmployeeController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteEmployee(@PathVariable Integer id) {
         deleteEmployeeUseCase.execute(id);
-        return BuilderHelper.buildResponse(null, "empleado eliminado", HttpStatus.NO_CONTENT, true);
+        return BuilderHelper.buildResponse(null, "empleado desactivado", HttpStatus.NO_CONTENT, true);
     }
 
     @GetMapping

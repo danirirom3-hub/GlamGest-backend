@@ -29,7 +29,9 @@ public class ClientRepositoryAdapter implements ClientRepository {
 
     @Override
     public Optional<Client> findById(Integer id) {
-        return jpaClientRepository.findById(id).map(this::toModel);
+        return jpaClientRepository.findById(id)
+                .filter(entity -> entity.getActive() != null && entity.getActive())
+                .map(this::toModel);
     }
 
     @Override
@@ -58,12 +60,12 @@ public class ClientRepositoryAdapter implements ClientRepository {
 
     @Override
     public void deleteById(Integer id) {
-        jpaClientRepository.deleteById(id);
+        jpaClientRepository.softDelete(id);
     }
 
     @Override
     public List<Client> findAll() {
-        return jpaClientRepository.findAll().stream().map(this::toModel).collect(Collectors.toList());
+        return jpaClientRepository.findAllActive().stream().map(this::toModel).collect(Collectors.toList());
     }
 
     private Clients toEntity(Client client) {
@@ -75,6 +77,7 @@ public class ClientRepositoryAdapter implements ClientRepository {
         entity.setEmail(client.getEmail());
         entity.setPhone(client.getPhone());
         entity.setRegistrationDate(client.getRegistrationDate());
+        entity.setActive(true);
         if (client.getUserId() != null) {
             entity.setUserId(new Users(client.getUserId()));
         }

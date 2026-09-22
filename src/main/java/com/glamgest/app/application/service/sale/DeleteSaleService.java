@@ -2,6 +2,7 @@ package com.glamgest.app.application.service.sale;
 
 import com.glamgest.app.application.usecase.sale.DeleteSaleUseCase;
 import com.glamgest.app.common.exception.ResourceNotFoundException;
+import com.glamgest.app.common.exception.OperationNotAllowedException;
 import com.glamgest.app.domain.repository.SaleRepository;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,9 @@ public class DeleteSaleService implements DeleteSaleUseCase {
         if (!saleRepository.findById(id).isPresent()) {
             throw new ResourceNotFoundException("Sale not found with id " + id);
         }
-        saleRepository.deleteById(id);
+        if ("VOIDED".equals(saleRepository.findById(id).get().getStatus())) {
+            throw new OperationNotAllowedException("La venta ya está anulada");
+        }
+        saleRepository.voidById(id);
     }
 }

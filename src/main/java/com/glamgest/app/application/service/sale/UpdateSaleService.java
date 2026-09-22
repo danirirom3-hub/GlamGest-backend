@@ -6,6 +6,7 @@ import com.glamgest.app.application.dto.sale.SaleResponseDTO;
 import com.glamgest.app.application.dto.sale.SaleUpdateDTO;
 import com.glamgest.app.application.usecase.sale.UpdateSaleUseCase;
 import com.glamgest.app.common.exception.ResourceNotFoundException;
+import com.glamgest.app.common.exception.OperationNotAllowedException;
 import com.glamgest.app.domain.model.Sale;
 import com.glamgest.app.domain.repository.SaleRepository;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,9 @@ public class UpdateSaleService implements UpdateSaleUseCase {
     public SaleResponseDTO execute(SaleUpdateDTO saleUpdateDTO) {
         Sale existingSale = saleRepository.findById(saleUpdateDTO.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Sale not found with id " + saleUpdateDTO.getId()));
+        if ("VOIDED".equals(existingSale.getStatus())) {
+            throw new OperationNotAllowedException("Una venta anulada no se puede modificar");
+        }
 
         // Update payment type if provided
         if (saleUpdateDTO.getPaymentType() != null) {
@@ -39,7 +43,7 @@ public class UpdateSaleService implements UpdateSaleUseCase {
 
         Sale updatedSale = saleRepository.save(existingSale);
 
-        return new SaleResponseDTO(
+        SaleResponseDTO response = new SaleResponseDTO(
                 updatedSale.getId(),
                 updatedSale.getSaleDatetime(),
                 updatedSale.getTotal(),
@@ -55,5 +59,9 @@ public class UpdateSaleService implements UpdateSaleUseCase {
                                 detail.getUnitPrice(),
                                 detail.getSubtotal()))
                         .collect(Collectors.toList()) : null);
+        response.setStatus(updatedSale.getStatus());
+        response.setVoidedAt(updatedSale.getVoidedAt());
+        response.setVoidReason(updatedSale.getVoidReason());
+        return response;
     }
 }

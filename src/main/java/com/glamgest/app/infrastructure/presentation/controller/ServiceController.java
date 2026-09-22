@@ -65,6 +65,6 @@ public class ServiceController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteService(@PathVariable Integer id) {
         deleteServiceUseCase.execute(id);
-        return BuilderHelper.buildResponse(null, "Service deleted successfully", HttpStatus.OK, true);
+        return BuilderHelper.buildResponse(null, "Service deactivated successfully", HttpStatus.OK, true);
     }
 }

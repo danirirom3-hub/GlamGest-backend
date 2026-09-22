@@ -70,7 +70,7 @@ public class SaleController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteSale(@PathVariable Integer id) {
         deleteSaleUseCase.execute(id);
-        return BuilderHelper.buildResponse(null, "Venta eliminada", HttpStatus.NO_CONTENT, true);
+        return BuilderHelper.buildResponse(null, "Venta anulada", HttpStatus.NO_CONTENT, true);
     }
 
     private ResponseEntity<?> validation(BindingResult result) {

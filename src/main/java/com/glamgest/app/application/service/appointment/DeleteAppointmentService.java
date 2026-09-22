@@ -8,6 +8,8 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import com.glamgest.app.domain.repository.ClientRepository;
 import com.glamgest.app.domain.repository.UserRepository;
+import com.glamgest.app.common.constant.Constant;
+import com.glamgest.app.common.constant.AppointmentStatusRules;
 
 @Service
 public class DeleteAppointmentService implements DeleteAppointmentUseCase {
@@ -38,6 +40,8 @@ public class DeleteAppointmentService implements DeleteAppointmentUseCase {
                 throw new AccessDeniedException("No puede eliminar esta cita");
             }
         }
-        appointmentRepository.deleteById(id);
+        AppointmentStatusRules.ensureTransition(appointment.get().getStatus(), Constant.APPOINTMENT_STATUS_CANCELLED);
+        appointment.get().setStatus(Constant.APPOINTMENT_STATUS_CANCELLED);
+        appointmentRepository.save(appointment.get());
     }
 }

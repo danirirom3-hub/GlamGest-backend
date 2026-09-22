@@ -11,6 +11,9 @@ public class SaleResponseDTO {
     private String paymentType;
     private Integer clientId;
     private Integer userId;
+    private String status;
+    private Date voidedAt;
+    private String voidReason;
     private List<SaleDetailResponseDTO> saleDetails;
 
     public SaleResponseDTO() {
@@ -73,6 +76,30 @@ public class SaleResponseDTO {
 
     public void setUserId(Integer userId) {
         this.userId = userId;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public Date getVoidedAt() {
+        return voidedAt;
+    }
+
+    public void setVoidedAt(Date voidedAt) {
+        this.voidedAt = voidedAt;
+    }
+
+    public String getVoidReason() {
+        return voidReason;
+    }
+
+    public void setVoidReason(String voidReason) {
+        this.voidReason = voidReason;
     }
 
     public List<SaleDetailResponseDTO> getSaleDetails() {

@@ -5,6 +5,7 @@ import com.glamgest.app.application.dto.sale.SaleDetailResponseDTO;
 import com.glamgest.app.application.dto.sale.SaleRequestDTO;
 import com.glamgest.app.application.dto.sale.SaleResponseDTO;
 import com.glamgest.app.application.usecase.sale.CreateSaleUseCase;
+import com.glamgest.app.common.constant.Constant;
 import com.glamgest.app.common.exception.ResourceNotFoundException;
 import com.glamgest.app.infrastructure.persistence.entity.Appointments;
 import com.glamgest.app.infrastructure.persistence.entity.Employees;
@@ -58,7 +59,9 @@ public class CreateSaleService implements CreateSaleUseCase {
 
         Sales sale = new Sales();
         sale.setSaleDatetime(new Date());
+        sale.setStatus(Constant.SALE_STATUS_ACTIVE);
         sale.setClientId(jpaClientRepository.findById(saleRequestDTO.getClientId())
+                .filter(client -> !Boolean.FALSE.equals(client.getActive()))
                 .orElseThrow(() -> new ResourceNotFoundException("Client not found with id " + saleRequestDTO.getClientId())));
         var authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.getName() != null) {
@@ -91,6 +94,10 @@ public class CreateSaleService implements CreateSaleUseCase {
         if (detailRequest.getAppointmentId() != null) {
             appointment = jpaAppointmentRepository.findById(detailRequest.getAppointmentId())
                     .orElseThrow(() -> new ResourceNotFoundException("Appointment not found with id " + detailRequest.getAppointmentId()));
+            if ("CANCELLED".equalsIgnoreCase(appointment.getStatus())
+                    || "NO_SHOW".equalsIgnoreCase(appointment.getStatus())) {
+                throw new IllegalArgumentException("No se puede facturar una cita cancelada o no asistida");
+            }
         }
 
         Services service = null;
@@ -101,6 +108,7 @@ public class CreateSaleService implements CreateSaleUseCase {
             }
         } else if (detailRequest.getServiceId() != null) {
             service = jpaServiceRepository.findById(detailRequest.getServiceId())
+                    .filter(item -> !Boolean.FALSE.equals(item.getActive()))
                     .orElseThrow(() -> new ResourceNotFoundException("Service not found with id " + detailRequest.getServiceId()));
         } else {
             throw new IllegalArgumentException("Sale detail must include a service when appointment is not provided");
@@ -109,6 +117,7 @@ public class CreateSaleService implements CreateSaleUseCase {
         Employees employee;
         if (detailRequest.getEmployeeId() != null) {
             employee = jpaEmployeeRepository.findById(detailRequest.getEmployeeId())
+                    .filter(item -> !Boolean.FALSE.equals(item.getActive()))
                     .orElseThrow(() -> new ResourceNotFoundException("Employee not found with id " + detailRequest.getEmployeeId()));
         } else if (appointment != null) {
             employee = appointment.getEmployeeId();
@@ -142,6 +151,7 @@ public class CreateSaleService implements CreateSaleUseCase {
         response.setSaleDatetime(sale.getSaleDatetime());
         response.setTotal(sale.getTotal());
         response.setPaymentType(sale.getPaymentType());
+        response.setStatus(sale.getStatus());
         response.setClientId(sale.getClientId() != null ? sale.getClientId().getClientId() : null);
         response.setUserId(sale.getUserId() != null ? sale.getUserId().getUserId() : null);
         response.setSaleDetails(sale.getSaleDetailsList().stream()

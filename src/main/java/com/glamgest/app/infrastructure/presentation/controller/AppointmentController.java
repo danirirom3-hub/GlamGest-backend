@@ -3,10 +3,12 @@ package com.glamgest.app.infrastructure.presentation.controller;
 import com.glamgest.app.application.dto.appointment.AppointmentRequestDTO;
 import com.glamgest.app.application.dto.appointment.AppointmentResponseDTO;
 import com.glamgest.app.application.dto.appointment.AppointmentUpdateDTO;
+import com.glamgest.app.application.dto.appointment.AppointmentStatusRequestDTO;
 import com.glamgest.app.application.usecase.appointment.CreateAppointmentUseCase;
 import com.glamgest.app.application.usecase.appointment.DeleteAppointmentUseCase;
 import com.glamgest.app.application.usecase.appointment.GetAllAppointmentsUseCase;
 import com.glamgest.app.application.usecase.appointment.UpdateAppointmentUseCase;
+import com.glamgest.app.application.usecase.appointment.ChangeAppointmentStatusUseCase;
 import com.glamgest.app.infrastructure.presentation.helper.BuilderHelper;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -26,15 +28,18 @@ public class AppointmentController {
     private final GetAllAppointmentsUseCase getAllAppointmentsUseCase;
     private final UpdateAppointmentUseCase updateAppointmentUseCase;
     private final DeleteAppointmentUseCase deleteAppointmentUseCase;
+    private final ChangeAppointmentStatusUseCase changeAppointmentStatusUseCase;
 
     public AppointmentController(CreateAppointmentUseCase createAppointmentUseCase,
                                  GetAllAppointmentsUseCase getAllAppointmentsUseCase,
                                  UpdateAppointmentUseCase updateAppointmentUseCase,
-                                 DeleteAppointmentUseCase deleteAppointmentUseCase) {
+                                  DeleteAppointmentUseCase deleteAppointmentUseCase,
+                                  ChangeAppointmentStatusUseCase changeAppointmentStatusUseCase) {
         this.createAppointmentUseCase = createAppointmentUseCase;
         this.getAllAppointmentsUseCase = getAllAppointmentsUseCase;
         this.updateAppointmentUseCase = updateAppointmentUseCase;
         this.deleteAppointmentUseCase = deleteAppointmentUseCase;
+        this.changeAppointmentStatusUseCase = changeAppointmentStatusUseCase;
     }
 
     @PostMapping
@@ -77,7 +82,14 @@ public class AppointmentController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteAppointment(@PathVariable Integer id) {
         deleteAppointmentUseCase.execute(id);
-        return BuilderHelper.buildResponse(null, "Cita eliminada", HttpStatus.NO_CONTENT, true);
+        return BuilderHelper.buildResponse(null, "Cita cancelada", HttpStatus.NO_CONTENT, true);
+    }
+
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<?> changeStatus(@PathVariable Integer id,
+                                          @Valid @RequestBody AppointmentStatusRequestDTO request) {
+        AppointmentResponseDTO response = changeAppointmentStatusUseCase.execute(id, request.status());
+        return BuilderHelper.buildResponse(response, "Estado de cita actualizado", HttpStatus.OK, true);
     }
 
     private ResponseEntity<?> validation(BindingResult result) {

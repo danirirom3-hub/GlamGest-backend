@@ -13,5 +13,7 @@ public interface SaleRepository {
 
     void deleteById(Integer id);
 
+    void voidById(Integer id);
+
     List<Sale> findAll();
 }

@@ -89,7 +89,7 @@ public class ClientController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteClient(@PathVariable Integer id) {
         deleteClientUseCase.execute(id);
-        return BuilderHelper.buildResponse(null, "Cliente eliminado", HttpStatus.NO_CONTENT, true);
+        return BuilderHelper.buildResponse(null, "Cliente desactivado", HttpStatus.NO_CONTENT, true);
     }
 
     private ResponseEntity<?> validation(BindingResult result) {

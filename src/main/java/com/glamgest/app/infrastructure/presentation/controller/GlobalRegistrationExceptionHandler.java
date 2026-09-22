@@ -18,6 +18,8 @@ import com.glamgest.app.common.exception.DuplicateEmployeePhoneException;
 import com.glamgest.app.common.exception.DuplicateRoleNameException;
 import com.glamgest.app.common.exception.ResourceNotFoundException;
 import com.glamgest.app.common.exception.RoleNotFoundException;
+import com.glamgest.app.common.exception.OperationNotAllowedException;
+import com.glamgest.app.common.exception.InvalidAppointmentStatusException;
 import com.glamgest.app.infrastructure.presentation.helper.BuilderHelper;
 
 @RestControllerAdvice
@@ -34,6 +36,8 @@ public class GlobalRegistrationExceptionHandler {
             DuplicateClientEmailException.class,
             DuplicateClientPhoneException.class,
             DuplicateRoleNameException.class,
+            OperationNotAllowedException.class,
+            InvalidAppointmentStatusException.class,
             HttpMessageNotReadableException.class,
              MethodArgumentTypeMismatchException.class })
     ResponseEntity<?> throwBadRequest(Exception ex) {

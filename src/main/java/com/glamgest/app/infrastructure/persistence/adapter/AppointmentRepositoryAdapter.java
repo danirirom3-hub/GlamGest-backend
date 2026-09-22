@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import com.glamgest.app.common.exception.OperationNotAllowedException;
 
 @Repository
 public class AppointmentRepositoryAdapter implements AppointmentRepository {
@@ -38,7 +39,7 @@ public class AppointmentRepositoryAdapter implements AppointmentRepository {
 
     @Override
     public void deleteById(Integer id) {
-        jpaAppointmentRepository.deleteById(id);
+        throw new OperationNotAllowedException("Las citas no se eliminan; deben cancelarse");
     }
 
     @Override

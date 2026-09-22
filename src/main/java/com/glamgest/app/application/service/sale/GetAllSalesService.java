@@ -21,7 +21,8 @@ public class GetAllSalesService implements GetAllSalesUseCase {
     @Override
     public List<SaleResponseDTO> execute() {
         return saleRepository.findAll().stream()
-                .map(sale -> new SaleResponseDTO(
+                .map(sale -> {
+                    SaleResponseDTO response = new SaleResponseDTO(
                         sale.getId(),
                         sale.getSaleDatetime(),
                         sale.getTotal(),
@@ -36,7 +37,12 @@ public class GetAllSalesService implements GetAllSalesUseCase {
                                         detail.getQuantity(),
                                         detail.getUnitPrice(),
                                         detail.getSubtotal()))
-                                .collect(Collectors.toList()) : null))
+                                .collect(Collectors.toList()) : null);
+                    response.setStatus(sale.getStatus());
+                    response.setVoidedAt(sale.getVoidedAt());
+                    response.setVoidReason(sale.getVoidReason());
+                    return response;
+                })
                 .collect(Collectors.toList());
     }
 }

@@ -75,7 +75,7 @@ public class RoleController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteRole(@PathVariable Integer id) {
         deleteRoleUseCase.execute(id);
-        return BuilderHelper.buildResponse(null, "rol eliminado", HttpStatus.NO_CONTENT, true);
+        return BuilderHelper.buildResponse(null, "rol desactivado", HttpStatus.NO_CONTENT, true);
     }
 
     @GetMapping

@@ -75,7 +75,7 @@ public class UserController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable Integer id) {
         deleteUserUseCase.execute(id);
-        return BuilderHelper.buildResponse(null, "usuario eliminado", HttpStatus.NO_CONTENT, true);
+        return BuilderHelper.buildResponse(null, "usuario desactivado", HttpStatus.NO_CONTENT, true);
     }
 
     @GetMapping

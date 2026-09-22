@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import com.glamgest.app.common.exception.OperationNotAllowedException;
 
 @Repository
 public class SaleDetailRepositoryAdapter implements SaleDetailRepository {
@@ -38,7 +39,7 @@ public class SaleDetailRepositoryAdapter implements SaleDetailRepository {
 
     @Override
     public void deleteById(Integer id) {
-        jpaSaleDetailsRepository.deleteById(id);
+        throw new OperationNotAllowedException("Los detalles de una venta no se pueden eliminar; anule la venta completa");
     }
 
     @Override

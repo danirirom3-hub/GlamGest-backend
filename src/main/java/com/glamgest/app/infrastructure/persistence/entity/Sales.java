@@ -35,12 +35,47 @@ public class Sales implements Serializable {
     @Column(name = "payment_type")
     private String paymentType;
 
+    @Basic(optional = false)
+    @Column(name = "status", nullable = false)
+    private String status;
+
+    @Column(name = "voided_at")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date voidedAt;
+
+    @Column(name = "void_reason")
+    private String voidReason;
+
     public String getPaymentType() {
         return paymentType;
     }
 
     public void setPaymentType(String status) {
         this.paymentType = status;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public Date getVoidedAt() {
+        return voidedAt;
+    }
+
+    public void setVoidedAt(Date voidedAt) {
+        this.voidedAt = voidedAt;
+    }
+
+    public String getVoidReason() {
+        return voidReason;
+    }
+
+    public void setVoidReason(String voidReason) {
+        this.voidReason = voidReason;
     }
 
     public Sales() {

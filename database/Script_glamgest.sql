@@ -18,6 +18,7 @@ CREATE TABLE roles (
     role_id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(50) NOT NULL,
     description VARCHAR(150),
+    active BIT(1) DEFAULT b'1' NOT NULL,
     CONSTRAINT uq_roles_name UNIQUE (name)
 );
 
@@ -65,6 +66,7 @@ CREATE TABLE clients (
     phone VARCHAR(20),
     email VARCHAR(100),
     registration_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    active BIT(1) DEFAULT b'1' NOT NULL,
     user_id INT NULL,
     CONSTRAINT uq_clients_email UNIQUE (email),
     CONSTRAINT uq_clients_user UNIQUE (user_id),
@@ -127,6 +129,9 @@ CREATE TABLE sales (
     sale_datetime DATETIME DEFAULT CURRENT_TIMESTAMP,
     payment_type VARCHAR(30) NOT NULL,
     total INT NOT NULL,
+    status VARCHAR(20) NOT NULL DEFAULT 'ACTIVE',
+    voided_at DATETIME NULL,
+    void_reason VARCHAR(255) NULL,
 
     CONSTRAINT fk_sales_clients
         FOREIGN KEY (client_id) REFERENCES clients(client_id),

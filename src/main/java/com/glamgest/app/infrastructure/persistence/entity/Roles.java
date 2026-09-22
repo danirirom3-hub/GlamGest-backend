@@ -19,6 +19,8 @@ public class Roles implements Serializable {
     private String name;
     @Column(name = "description")
     private String description;
+    @Column(name = "active", nullable = false)
+    private Boolean active;
     @OneToMany(mappedBy = "roleId")
     private List<Users> usersList;
 
@@ -56,6 +58,14 @@ public class Roles implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 
     public List<Users> getUsersList() {

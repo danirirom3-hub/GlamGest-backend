@@ -3,6 +3,7 @@ package com.glamgest.app.infrastructure.persistence.adapter;
 import com.glamgest.app.domain.model.Service;
 import com.glamgest.app.domain.repository.ServiceRepository;
 import com.glamgest.app.infrastructure.persistence.entity.Services;
+import com.glamgest.app.infrastructure.persistence.entity.Categories;
 import com.glamgest.app.infrastructure.persistence.repository.JpaServiceRepository;
 import org.springframework.stereotype.Component;
 
@@ -65,6 +66,9 @@ public class ServiceRepositoryAdapter implements ServiceRepository {
         entity.setPrice(model.getPrice());
         entity.setDurationMinutes(model.getDurationMinutes());
         entity.setActive(model.getActive());
+        if (model.getCategoryId() != null) {
+            entity.setCategoryId(new Categories(model.getCategoryId()));
+        }
         return entity;
     }
 
@@ -75,7 +79,9 @@ public class ServiceRepositoryAdapter implements ServiceRepository {
                 entity.getDescription(),
                 entity.getPrice(),
                 entity.getDurationMinutes(),
-                entity.getActive()
+                entity.getActive(),
+                entity.getCategoryId() != null ? entity.getCategoryId().getCategoryId() : null,
+                entity.getCategoryId() != null ? entity.getCategoryId().getName() : null
         );
     }
 }

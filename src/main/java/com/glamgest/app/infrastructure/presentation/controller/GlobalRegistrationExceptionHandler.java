@@ -21,6 +21,7 @@ import com.glamgest.app.common.exception.RoleNotFoundException;
 import com.glamgest.app.common.exception.OperationNotAllowedException;
 import com.glamgest.app.common.exception.InvalidAppointmentStatusException;
 import com.glamgest.app.common.exception.InvalidDashboardPeriodException;
+import com.glamgest.app.common.exception.DuplicateCategoryNameException;
 import com.glamgest.app.infrastructure.presentation.helper.BuilderHelper;
 
 @RestControllerAdvice
@@ -40,6 +41,7 @@ public class GlobalRegistrationExceptionHandler {
             OperationNotAllowedException.class,
             InvalidAppointmentStatusException.class,
             InvalidDashboardPeriodException.class,
+            DuplicateCategoryNameException.class,
             HttpMessageNotReadableException.class,
              MethodArgumentTypeMismatchException.class })
     ResponseEntity<?> throwBadRequest(Exception ex) {

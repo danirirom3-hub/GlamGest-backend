@@ -7,14 +7,24 @@ import com.glamgest.app.common.exception.DuplicateServiceNameException;
 import com.glamgest.app.common.exception.ServiceNotFoundException;
 import com.glamgest.app.domain.model.Service;
 import com.glamgest.app.domain.repository.ServiceRepository;
+import com.glamgest.app.domain.repository.CategoryRepository;
+import com.glamgest.app.common.exception.ResourceNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @org.springframework.stereotype.Service
 public class UpdateServiceService implements UpdateServiceUseCase {
 
     private final ServiceRepository serviceRepository;
+    private final CategoryRepository categoryRepository;
+
+    @Autowired
+    public UpdateServiceService(ServiceRepository serviceRepository, CategoryRepository categoryRepository) {
+        this.serviceRepository = serviceRepository;
+        this.categoryRepository = categoryRepository;
+    }
 
     public UpdateServiceService(ServiceRepository serviceRepository) {
-        this.serviceRepository = serviceRepository;
+        this(serviceRepository, null);
     }
 
     @Override
@@ -41,6 +51,15 @@ public class UpdateServiceService implements UpdateServiceUseCase {
             existingService.setDurationMinutes(serviceUpdateDTO.getDurationMinutes());
         }
 
+        if (serviceUpdateDTO.getCategoryId() != null) {
+            if (categoryRepository == null) {
+                throw new ResourceNotFoundException("Category repository is not available");
+            }
+            existingService.setCategoryId(categoryRepository.findById(serviceUpdateDTO.getCategoryId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Category not found with id: " + serviceUpdateDTO.getCategoryId()))
+                    .getId());
+        }
+
         Service updatedService = serviceRepository.save(existingService);
 
         ServiceResponseDTO response = new ServiceResponseDTO();
@@ -50,6 +69,8 @@ public class UpdateServiceService implements UpdateServiceUseCase {
         response.setPrice(updatedService.getPrice());
         response.setDurationMinutes(updatedService.getDurationMinutes());
         response.setActive(updatedService.getActive());
+        response.setCategoryId(updatedService.getCategoryId());
+        response.setCategoryName(updatedService.getCategoryName());
 
         return response;
     }

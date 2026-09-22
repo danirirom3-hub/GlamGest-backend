@@ -9,6 +9,8 @@ public class ServiceResponseDTO {
     private Integer price;
     private Integer durationMinutes;
     private Boolean active;
+    private Integer categoryId;
+    private String categoryName;
 
     // Getters and Setters
     public Integer getId() {
@@ -58,4 +60,12 @@ public class ServiceResponseDTO {
     public void setActive(Boolean active) {
         this.active = active;
     }
+
+    public Integer getCategoryId() { return categoryId; }
+
+    public void setCategoryId(Integer categoryId) { this.categoryId = categoryId; }
+
+    public String getCategoryName() { return categoryName; }
+
+    public void setCategoryName(String categoryName) { this.categoryName = categoryName; }
 }

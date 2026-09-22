@@ -19,6 +19,8 @@ public class ServiceRequestDTO {
     @Min(value = 1, message = "Duration must be at least 1 minute")
     private Integer durationMinutes;
 
+    private Integer categoryId;
+
     // Getters and Setters
     public String getName() {
         return name;
@@ -51,4 +53,8 @@ public class ServiceRequestDTO {
     public void setDurationMinutes(Integer durationMinutes) {
         this.durationMinutes = durationMinutes;
     }
+
+    public Integer getCategoryId() { return categoryId; }
+
+    public void setCategoryId(Integer categoryId) { this.categoryId = categoryId; }
 }

@@ -27,6 +27,8 @@ public class GetServiceByIdService implements GetServiceByIdUseCase {
         dto.setPrice(service.getPrice());
         dto.setDurationMinutes(service.getDurationMinutes());
         dto.setActive(service.getActive());
+        dto.setCategoryId(service.getCategoryId());
+        dto.setCategoryName(service.getCategoryName());
         return dto;
     }
 }

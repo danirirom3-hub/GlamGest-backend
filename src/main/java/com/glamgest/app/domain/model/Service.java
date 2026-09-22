@@ -8,6 +8,8 @@ public class Service {
     private Integer price;
     private Integer durationMinutes;
     private Boolean active;
+    private Integer categoryId;
+    private String categoryName;
 
     public Service() {}
 
@@ -18,6 +20,13 @@ public class Service {
         this.price = price;
         this.durationMinutes = durationMinutes;
         this.active = active;
+    }
+
+    public Service(Integer id, String name, String description, Integer price, Integer durationMinutes,
+                   Boolean active, Integer categoryId, String categoryName) {
+        this(id, name, description, price, durationMinutes, active);
+        this.categoryId = categoryId;
+        this.categoryName = categoryName;
     }
 
     // Getters and Setters
@@ -68,4 +77,9 @@ public class Service {
     public void setActive(Boolean active) {
         this.active = active;
     }
+
+    public Integer getCategoryId() { return categoryId; }
+    public void setCategoryId(Integer categoryId) { this.categoryId = categoryId; }
+    public String getCategoryName() { return categoryName; }
+    public void setCategoryName(String categoryName) { this.categoryName = categoryName; }
 }

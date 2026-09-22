@@ -26,6 +26,9 @@ public class Services implements Serializable {
     private Integer durationMinutes;
     @Column(name = "active", nullable = false)
     private Boolean active;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "category_id", referencedColumnName = "category_id")
+    private Categories categoryId;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "serviceId")
     private List<Appointments> appointmentsList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "serviceId")
@@ -91,6 +94,10 @@ public class Services implements Serializable {
     public void setActive(Boolean active) {
         this.active = active;
     }
+
+    public Categories getCategoryId() { return categoryId; }
+
+    public void setCategoryId(Categories categoryId) { this.categoryId = categoryId; }
 
     public List<Appointments> getAppointmentsList() {
         return appointmentsList;

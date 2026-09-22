@@ -75,6 +75,15 @@ CREATE TABLE clients (
 
 -- WORKERS
 
+-- CATEGORIES
+CREATE TABLE categories (
+    category_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    description VARCHAR(255),
+    active BIT(1) DEFAULT b'1' NOT NULL,
+    CONSTRAINT uq_categories_name UNIQUE (name)
+);
+
 CREATE TABLE employees (
     employee_id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
@@ -92,7 +101,9 @@ CREATE TABLE services (
     price INT NOT NULL,
     duration_minutes INT,
     active BIT(1) DEFAULT b'1',
-    CONSTRAINT uq_services_name UNIQUE (name)
+    category_id INT NULL,
+    CONSTRAINT uq_services_name UNIQUE (name),
+    CONSTRAINT fk_services_category FOREIGN KEY (category_id) REFERENCES categories(category_id) ON DELETE RESTRICT
 );
 
 -- APPOINTMENTS
@@ -170,3 +181,4 @@ CREATE INDEX idx_appointments_datetime ON appointments(appointment_datetime);
 CREATE INDEX idx_appointments_status_datetime ON appointments(status, appointment_datetime);
 CREATE INDEX idx_sale_details_service ON sale_details(service_id);
 CREATE INDEX idx_sale_details_employee ON sale_details(employee_id);
+CREATE INDEX idx_services_category ON services(category_id);

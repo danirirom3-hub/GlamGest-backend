@@ -10,6 +10,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.glamgest.app.domain.model.User;
 import com.glamgest.app.domain.repository.ClientRepository;
@@ -24,18 +25,26 @@ public class LoginService implements LoginUseCase {
     private final JwtService jwtService;
     private final UserRepository userRepository;
     private final ClientRepository clientRepository;
+    private final String policyVersion;
 
     public LoginService(AuthenticationManager authenticationManager, JwtService jwtService) {
-        this(authenticationManager, jwtService, null, null);
+        this(authenticationManager, jwtService, null, null, "1.0");
     }
 
     @Autowired
     public LoginService(AuthenticationManager authenticationManager, JwtService jwtService,
                         UserRepository userRepository, ClientRepository clientRepository) {
+        this(authenticationManager, jwtService, userRepository, clientRepository, "1.0");
+    }
+
+    public LoginService(AuthenticationManager authenticationManager, JwtService jwtService,
+                        UserRepository userRepository, ClientRepository clientRepository,
+                        @Value("${privacy-policy.version:1.0}") String policyVersion) {
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
         this.userRepository = userRepository;
         this.clientRepository = clientRepository;
+        this.policyVersion = policyVersion;
     }
 
     @Override
@@ -66,6 +75,11 @@ public class LoginService implements LoginUseCase {
             }
         }
 
-        return new LoginResponseDTO(token, "Bearer", role, userId, clientId);
+        boolean accepted = userRepository != null && userRepository.findByEmail(email)
+                .map(user -> Boolean.TRUE.equals(user.getPrivacyPolicyAccepted())
+                        && policyVersion.equals(user.getPrivacyPolicyVersion()))
+                .orElse(false);
+        return new LoginResponseDTO(token, "Bearer", role, userId, clientId,
+                accepted, policyVersion, !accepted);
     }
 }

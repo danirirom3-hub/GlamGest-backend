@@ -2,6 +2,7 @@ package com.glamgest.app.infrastructure.configuration;
 
 import com.glamgest.app.application.service.auth.CustomUserDetailsService;
 import com.glamgest.app.application.service.auth.JwtService;
+import com.glamgest.app.application.service.auth.PolicyService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,10 +22,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final CustomUserDetailsService userDetailsService;
+    private final PolicyService policyService;
 
-    public JwtAuthenticationFilter(JwtService jwtService, CustomUserDetailsService userDetailsService) {
+    public JwtAuthenticationFilter(JwtService jwtService, CustomUserDetailsService userDetailsService,
+            PolicyService policyService) {
         this.jwtService = jwtService;
         this.userDetailsService = userDetailsService;
+        this.policyService = policyService;
     }
 
     @Override
@@ -58,6 +62,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 );
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
+
+                if (!request.getRequestURI().equals("/api/auth/policy")
+                        && !request.getRequestURI().startsWith("/api/auth/")
+                        && !policyService.isAccepted(userEmail)) {
+                    response.sendError(HttpServletResponse.SC_FORBIDDEN,
+                            "Debe aceptar la política de tratamiento de datos");
+                    return;
+                }
             }
         }
 

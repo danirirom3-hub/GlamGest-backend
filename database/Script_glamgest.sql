@@ -36,6 +36,9 @@ CREATE TABLE users (
     password VARCHAR(255) NOT NULL,
     role_id INT NOT NULL,
     active BIT(1) DEFAULT b'1' NOT NULL,
+    privacy_policy_accepted BIT(1) DEFAULT b'0' NOT NULL,
+    privacy_policy_version VARCHAR(30),
+    privacy_policy_accepted_at DATETIME,
 
     CONSTRAINT fk_users_roles
         FOREIGN KEY (role_id) REFERENCES roles(role_id) ON DELETE RESTRICT ON UPDATE RESTRICT

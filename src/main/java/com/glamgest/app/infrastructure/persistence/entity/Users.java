@@ -2,6 +2,7 @@ package com.glamgest.app.infrastructure.persistence.entity;
 
 import java.io.Serializable;
 import java.util.List;
+import java.time.LocalDateTime;
 import jakarta.persistence.*;
 
 /**
@@ -31,6 +32,12 @@ public class Users implements Serializable {
     private String password;
     @Column(name = "active", nullable = false)
     private Boolean active;
+    @Column(name = "privacy_policy_accepted", nullable = false)
+    private Boolean privacyPolicyAccepted;
+    @Column(name = "privacy_policy_version", length = 30)
+    private String privacyPolicyVersion;
+    @Column(name = "privacy_policy_accepted_at")
+    private LocalDateTime privacyPolicyAcceptedAt;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
     private List<Appointments> appointmentsList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
@@ -91,6 +98,30 @@ public class Users implements Serializable {
 
     public void setActive(Boolean active) {
         this.active = active;
+    }
+
+    public Boolean getPrivacyPolicyAccepted() {
+        return privacyPolicyAccepted;
+    }
+
+    public void setPrivacyPolicyAccepted(Boolean privacyPolicyAccepted) {
+        this.privacyPolicyAccepted = privacyPolicyAccepted;
+    }
+
+    public String getPrivacyPolicyVersion() {
+        return privacyPolicyVersion;
+    }
+
+    public void setPrivacyPolicyVersion(String privacyPolicyVersion) {
+        this.privacyPolicyVersion = privacyPolicyVersion;
+    }
+
+    public LocalDateTime getPrivacyPolicyAcceptedAt() {
+        return privacyPolicyAcceptedAt;
+    }
+
+    public void setPrivacyPolicyAcceptedAt(LocalDateTime privacyPolicyAcceptedAt) {
+        this.privacyPolicyAcceptedAt = privacyPolicyAcceptedAt;
     }
 
     public List<Appointments> getAppointmentsList() {

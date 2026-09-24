@@ -34,7 +34,8 @@ public class UserRepositoryAdapter implements UserRepository {
                         entity.getPassword(),
                         entity.getRoleId().getRoleId(),
                         entity.getRoleId().getName(),
-                        entity.getActive()));
+                        entity.getActive(), entity.getPrivacyPolicyAccepted(), entity.getPrivacyPolicyVersion(),
+                        entity.getPrivacyPolicyAcceptedAt()));
     }
 
     @Override
@@ -47,7 +48,8 @@ public class UserRepositoryAdapter implements UserRepository {
                         entity.getPassword(),
                         entity.getRoleId().getRoleId(),
                         entity.getRoleId().getName(),
-                        entity.getActive()));
+                        entity.getActive(), entity.getPrivacyPolicyAccepted(), entity.getPrivacyPolicyVersion(),
+                        entity.getPrivacyPolicyAcceptedAt()));
     }
 
     @Override
@@ -65,6 +67,9 @@ public class UserRepositoryAdapter implements UserRepository {
         entity.setEmail(user.getEmail());
         entity.setPassword(user.getPassword());
         entity.setActive(user.getActive());
+        entity.setPrivacyPolicyAccepted(user.getPrivacyPolicyAccepted());
+        entity.setPrivacyPolicyVersion(user.getPrivacyPolicyVersion());
+        entity.setPrivacyPolicyAcceptedAt(user.getPrivacyPolicyAcceptedAt());
 
         Roles role = new Roles();
         role.setRoleId(user.getRoleId());
@@ -79,7 +84,8 @@ public class UserRepositoryAdapter implements UserRepository {
                 savedEntity.getPassword(),
                 savedEntity.getRoleId().getRoleId(),
                 user.getRoleName() != null ? user.getRoleName() : savedEntity.getRoleId().getName(),
-                savedEntity.getActive());
+                savedEntity.getActive(), savedEntity.getPrivacyPolicyAccepted(), savedEntity.getPrivacyPolicyVersion(),
+                savedEntity.getPrivacyPolicyAcceptedAt());
     }
 
     @Override
@@ -98,7 +104,8 @@ public class UserRepositoryAdapter implements UserRepository {
                         entity.getPassword(),
                         entity.getRoleId().getRoleId(),
                         entity.getRoleId().getName(),
-                        entity.getActive()))
+                        entity.getActive(), entity.getPrivacyPolicyAccepted(), entity.getPrivacyPolicyVersion(),
+                        entity.getPrivacyPolicyAcceptedAt()))
                 .collect(Collectors.toList());
     }
 }

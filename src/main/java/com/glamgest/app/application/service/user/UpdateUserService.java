@@ -54,7 +54,10 @@ public class UpdateUserService implements UpdateUserUseCase {
                 passwordEncoder.encode(userUpdateDTO.getPassword()),
                 roleId,
                 roleName,
-                existingUser.getActive()
+                existingUser.getActive(),
+                existingUser.getPrivacyPolicyAccepted(),
+                existingUser.getPrivacyPolicyVersion(),
+                existingUser.getPrivacyPolicyAcceptedAt()
         );
 
         User updatedUser = userRepository.save(user);

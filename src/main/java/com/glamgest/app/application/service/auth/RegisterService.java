@@ -15,8 +15,10 @@ import com.glamgest.app.domain.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Date;
+import java.time.LocalDateTime;
 
 @Service
 public class RegisterService implements RegisterUseCase {
@@ -28,14 +30,23 @@ public class RegisterService implements RegisterUseCase {
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final String policyVersion;
 
     public RegisterService(UserRepository userRepository, ClientRepository clientRepository,
                            RoleRepository roleRepository, PasswordEncoder passwordEncoder, JwtService jwtService) {
+        this(userRepository, clientRepository, roleRepository, passwordEncoder, jwtService, "1.0");
+    }
+
+    @org.springframework.beans.factory.annotation.Autowired
+    public RegisterService(UserRepository userRepository, ClientRepository clientRepository,
+                           RoleRepository roleRepository, PasswordEncoder passwordEncoder, JwtService jwtService,
+                           @Value("${privacy-policy.version:1.0}") String policyVersion) {
         this.userRepository = userRepository;
         this.clientRepository = clientRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
+        this.policyVersion = policyVersion;
     }
 
     @Override
@@ -60,7 +71,8 @@ public class RegisterService implements RegisterUseCase {
         }
 
         User user = userRepository.save(new User(null, request.name().trim(), email,
-                passwordEncoder.encode(request.password()), clientRole.getId(), clientRole.getName(), true));
+                passwordEncoder.encode(request.password()), clientRole.getId(), clientRole.getName(), true,
+                true, policyVersion, LocalDateTime.now()));
 
         if (client == null) {
             client = new Client(null, request.name().trim(), email, request.phone(), new Date(), user.getId());
@@ -75,6 +87,7 @@ public class RegisterService implements RegisterUseCase {
         var principal = new org.springframework.security.core.userdetails.User(
                 user.getEmail(), user.getPassword(), java.util.List.of(
                         new org.springframework.security.core.authority.SimpleGrantedAuthority(clientRole.getName())));
-        return new LoginResponseDTO(jwtService.generateToken(principal), "Bearer", clientRole.getName(), user.getId(), client.getId());
+        return new LoginResponseDTO(jwtService.generateToken(principal), "Bearer", clientRole.getName(), user.getId(), client.getId(),
+                true, policyVersion, false);
     }
 }

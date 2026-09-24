@@ -19,6 +19,7 @@ SPRING_DATASOURCE_PASSWORD=<password>
 JWT_SECRET=<secret-con-al-menos-32-caracteres>
 CORS_ALLOWED_ORIGINS=http://localhost:4200
 SPRING_JPA_HIBERNATE_DDL_AUTO=validate
+PRIVACY_POLICY_VERSION=1.0
 ```
 
 Crear la base de datos con `glamgest_db.sql`. Para una base existente, limpiar duplicados de email y aplicar las migraciones de `database/migration` en orden antes de activar `validate`.
@@ -27,7 +28,13 @@ Crear la base de datos con `glamgest_db.sql`. Para una base existente, limpiar d
 
 `POST /api/auth/register` crea un usuario con rol `CLIENT` y crea o enlaza su perfil en `clients` usando el email. Si un administrador ya creó el cliente, el registro lo vincula sin duplicar sus citas.
 
-`POST /api/auth/login` devuelve el token Bearer, el rol, el identificador del usuario y el identificador del cliente cuando existe.
+`POST /api/auth/login` devuelve el token Bearer, el rol, los identificadores disponibles y el estado de aceptación de la política. Los usuarios con una política pendiente reciben `privacyPolicyRequired: true`.
+
+`PUT /api/auth/policy` acepta la versión vigente de la política para el usuario autenticado. Su cuerpo debe ser `{ "accepted": true }`. Mientras la política esté pendiente, el backend bloquea los demás endpoints protegidos.
+
+La aceptación guarda también la fecha y hora en `privacy_policy_accepted_at`. Las bases existentes deben aplicar la migración `V7__add_privacy_policy_accepted_at.sql`.
+
+`GET /api/auth/policy` devuelve la versión, fecha de vigencia y contenido de la política para que el frontend la muestre antes de solicitar la aceptación.
 
 Los clientes autenticados pueden usar:
 

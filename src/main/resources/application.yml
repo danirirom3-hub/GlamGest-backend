@@ -21,6 +21,9 @@ jwt:
   secret: ${JWT_SECRET}
   expiration: ${JWT_EXPIRATION}
 
+privacy-policy:
+  version: ${PRIVACY_POLICY_VERSION:1.0}
+
 email:
   service:
     url: ${EMAIL_SERVICE_URL:http://localhost:8081/api/email/send}

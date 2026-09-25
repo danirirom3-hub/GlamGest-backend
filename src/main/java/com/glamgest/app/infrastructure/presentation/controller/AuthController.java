@@ -5,6 +5,7 @@ import com.glamgest.app.application.dto.auth.RegisterRequestDTO;
 import com.glamgest.app.application.usecase.auth.LoginUseCase;
 import com.glamgest.app.application.usecase.auth.RegisterUseCase;
 import com.glamgest.app.application.dto.auth.PolicyAcceptanceRequestDTO;
+import com.glamgest.app.application.dto.auth.UnlockRequestDTO;
 import com.glamgest.app.application.service.auth.PolicyService;
 import com.glamgest.app.application.service.auth.RecaptchaVerificationService;
 import com.glamgest.app.application.service.auth.LoginHoneypotService;
@@ -15,6 +16,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -25,15 +28,18 @@ public class AuthController {
     private final PolicyService policyService;
     private final RecaptchaVerificationService recaptchaVerificationService;
     private final LoginHoneypotService loginHoneypotService;
+    private final AuthenticationManager authenticationManager;
 
     public AuthController(LoginUseCase loginUseCase, RegisterUseCase registerUseCase, PolicyService policyService,
                           RecaptchaVerificationService recaptchaVerificationService,
-                          LoginHoneypotService loginHoneypotService) {
+                          LoginHoneypotService loginHoneypotService,
+                          AuthenticationManager authenticationManager) {
         this.loginUseCase = loginUseCase;
         this.registerUseCase = registerUseCase;
         this.policyService = policyService;
         this.recaptchaVerificationService = recaptchaVerificationService;
         this.loginHoneypotService = loginHoneypotService;
+        this.authenticationManager = authenticationManager;
     }
 
     @PostMapping("/login")
@@ -41,6 +47,16 @@ public class AuthController {
         loginHoneypotService.validate(loginRequestDTO.website());
         recaptchaVerificationService.verify(loginRequestDTO.recaptchaToken(), request.getRemoteAddr());
         return BuilderHelper.buildResponse(loginUseCase.execute(loginRequestDTO), "Login successful", HttpStatus.OK, true);
+    }
+
+    @PostMapping("/unlock")
+    public ResponseEntity<?> unlock(@Valid @RequestBody UnlockRequestDTO request,
+            Authentication authentication) {
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                authentication.getName(), request.password()));
+
+        return BuilderHelper.buildResponse(
+                java.util.Map.of("unlocked", true), "Sesión desbloqueada", HttpStatus.OK, true);
     }
 
     @PostMapping("/register")

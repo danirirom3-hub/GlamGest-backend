@@ -33,6 +33,8 @@ Crear la base de datos con `glamgest_db.sql`. Para una base existente, limpiar d
 
 `POST /api/auth/login` devuelve el token Bearer, el rol, los identificadores disponibles y el estado de aceptación de la política. Los usuarios con una política pendiente reciben `privacyPolicyRequired: true`.
 
+`POST /api/auth/unlock` valida nuevamente la contraseña del usuario autenticado para desbloquear una sesión bloqueada por inactividad. Requiere el token Bearer vigente y recibe `{ "password": "..." }`. Devuelve `200` cuando la contraseña es válida y `401` cuando no lo es; no genera un token nuevo.
+
 Los endpoints públicos de login y registro requieren un token válido de Google reCAPTCHA v2. El frontend debe enviar el valor de `g-recaptcha-response` como `recaptchaToken` en el cuerpo de la petición. El backend valida el token directamente con Google antes de autenticar o crear la cuenta.
 
 El login también incluye el campo honeypot `website`. Debe enviarse vacío; el frontend debe mostrarlo fuera de la vista y fuera del orden de tabulación para que los usuarios reales no lo completen. Si contiene texto, el backend rechaza el login sin ejecutar la validación reCAPTCHA.

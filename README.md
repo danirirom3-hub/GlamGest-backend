@@ -20,7 +20,10 @@ JWT_SECRET=<secret-con-al-menos-32-caracteres>
 CORS_ALLOWED_ORIGINS=http://localhost:4200
 SPRING_JPA_HIBERNATE_DDL_AUTO=validate
 PRIVACY_POLICY_VERSION=1.0
+GOOGLE_RECAPTCHA_SECRET_KEY=<secret-key-de-recaptcha-v2>
 ```
+
+También puede configurarse la URL de verificación con `GOOGLE_RECAPTCHA_VERIFY_URL`; por defecto es `https://www.google.com/recaptcha/api/siteverify`.
 
 Crear la base de datos con `glamgest_db.sql`. Para una base existente, limpiar duplicados de email y aplicar las migraciones de `database/migration` en orden antes de activar `validate`.
 
@@ -29,6 +32,20 @@ Crear la base de datos con `glamgest_db.sql`. Para una base existente, limpiar d
 `POST /api/auth/register` crea un usuario con rol `CLIENT` y crea o enlaza su perfil en `clients` usando el email. Si un administrador ya creó el cliente, el registro lo vincula sin duplicar sus citas.
 
 `POST /api/auth/login` devuelve el token Bearer, el rol, los identificadores disponibles y el estado de aceptación de la política. Los usuarios con una política pendiente reciben `privacyPolicyRequired: true`.
+
+Los endpoints públicos de login y registro requieren un token válido de Google reCAPTCHA v2. El frontend debe enviar el valor de `g-recaptcha-response` como `recaptchaToken` en el cuerpo de la petición. El backend valida el token directamente con Google antes de autenticar o crear la cuenta.
+
+Ejemplo de login:
+
+```json
+{
+  "email": "usuario@example.com",
+  "password": "Password123!",
+  "recaptchaToken": "token-generado-por-recaptcha"
+}
+```
+
+Para pruebas locales, el dominio `localhost` debe estar registrado en la clave de sitio de reCAPTCHA. La clave de sitio se usa únicamente en el frontend; `GOOGLE_RECAPTCHA_SECRET_KEY` se mantiene únicamente en el backend.
 
 `PUT /api/auth/policy` acepta la versión vigente de la política para el usuario autenticado. Su cuerpo debe ser `{ "accepted": true }`. Mientras la política esté pendiente, el backend bloquea los demás endpoints protegidos.
 

@@ -18,3 +18,8 @@ jwt:
 email:
   service:
     url: http://localhost:8081/api/email/send
+
+google:
+  recaptcha:
+    secret-key: test-recaptcha-secret
+    verify-url: http://localhost/recaptcha

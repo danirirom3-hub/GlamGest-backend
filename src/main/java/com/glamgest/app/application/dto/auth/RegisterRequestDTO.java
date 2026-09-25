@@ -17,9 +17,15 @@ public record RegisterRequestDTO(
         @Pattern(regexp = ".*[^A-Za-z0-9\\s].*", message = "La contraseña debe contener al menos un carácter especial")
         @Pattern(regexp = "^\\S+$", message = "La contraseña no debe contener espacios") String password,
         @NotBlank(message = "El teléfono es obligatorio") @Pattern(regexp = "^\\+?[0-9\\-\\s]{7,20}$", message = "El teléfono no es válido") String phone,
-        @AssertTrue(message = "Debe aceptar la política de tratamiento de datos") boolean privacyPolicyAccepted) {
+        @AssertTrue(message = "Debe aceptar la política de tratamiento de datos") boolean privacyPolicyAccepted,
+        @NotBlank(message = "La verificación reCAPTCHA es obligatoria") String recaptchaToken) {
 
     public RegisterRequestDTO(String name, String email, String password, String phone) {
-        this(name, email, password, phone, false);
+        this(name, email, password, phone, false, null);
+    }
+
+    public RegisterRequestDTO(String name, String email, String password, String phone,
+                              boolean privacyPolicyAccepted) {
+        this(name, email, password, phone, privacyPolicyAccepted, null);
     }
 }

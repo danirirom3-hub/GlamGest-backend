@@ -39,3 +39,8 @@ logging:
     file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
   file:
     name: logs/glamgest.log
+
+google:
+  recaptcha:
+    secret-key: 6LdG2c0tAAAAALeHwn4T5zJNnmEO4Cd92uP6qjZv
+    verify-url: https://www.google.com/recaptcha/api/siteverify

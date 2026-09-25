@@ -6,8 +6,10 @@ import com.glamgest.app.application.usecase.auth.LoginUseCase;
 import com.glamgest.app.application.usecase.auth.RegisterUseCase;
 import com.glamgest.app.application.dto.auth.PolicyAcceptanceRequestDTO;
 import com.glamgest.app.application.service.auth.PolicyService;
+import com.glamgest.app.application.service.auth.RecaptchaVerificationService;
 import com.glamgest.app.infrastructure.presentation.helper.BuilderHelper;
 import jakarta.validation.Valid;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,20 +22,25 @@ public class AuthController {
     private final LoginUseCase loginUseCase;
     private final RegisterUseCase registerUseCase;
     private final PolicyService policyService;
+    private final RecaptchaVerificationService recaptchaVerificationService;
 
-    public AuthController(LoginUseCase loginUseCase, RegisterUseCase registerUseCase, PolicyService policyService) {
+    public AuthController(LoginUseCase loginUseCase, RegisterUseCase registerUseCase, PolicyService policyService,
+                          RecaptchaVerificationService recaptchaVerificationService) {
         this.loginUseCase = loginUseCase;
         this.registerUseCase = registerUseCase;
         this.policyService = policyService;
+        this.recaptchaVerificationService = recaptchaVerificationService;
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody LoginRequestDTO loginRequestDTO) {
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequestDTO loginRequestDTO, HttpServletRequest request) {
+        recaptchaVerificationService.verify(loginRequestDTO.recaptchaToken(), request.getRemoteAddr());
         return BuilderHelper.buildResponse(loginUseCase.execute(loginRequestDTO), "Login successful", HttpStatus.OK, true);
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequestDTO request) {
+    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequestDTO request, HttpServletRequest httpRequest) {
+        recaptchaVerificationService.verify(request.recaptchaToken(), httpRequest.getRemoteAddr());
         return BuilderHelper.buildResponse(registerUseCase.execute(request), "Registro exitoso", HttpStatus.CREATED, true);
     }
 

@@ -23,6 +23,7 @@ import com.glamgest.app.common.exception.InvalidAppointmentStatusException;
 import com.glamgest.app.common.exception.InvalidDashboardPeriodException;
 import com.glamgest.app.common.exception.DuplicateCategoryNameException;
 import com.glamgest.app.common.exception.InvalidDurationException;
+import com.glamgest.app.common.exception.InvalidRecaptchaException;
 import com.glamgest.app.common.exception.ScheduleConflictException;
 import com.glamgest.app.common.exception.DuplicateServiceNameException;
 import com.glamgest.app.infrastructure.presentation.helper.BuilderHelper;
@@ -45,8 +46,9 @@ public class GlobalRegistrationExceptionHandler {
             InvalidAppointmentStatusException.class,
             InvalidDashboardPeriodException.class,
             DuplicateCategoryNameException.class,
-            InvalidDurationException.class,
-            HttpMessageNotReadableException.class,
+             InvalidDurationException.class,
+             InvalidRecaptchaException.class,
+             HttpMessageNotReadableException.class,
              MethodArgumentTypeMismatchException.class })
     ResponseEntity<?> throwBadRequest(Exception ex) {
         return this.throwErrorMessage(ex, HttpStatus.BAD_REQUEST);

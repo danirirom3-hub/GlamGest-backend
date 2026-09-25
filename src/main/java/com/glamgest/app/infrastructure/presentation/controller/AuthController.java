@@ -7,6 +7,7 @@ import com.glamgest.app.application.usecase.auth.RegisterUseCase;
 import com.glamgest.app.application.dto.auth.PolicyAcceptanceRequestDTO;
 import com.glamgest.app.application.service.auth.PolicyService;
 import com.glamgest.app.application.service.auth.RecaptchaVerificationService;
+import com.glamgest.app.application.service.auth.LoginHoneypotService;
 import com.glamgest.app.infrastructure.presentation.helper.BuilderHelper;
 import jakarta.validation.Valid;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,17 +24,21 @@ public class AuthController {
     private final RegisterUseCase registerUseCase;
     private final PolicyService policyService;
     private final RecaptchaVerificationService recaptchaVerificationService;
+    private final LoginHoneypotService loginHoneypotService;
 
     public AuthController(LoginUseCase loginUseCase, RegisterUseCase registerUseCase, PolicyService policyService,
-                          RecaptchaVerificationService recaptchaVerificationService) {
+                          RecaptchaVerificationService recaptchaVerificationService,
+                          LoginHoneypotService loginHoneypotService) {
         this.loginUseCase = loginUseCase;
         this.registerUseCase = registerUseCase;
         this.policyService = policyService;
         this.recaptchaVerificationService = recaptchaVerificationService;
+        this.loginHoneypotService = loginHoneypotService;
     }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody LoginRequestDTO loginRequestDTO, HttpServletRequest request) {
+        loginHoneypotService.validate(loginRequestDTO.website());
         recaptchaVerificationService.verify(loginRequestDTO.recaptchaToken(), request.getRemoteAddr());
         return BuilderHelper.buildResponse(loginUseCase.execute(loginRequestDTO), "Login successful", HttpStatus.OK, true);
     }

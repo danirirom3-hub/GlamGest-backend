@@ -35,13 +35,16 @@ Crear la base de datos con `glamgest_db.sql`. Para una base existente, limpiar d
 
 Los endpoints públicos de login y registro requieren un token válido de Google reCAPTCHA v2. El frontend debe enviar el valor de `g-recaptcha-response` como `recaptchaToken` en el cuerpo de la petición. El backend valida el token directamente con Google antes de autenticar o crear la cuenta.
 
+El login también incluye el campo honeypot `website`. Debe enviarse vacío; el frontend debe mostrarlo fuera de la vista y fuera del orden de tabulación para que los usuarios reales no lo completen. Si contiene texto, el backend rechaza el login sin ejecutar la validación reCAPTCHA.
+
 Ejemplo de login:
 
 ```json
 {
   "email": "usuario@example.com",
   "password": "Password123!",
-  "recaptchaToken": "token-generado-por-recaptcha"
+  "recaptchaToken": "token-generado-por-recaptcha",
+  "website": ""
 }
 ```
 

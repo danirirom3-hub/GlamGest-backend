@@ -25,4 +25,13 @@ public interface JpaAppointmentRepository extends JpaRepository<Appointments, In
             + "WHERE a.appointment_datetime >= :from AND a.appointment_datetime < :to "
             + "GROUP BY a.employee_id, e.name ORDER BY COUNT(a.appointment_id) DESC", nativeQuery = true)
     List<Object[]> countByEmployeeBetween(@Param("from") LocalDateTime from, @Param("to") LocalDateTime to);
+
+    @Query(value = "SELECT a.appointment_datetime, c.name, e.name, s.name, a.status, "
+            + "a.duration_minutes, a.notes "
+            + "FROM appointments a JOIN clients c ON c.client_id = a.client_id "
+            + "JOIN employees e ON e.employee_id = a.employee_id "
+            + "JOIN services s ON s.service_id = a.service_id "
+            + "WHERE a.appointment_datetime >= :from AND a.appointment_datetime < :to "
+            + "ORDER BY a.appointment_datetime", nativeQuery = true)
+    List<Object[]> detailBetween(@Param("from") LocalDateTime from, @Param("to") LocalDateTime to);
 }

@@ -116,4 +116,16 @@ Ejemplo de reactivación:
 }
 ```
 
+## Reportes administrativos
+
+Los siguientes endpoints requieren la autoridad `ADMIN` y aceptan los parámetros opcionales `from` y `to` con formato `yyyy-MM-dd`. Si no se envían, se utiliza el mes actual hasta la fecha actual.
+
+- `GET /api/reports/executive/pdf` - resumen ejecutivo.
+- `GET /api/reports/appointments/pdf` - reporte de citas.
+- `GET /api/reports/sales/excel` - detalle de ventas.
+- `GET /api/reports/services/excel` - servicios más vendidos.
+- `GET /api/reports/employees/excel` - rendimiento de empleados.
+
+Los endpoints devuelven el archivo directamente como descarga (`application/pdf` o XLSX) y excluyen ventas anuladas de los reportes comerciales.
+
 Al crear un servicio con un nombre que ya pertenece a un servicio inactivo, el backend actualiza y reactiva el mismo registro conservando su identificador. Si el nombre pertenece a un servicio activo, devuelve `409 Conflict`.

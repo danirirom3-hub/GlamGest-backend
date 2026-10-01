@@ -23,6 +23,16 @@ public interface JpaSalesRepository extends JpaRepository<Sales, Integer> {
             + "GROUP BY DATE(sale_datetime) ORDER BY DATE(sale_datetime)", nativeQuery = true)
     List<Object[]> revenueByDay(@Param("from") LocalDateTime from, @Param("to") LocalDateTime to);
 
+    @Query(value = "SELECT sa.sale_datetime, sa.sale_id, c.name, e.name, s.name, "
+            + "sd.quantity, sd.unit_price, sd.subtotal, sa.payment_type "
+            + "FROM sale_details sd JOIN sales sa ON sa.sale_id = sd.sale_id "
+            + "JOIN clients c ON c.client_id = sa.client_id "
+            + "JOIN employees e ON e.employee_id = sd.employee_id "
+            + "JOIN services s ON s.service_id = sd.service_id "
+            + "WHERE sa.status = 'ACTIVE' AND sa.sale_datetime >= :from AND sa.sale_datetime < :to "
+            + "ORDER BY sa.sale_datetime, sa.sale_id, sd.detail_id", nativeQuery = true)
+    List<Object[]> activeDetailBetween(@Param("from") LocalDateTime from, @Param("to") LocalDateTime to);
+
     @Modifying
     @Transactional
     @Query("UPDATE Sales s SET s.status = 'VOIDED', s.voidedAt = CURRENT_TIMESTAMP WHERE s.saleId = :id AND s.status <> 'VOIDED'")

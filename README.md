@@ -21,6 +21,7 @@ CORS_ALLOWED_ORIGINS=http://localhost:4200
 SPRING_JPA_HIBERNATE_DDL_AUTO=validate
 PRIVACY_POLICY_VERSION=1.0
 GOOGLE_RECAPTCHA_SECRET_KEY=<secret-key-de-recaptcha-v2>
+GOOGLE_RECAPTCHA_VERIFY_URL=https://www.google.com/recaptcha/api/siteverify
 ```
 
 También puede configurarse la URL de verificación con `GOOGLE_RECAPTCHA_VERIFY_URL`; por defecto es `https://www.google.com/recaptcha/api/siteverify`.
@@ -78,6 +79,30 @@ Las pruebas usan H2 y se ejecutan con:
 ```text
 ./mvnw test
 ```
+
+## Despliegue con Docker
+
+La imagen utiliza Java 21 y escucha en el puerto definido por `PORT`, con `8080` como valor local predeterminado. Construir y ejecutar la imagen requiere que Docker Desktop esté iniciado.
+
+En el entorno Docker local existente, los contenedores comparten la red `code_default` y MySQL está disponible con el alias `mysql` en el puerto interno `3306`:
+
+```text
+docker build -t glamgest-backend .
+docker run --rm --network code_default -p 8080:8080 \
+  -e PORT=8080 \
+  -e SPRING_DATASOURCE_URL="jdbc:mysql://mysql:3306/glamgest_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true" \
+  -e SPRING_DATASOURCE_USERNAME="root" \
+  -e SPRING_DATASOURCE_PASSWORD="<password>" \
+  -e JWT_SECRET="<secret-de-al-menos-32-caracteres>" \
+  -e JWT_EXPIRATION="3600000" \
+  -e CORS_ALLOWED_ORIGINS="https://<dominio-del-frontend>" \
+  -e GOOGLE_RECAPTCHA_SECRET_KEY="<secret-key>" \
+  glamgest-backend
+```
+
+Si el backend existente ya ocupa el puerto `8080`, usar `-p 8081:8080` para probar esta imagen sin detenerlo. Desde Windows/Workbench, MySQL continúa siendo accesible mediante `localhost:3307`; ese puerto no debe usarse entre contenedores de la misma red.
+
+En producción, configurar las variables directamente en el proveedor de hosting y no incluir secretos en el repositorio. La base de datos debe existir y tener las migraciones aplicadas antes de usar `SPRING_JPA_HIBERNATE_DDL_AUTO=validate`.
 
 ## Duración de servicios y citas
 

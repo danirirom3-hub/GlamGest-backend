@@ -1,3 +1,6 @@
+server:
+  port: ${PORT:8080}
+
 spring:
   datasource:
     # Corregido: Se agregó '_db' para coincidir con tu MySQL Workbench
@@ -42,5 +45,5 @@ logging:
 
 google:
   recaptcha:
-    secret-key: 6LdG2c0tAAAAALeHwn4T5zJNnmEO4Cd92uP6qjZv
-    verify-url: https://www.google.com/recaptcha/api/siteverify
+    secret-key: ${GOOGLE_RECAPTCHA_SECRET_KEY}
+    verify-url: ${GOOGLE_RECAPTCHA_VERIFY_URL:https://www.google.com/recaptcha/api/siteverify}

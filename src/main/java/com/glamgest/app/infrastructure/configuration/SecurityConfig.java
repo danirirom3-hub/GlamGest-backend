@@ -107,8 +107,11 @@ public class SecurityConfig {
 	@Bean
 	CorsConfigurationSource configurationSource() {
 		CorsConfiguration config = new CorsConfiguration();
-		config.setAllowedOriginPatterns(Arrays.asList(allowedOrigins.split(",")));
-		config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedOriginPatterns(Arrays.stream(allowedOrigins.split(","))
+                .map(String::trim)
+                .filter(origin -> !origin.isBlank())
+                .toList());
+        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
 		config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept"));
 		config.setAllowCredentials(false);
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

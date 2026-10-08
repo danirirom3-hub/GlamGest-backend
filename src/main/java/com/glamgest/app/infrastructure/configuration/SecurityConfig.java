@@ -112,8 +112,9 @@ public class SecurityConfig {
                 .filter(origin -> !origin.isBlank())
                 .toList());
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-		config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept"));
-		config.setAllowCredentials(false);
+        config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept"));
+        config.setExposedHeaders(Arrays.asList("Content-Disposition", "Content-Length"));
+        config.setAllowCredentials(false);
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", config);
 		return source;

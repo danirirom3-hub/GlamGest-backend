@@ -18,4 +18,10 @@ public interface UserRepository {
     void deleteById(Integer id);
 
     List<User> findAll();
+
+    void activateSession(Integer userId, String sessionId);
+
+    void clearActiveSession(String email, String sessionId);
+
+    void clearAllActiveSessions();
 }

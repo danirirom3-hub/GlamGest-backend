@@ -35,7 +35,7 @@ public class UserRepositoryAdapter implements UserRepository {
                         entity.getRoleId().getRoleId(),
                         entity.getRoleId().getName(),
                         entity.getActive(), entity.getPrivacyPolicyAccepted(), entity.getPrivacyPolicyVersion(),
-                        entity.getPrivacyPolicyAcceptedAt()));
+                        entity.getPrivacyPolicyAcceptedAt(), entity.getActiveSessionId()));
     }
 
     @Override
@@ -49,7 +49,7 @@ public class UserRepositoryAdapter implements UserRepository {
                         entity.getRoleId().getRoleId(),
                         entity.getRoleId().getName(),
                         entity.getActive(), entity.getPrivacyPolicyAccepted(), entity.getPrivacyPolicyVersion(),
-                        entity.getPrivacyPolicyAcceptedAt()));
+                        entity.getPrivacyPolicyAcceptedAt(), entity.getActiveSessionId()));
     }
 
     @Override
@@ -70,6 +70,7 @@ public class UserRepositoryAdapter implements UserRepository {
         entity.setPrivacyPolicyAccepted(user.getPrivacyPolicyAccepted());
         entity.setPrivacyPolicyVersion(user.getPrivacyPolicyVersion());
         entity.setPrivacyPolicyAcceptedAt(user.getPrivacyPolicyAcceptedAt());
+        entity.setActiveSessionId(user.getActiveSessionId());
 
         Roles role = new Roles();
         role.setRoleId(user.getRoleId());
@@ -85,12 +86,27 @@ public class UserRepositoryAdapter implements UserRepository {
                 savedEntity.getRoleId().getRoleId(),
                 user.getRoleName() != null ? user.getRoleName() : savedEntity.getRoleId().getName(),
                 savedEntity.getActive(), savedEntity.getPrivacyPolicyAccepted(), savedEntity.getPrivacyPolicyVersion(),
-                savedEntity.getPrivacyPolicyAcceptedAt());
+                savedEntity.getPrivacyPolicyAcceptedAt(), savedEntity.getActiveSessionId());
     }
 
     @Override
     public void deleteById(Integer id) {
         jpaRepository.softDelete(id);
+    }
+
+    @Override
+    public void activateSession(Integer userId, String sessionId) {
+        jpaRepository.activateSession(userId, sessionId);
+    }
+
+    @Override
+    public void clearActiveSession(String email, String sessionId) {
+        jpaRepository.clearActiveSession(email, sessionId);
+    }
+
+    @Override
+    public void clearAllActiveSessions() {
+        jpaRepository.clearAllActiveSessions();
     }
 
     @Override
@@ -105,7 +121,7 @@ public class UserRepositoryAdapter implements UserRepository {
                         entity.getRoleId().getRoleId(),
                         entity.getRoleId().getName(),
                         entity.getActive(), entity.getPrivacyPolicyAccepted(), entity.getPrivacyPolicyVersion(),
-                        entity.getPrivacyPolicyAcceptedAt()))
+                        entity.getPrivacyPolicyAcceptedAt(), entity.getActiveSessionId()))
                 .collect(Collectors.toList());
     }
 }

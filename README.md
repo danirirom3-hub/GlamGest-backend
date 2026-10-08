@@ -127,6 +127,14 @@ La duración de cada cita también debe ser múltiplo de 15. El backend rechaza 
 
 Para bases existentes, ejecutar `database/migration/V5__add_appointment_effective_duration.sql`. La migración reporta duraciones de servicios inválidas y no modifica silenciosamente datos históricos.
 
+## Sesión única y backups
+
+La aplicación mantiene una sola sesión activa por usuario. Cada nuevo login invalida el token anterior; la base existente debe aplicar `database/migration/V8__add_active_session_id.sql` antes de usar `SPRING_JPA_HIBERNATE_DDL_AUTO=validate`.
+
+Los administradores pueden crear, consultar, descargar, restaurar y eliminar backups desde Configuración. Los archivos se guardan en `BACKUP_DIRECTORY` y se generan como SQL comprimido (`.sql.gz`). En Docker se utiliza el volumen `backup_data`; la imagen backend incluye `mysqldump` y el cliente `mysql`.
+
+La restauración crea automáticamente un backup previo e invalida todas las sesiones. Para bases existentes, aplicar las migraciones pendientes antes de habilitar la restauración.
+
 ## Reactivación de servicios
 
 `DELETE /api/services/{id}` desactiva el servicio sin eliminarlo físicamente. Para reactivarlo o actualizarlo, usar `PUT /api/services/{id}`; la búsqueda incluye servicios inactivos.

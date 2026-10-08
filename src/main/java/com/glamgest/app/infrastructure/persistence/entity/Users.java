@@ -38,6 +38,8 @@ public class Users implements Serializable {
     private String privacyPolicyVersion;
     @Column(name = "privacy_policy_accepted_at")
     private LocalDateTime privacyPolicyAcceptedAt;
+    @Column(name = "active_session_id", length = 64)
+    private String activeSessionId;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
     private List<Appointments> appointmentsList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
@@ -122,6 +124,14 @@ public class Users implements Serializable {
 
     public void setPrivacyPolicyAcceptedAt(LocalDateTime privacyPolicyAcceptedAt) {
         this.privacyPolicyAcceptedAt = privacyPolicyAcceptedAt;
+    }
+
+    public String getActiveSessionId() {
+        return activeSessionId;
+    }
+
+    public void setActiveSessionId(String activeSessionId) {
+        this.activeSessionId = activeSessionId;
     }
 
     public List<Appointments> getAppointmentsList() {

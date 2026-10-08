@@ -18,6 +18,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import com.glamgest.app.application.service.auth.JwtService;
+import com.glamgest.app.domain.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -29,17 +32,32 @@ public class AuthController {
     private final RecaptchaVerificationService recaptchaVerificationService;
     private final LoginHoneypotService loginHoneypotService;
     private final AuthenticationManager authenticationManager;
+    private final JwtService jwtService;
+    private final UserRepository userRepository;
 
+    @Autowired
     public AuthController(LoginUseCase loginUseCase, RegisterUseCase registerUseCase, PolicyService policyService,
                           RecaptchaVerificationService recaptchaVerificationService,
                           LoginHoneypotService loginHoneypotService,
                           AuthenticationManager authenticationManager) {
+        this(loginUseCase, registerUseCase, policyService, recaptchaVerificationService,
+                loginHoneypotService, authenticationManager, null, null);
+    }
+
+    public AuthController(LoginUseCase loginUseCase, RegisterUseCase registerUseCase, PolicyService policyService,
+                          RecaptchaVerificationService recaptchaVerificationService,
+                          LoginHoneypotService loginHoneypotService,
+                          AuthenticationManager authenticationManager,
+                          JwtService jwtService,
+                          UserRepository userRepository) {
         this.loginUseCase = loginUseCase;
         this.registerUseCase = registerUseCase;
         this.policyService = policyService;
         this.recaptchaVerificationService = recaptchaVerificationService;
         this.loginHoneypotService = loginHoneypotService;
         this.authenticationManager = authenticationManager;
+        this.jwtService = jwtService;
+        this.userRepository = userRepository;
     }
 
     @PostMapping("/login")
@@ -57,6 +75,16 @@ public class AuthController {
 
         return BuilderHelper.buildResponse(
                 java.util.Map.of("unlocked", true), "Sesión desbloqueada", HttpStatus.OK, true);
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(Authentication authentication, HttpServletRequest request) {
+        String header = request.getHeader("Authorization");
+        if (authentication != null && header != null && header.startsWith("Bearer ")) {
+            String sessionId = jwtService.extractSessionId(header.substring(7));
+            userRepository.clearActiveSession(authentication.getName(), sessionId);
+        }
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/register")

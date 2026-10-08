@@ -48,12 +48,14 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers(HttpMethod.PUT, "/api/auth/policy").authenticated()
-                        .requestMatchers(HttpMethod.POST, "/api/auth/unlock").authenticated()
-                        .requestMatchers("/api/auth/**").permitAll()
+                         .requestMatchers(HttpMethod.PUT, "/api/auth/policy").authenticated()
+                         .requestMatchers(HttpMethod.POST, "/api/auth/unlock").authenticated()
+                         .requestMatchers(HttpMethod.POST, "/api/auth/logout").authenticated()
+                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/api/dashboard/**").hasAuthority("ADMIN")
                          .requestMatchers("/api/reports/**").hasAuthority("ADMIN")
+                         .requestMatchers("/api/backups/**").hasAuthority("ADMIN")
 
                         .requestMatchers(HttpMethod.POST, "/api/users").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.GET,"/api/users").hasAuthority("ADMIN")

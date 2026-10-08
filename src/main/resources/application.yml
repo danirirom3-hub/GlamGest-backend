@@ -47,3 +47,8 @@ google:
   recaptcha:
     secret-key: ${GOOGLE_RECAPTCHA_SECRET_KEY}
     verify-url: ${GOOGLE_RECAPTCHA_VERIFY_URL:https://www.google.com/recaptcha/api/siteverify}
+
+backup:
+  directory: ${BACKUP_DIRECTORY:backups}
+  mysqldump-command: ${BACKUP_MYSQLDUMP_COMMAND:mysqldump}
+  mysql-command: ${BACKUP_MYSQL_COMMAND:mysql}

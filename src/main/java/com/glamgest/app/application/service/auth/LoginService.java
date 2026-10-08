@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.glamgest.app.domain.model.User;
 import com.glamgest.app.domain.repository.ClientRepository;
 import com.glamgest.app.domain.repository.UserRepository;
+import java.util.UUID;
 
 @Service
 public class LoginService implements LoginUseCase {
@@ -59,7 +60,10 @@ public class LoginService implements LoginUseCase {
         );
 
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        String token = jwtService.generateToken(userDetails);
+        String sessionId = UUID.randomUUID().toString();
+        String token = userRepository == null
+                ? jwtService.generateToken(userDetails)
+                : jwtService.generateToken(userDetails, sessionId);
 
         String role = userDetails.getAuthorities().stream().findFirst()
                 .map(a -> a.getAuthority()).orElse(null);
@@ -69,6 +73,7 @@ public class LoginService implements LoginUseCase {
             User user = userRepository.findByEmail(email).orElse(null);
             if (user != null) {
                 userId = user.getId();
+                userRepository.activateSession(user.getId(), sessionId);
                 if (clientRepository != null) {
                     clientId = clientRepository.findByUserId(user.getId()).map(c -> c.getId()).orElse(null);
                 }

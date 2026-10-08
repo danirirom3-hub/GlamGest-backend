@@ -16,6 +16,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import io.jsonwebtoken.JwtException;
+import com.glamgest.app.domain.repository.UserRepository;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -23,12 +25,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final CustomUserDetailsService userDetailsService;
     private final PolicyService policyService;
+    private final UserRepository userRepository;
 
     public JwtAuthenticationFilter(JwtService jwtService, CustomUserDetailsService userDetailsService,
-            PolicyService policyService) {
+            PolicyService policyService, UserRepository userRepository) {
         this.jwtService = jwtService;
         this.userDetailsService = userDetailsService;
         this.policyService = policyService;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -46,7 +50,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         jwt = authHeader.substring(7);
         try {
             userEmail = jwtService.extractUsername(jwt);
-        } catch (JwtException | IllegalArgumentException ex) {
+            String sessionId = jwtService.extractSessionId(jwt);
+            boolean activeSession = sessionId != null && userRepository.findByEmail(userEmail)
+                    .map(user -> sessionId.equals(user.getActiveSessionId()))
+                    .orElse(false);
+            if (!activeSession) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setContentType("application/json");
+                response.getWriter().write("{\"code\":\"SESSION_REPLACED\",\"message\":\"La sesión ya no está activa.\"}");
+                return;
+            }
+        } catch (JwtException | IllegalArgumentException | UsernameNotFoundException ex) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }

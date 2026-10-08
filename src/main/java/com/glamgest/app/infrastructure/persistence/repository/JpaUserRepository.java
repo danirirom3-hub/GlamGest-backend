@@ -21,4 +21,19 @@ public interface JpaUserRepository extends JpaRepository<Users, Integer> {
     @Transactional
     @Query("UPDATE Users u SET u.active = false WHERE u.userId = :id")
     void softDelete(@Param("id") Integer id);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE Users u SET u.activeSessionId = :sessionId WHERE u.userId = :id AND u.active = true")
+    void activateSession(@Param("id") Integer id, @Param("sessionId") String sessionId);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE Users u SET u.activeSessionId = null WHERE u.email = :email AND u.activeSessionId = :sessionId")
+    void clearActiveSession(@Param("email") String email, @Param("sessionId") String sessionId);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE Users u SET u.activeSessionId = null WHERE u.activeSessionId IS NOT NULL")
+    void clearAllActiveSessions();
 }

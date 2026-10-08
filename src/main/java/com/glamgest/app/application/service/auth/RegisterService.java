@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Date;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Service
 public class RegisterService implements RegisterUseCase {
@@ -87,7 +88,9 @@ public class RegisterService implements RegisterUseCase {
         var principal = new org.springframework.security.core.userdetails.User(
                 user.getEmail(), user.getPassword(), java.util.List.of(
                         new org.springframework.security.core.authority.SimpleGrantedAuthority(clientRole.getName())));
-        return new LoginResponseDTO(jwtService.generateToken(principal), "Bearer", clientRole.getName(), user.getId(), client.getId(),
+        String sessionId = UUID.randomUUID().toString();
+        userRepository.activateSession(user.getId(), sessionId);
+        return new LoginResponseDTO(jwtService.generateToken(principal, sessionId), "Bearer", clientRole.getName(), user.getId(), client.getId(),
                 true, policyVersion, false);
     }
 }

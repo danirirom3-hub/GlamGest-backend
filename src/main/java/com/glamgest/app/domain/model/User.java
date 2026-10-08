@@ -14,6 +14,7 @@ public class User {
     private Boolean privacyPolicyAccepted;
     private String privacyPolicyVersion;
     private LocalDateTime privacyPolicyAcceptedAt;
+    private String activeSessionId;
 
     public User(Integer id, String name, String email,
             String password, Integer roleId, String roleName, Boolean active) {
@@ -24,13 +25,21 @@ public class User {
             Integer roleId, String roleName, Boolean active,
             Boolean privacyPolicyAccepted, String privacyPolicyVersion) {
         this(id, name, email, password, roleId, roleName, active,
-                privacyPolicyAccepted, privacyPolicyVersion, null);
+                privacyPolicyAccepted, privacyPolicyVersion, null, null);
     }
 
     public User(Integer id, String name, String email, String password,
             Integer roleId, String roleName, Boolean active,
             Boolean privacyPolicyAccepted, String privacyPolicyVersion,
             LocalDateTime privacyPolicyAcceptedAt) {
+        this(id, name, email, password, roleId, roleName, active,
+                privacyPolicyAccepted, privacyPolicyVersion, privacyPolicyAcceptedAt, null);
+    }
+
+    public User(Integer id, String name, String email, String password,
+            Integer roleId, String roleName, Boolean active,
+            Boolean privacyPolicyAccepted, String privacyPolicyVersion,
+            LocalDateTime privacyPolicyAcceptedAt, String activeSessionId) {
 
         this.id = id;
         this.name = name;
@@ -42,6 +51,7 @@ public class User {
         this.privacyPolicyAccepted = privacyPolicyAccepted;
         this.privacyPolicyVersion = privacyPolicyVersion;
         this.privacyPolicyAcceptedAt = privacyPolicyAcceptedAt;
+        this.activeSessionId = activeSessionId;
     }
 
     public Integer getId() {
@@ -82,5 +92,9 @@ public class User {
 
     public LocalDateTime getPrivacyPolicyAcceptedAt() {
         return privacyPolicyAcceptedAt;
+    }
+
+    public String getActiveSessionId() {
+        return activeSessionId;
     }
 }

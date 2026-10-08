@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import java.security.Key;
 import java.util.Date;
 import java.util.function.Function;
+import java.util.UUID;
 
 @Service
 public class JwtService {
@@ -24,8 +25,13 @@ public class JwtService {
     }
 
     public String generateToken(UserDetails userDetails) {
+        return generateToken(userDetails, UUID.randomUUID().toString());
+    }
+
+    public String generateToken(UserDetails userDetails, String sessionId) {
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())
+                .claim("sid", sessionId)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
@@ -34,6 +40,10 @@ public class JwtService {
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
+    }
+
+    public String extractSessionId(String token) {
+        return extractClaim(token, claims -> claims.get("sid", String.class));
     }
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {

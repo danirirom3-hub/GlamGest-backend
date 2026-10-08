@@ -38,6 +38,7 @@ CREATE TABLE users (
     privacy_policy_accepted BIT(1) DEFAULT b'0' NOT NULL,
     privacy_policy_version VARCHAR(30),
     privacy_policy_accepted_at DATETIME,
+    active_session_id VARCHAR(64),
 
     CONSTRAINT fk_users_roles
         FOREIGN KEY (role_id) REFERENCES roles(role_id) ON DELETE RESTRICT ON UPDATE RESTRICT

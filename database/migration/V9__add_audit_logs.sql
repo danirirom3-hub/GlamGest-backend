@@ -1,0 +1,22 @@
+CREATE TABLE logs (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    occurred_at DATETIME NOT NULL,
+    user_id INT NULL,
+    user_email VARCHAR(150) NULL,
+    role_name VARCHAR(50) NULL,
+    action_name VARCHAR(30) NOT NULL,
+    module_name VARCHAR(50) NOT NULL,
+    resource_id VARCHAR(100) NULL,
+    http_method VARCHAR(10) NOT NULL,
+    endpoint VARCHAR(255) NOT NULL,
+    status_code INT NOT NULL,
+    description TEXT NOT NULL,
+    ip_address VARCHAR(100) NULL,
+    user_agent VARCHAR(500) NULL,
+    error_message TEXT NULL,
+    INDEX idx_logs_occurred_at (occurred_at),
+    INDEX idx_logs_user_email (user_email),
+    INDEX idx_logs_action (action_name),
+    INDEX idx_logs_module (module_name),
+    INDEX idx_logs_status (status_code)
+);

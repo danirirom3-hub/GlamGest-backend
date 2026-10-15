@@ -56,6 +56,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/dashboard/**").hasAuthority("ADMIN")
                          .requestMatchers("/api/reports/**").hasAuthority("ADMIN")
                          .requestMatchers("/api/backups/**").hasAuthority("ADMIN")
+                         .requestMatchers("/api/logs/**").hasAuthority("ADMIN")
 
                         .requestMatchers(HttpMethod.POST, "/api/users").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.GET,"/api/users").hasAuthority("ADMIN")

@@ -52,3 +52,6 @@ backup:
   directory: ${BACKUP_DIRECTORY:backups}
   mysqldump-command: ${BACKUP_MYSQLDUMP_COMMAND:mysqldump}
   mysql-command: ${BACKUP_MYSQL_COMMAND:mysql}
+
+audit:
+  retention-days: ${AUDIT_RETENTION_DAYS:365}

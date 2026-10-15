@@ -10,6 +10,8 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import com.glamgest.app.common.exception.DuplicateClientEmailException;
 import com.glamgest.app.common.exception.DuplicateClientPhoneException;
@@ -27,9 +29,17 @@ import com.glamgest.app.common.exception.InvalidRecaptchaException;
 import com.glamgest.app.common.exception.ScheduleConflictException;
 import com.glamgest.app.common.exception.DuplicateServiceNameException;
 import com.glamgest.app.infrastructure.presentation.helper.BuilderHelper;
+import com.glamgest.app.application.service.audit.AuditLogService;
 
 @RestControllerAdvice
 public class GlobalRegistrationExceptionHandler {
+
+    private void exposeAuditError(Exception exception) {
+        var attributes = RequestContextHolder.getRequestAttributes();
+        if (attributes instanceof ServletRequestAttributes servletAttributes) {
+            servletAttributes.getRequest().setAttribute(AuditLogService.ERROR_MESSAGE_ATTRIBUTE, exception.getMessage());
+        }
+    }
 
     @ExceptionHandler({ ResourceNotFoundException.class, RoleNotFoundException.class, NoHandlerFoundException.class })
     ResponseEntity<?> notFound(Exception ex) {
@@ -87,6 +97,7 @@ public class GlobalRegistrationExceptionHandler {
     }
 
     private ResponseEntity<?> throwErrorMessage(Exception ex, HttpStatus httpStatus) {
+        exposeAuditError(ex);
         return BuilderHelper.buildResponse(null, ex.getMessage(), httpStatus, false);
     }
 }

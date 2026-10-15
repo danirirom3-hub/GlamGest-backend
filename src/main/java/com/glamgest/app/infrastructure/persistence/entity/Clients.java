@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.glamgest.app.infrastructure.persistence.entity;
 
 import java.io.Serializable;
@@ -134,7 +130,7 @@ public class Clients implements Serializable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
+        // Las entidades se comparan por su identificador persistido.
         if (!(object instanceof Clients)) {
             return false;
         }

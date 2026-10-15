@@ -3,10 +3,7 @@ package com.glamgest.app.infrastructure.persistence.entity;
 import java.io.Serializable;
 import jakarta.persistence.*;
 
-/**
- *
- * @author angie
- */
+/** Entidad que representa una línea de detalle de una venta. */
 @Entity
 @Table(name = "sale_details", catalog = "glamgest_db", schema = "")
 @NamedQueries({

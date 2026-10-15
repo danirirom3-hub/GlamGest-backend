@@ -20,7 +20,7 @@ public class ServiceUpdateDTO {
     private Boolean active;
     private boolean categoryIdSet;
 
-    // Getters and Setters
+    // Métodos de acceso a los datos de actualización.
     public String getName() {
         return name;
     }

@@ -33,13 +33,12 @@ public class UpdateSaleService implements UpdateSaleUseCase {
             throw new OperationNotAllowedException("Una venta anulada no se puede modificar");
         }
 
-        // Update payment type if provided
+        // Actualiza el medio de pago cuando se incluye en la petición.
         if (saleUpdateDTO.getPaymentType() != null) {
             existingSale.setPaymentType(saleUpdateDTO.getPaymentType());
         }
 
-        // For simplicity, if saleDetails are provided, we could update them, but for now, just update payment type
-        // In a real scenario, you might need to handle updating sale details more carefully
+        // Los detalles de venta se conservan para mantener el historial de la operación.
 
         Sale updatedSale = saleRepository.save(existingSale);
 

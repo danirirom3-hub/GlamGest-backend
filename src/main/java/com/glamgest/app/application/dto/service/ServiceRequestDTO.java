@@ -23,7 +23,7 @@ public class ServiceRequestDTO {
 
     private Integer categoryId;
 
-    // Getters and Setters
+    // Métodos de acceso a los datos de la petición.
     public String getName() {
         return name;
     }

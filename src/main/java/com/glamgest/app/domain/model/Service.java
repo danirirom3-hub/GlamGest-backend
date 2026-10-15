@@ -29,7 +29,7 @@ public class Service {
         this.categoryName = categoryName;
     }
 
-    // Getters and Setters
+    // Métodos de acceso a los datos del servicio.
     public Integer getId() {
         return id;
     }

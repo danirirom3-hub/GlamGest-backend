@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.glamgest.app.infrastructure.persistence.entity;
 
 import java.io.Serializable;
@@ -9,10 +5,7 @@ import java.util.Date;
 import java.util.List;
 import jakarta.persistence.*;
 
-/**
- *
- * @author angie
- */
+/** Entidad que representa una cita almacenada en la base de datos. */
 @Entity
 @Table(name = "appointments", catalog = "glamgest_db", schema = "")
 public class Appointments implements Serializable {

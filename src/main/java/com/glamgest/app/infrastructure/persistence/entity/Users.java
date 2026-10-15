@@ -5,10 +5,7 @@ import java.util.List;
 import java.time.LocalDateTime;
 import jakarta.persistence.*;
 
-/**
- *
- * @author angie
- */
+/** Entidad que representa un usuario del sistema. */
 @Entity
 @Table(name = "users", catalog = "glamgest_db", schema = "")
 @NamedQueries({

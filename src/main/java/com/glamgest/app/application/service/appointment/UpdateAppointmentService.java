@@ -51,7 +51,7 @@ public class UpdateAppointmentService implements UpdateAppointmentUseCase {
             throw new AccessDeniedException("No puede modificar esta cita");
         }
 
-        // Validate relationships
+        // Valida que las relaciones de la cita sigan activas.
         if (jpaClientRepository.findById(appointmentUpdateDTO.getClientId())
                 .filter(client -> !Boolean.FALSE.equals(client.getActive())).isEmpty()) {
             throw new ResourceNotFoundException("Client not found with id " + appointmentUpdateDTO.getClientId());
@@ -64,7 +64,7 @@ public class UpdateAppointmentService implements UpdateAppointmentUseCase {
                 .filter(service -> !Boolean.FALSE.equals(service.getActive()))
                 .orElseThrow(() -> new ResourceNotFoundException("Service not found with id " + appointmentUpdateDTO.getServiceId()));
 
-        // Update appointment
+        // Conserva los datos restringidos del cliente y actualiza el resto.
         Integer clientId = isClient() ? existingAppointment.getClientId() : appointmentUpdateDTO.getClientId();
         String status = isClient() ? existingAppointment.getStatus()
                 : appointmentUpdateDTO.getStatus() != null ? appointmentUpdateDTO.getStatus() : existingAppointment.getStatus();

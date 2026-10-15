@@ -24,7 +24,7 @@ public class UserRepositoryAdapter implements UserRepository {
     public Optional<User> findById(Integer id) {
         Optional<Users> entityOpt = jpaRepository.findById(id);
         
-        // Filter out soft-deleted users (active = false)
+        // Excluye los usuarios desactivados mediante borrado lógico.
         return entityOpt
                 .filter(entity -> entity.getActive() != null && entity.getActive())
                 .map(entity -> new User(

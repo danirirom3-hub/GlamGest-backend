@@ -12,7 +12,7 @@ public class ServiceResponseDTO {
     private Integer categoryId;
     private String categoryName;
 
-    // Getters and Setters
+    // Métodos de acceso a los datos de la respuesta.
     public Integer getId() {
         return id;
     }

@@ -111,12 +111,12 @@ public class CreateAppointmentService implements CreateAppointmentUseCase {
 
         Appointment saved = appointmentRepository.save(appointment);
 
-        // Enviar correo al cliente
+        // Envía una confirmación al cliente después de guardar la cita.
         try {
             sendConfirmationEmail(client, saved);
         } catch (Exception e) {
             logger.error("Error al enviar correo de confirmación al cliente: {}", e.getMessage(), e);
-            // No lanzamos excepción para que la cita se cree aún si hay error en email
+            // El correo es una notificación secundaria y no bloquea la creación de la cita.
         }
 
         AppointmentResponseDTO response = new AppointmentResponseDTO();
@@ -160,9 +160,7 @@ public class CreateAppointmentService implements CreateAppointmentUseCase {
         }
     }
 
-    /**
-     * Envía un correo de confirmación al cliente cuando se crea una cita
-     */
+     /** Envía un correo de confirmación al cliente cuando se crea una cita. */
     private void sendConfirmationEmail(Client client, Appointment appointment) {
         if (client == null || client.getEmail() == null || client.getEmail().isEmpty()) {
             logger.warn("No se puede enviar correo: cliente sin email");

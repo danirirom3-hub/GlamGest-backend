@@ -37,6 +37,12 @@ public class CategoryController {
         return BuilderHelper.buildResponse(getAllCategoriesUseCase.execute(), "Categories retrieved successfully", HttpStatus.OK, true);
     }
 
+    @GetMapping("/admin")
+    public ResponseEntity<?> getAllForAdmin() {
+        return BuilderHelper.buildResponse(getAllCategoriesUseCase.executeIncludingInactive(),
+                "Categories retrieved successfully", HttpStatus.OK, true);
+    }
+
     @PostMapping
     public ResponseEntity<?> create(@Valid @RequestBody CategoryRequestDTO request) {
         CategoryResponseDTO response = createCategoryUseCase.execute(request);

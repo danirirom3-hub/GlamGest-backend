@@ -20,4 +20,10 @@ public class GetAllCategoriesService implements GetAllCategoriesUseCase {
     public List<CategoryResponseDTO> execute() {
         return categoryRepository.findAll().stream().map(CreateCategoryService::toResponse).toList();
     }
+
+    @Override
+    public List<CategoryResponseDTO> executeIncludingInactive() {
+        return categoryRepository.findAllIncludingInactive().stream()
+                .map(CreateCategoryService::toResponse).toList();
+    }
 }

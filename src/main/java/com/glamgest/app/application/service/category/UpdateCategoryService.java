@@ -20,7 +20,7 @@ public class UpdateCategoryService implements UpdateCategoryUseCase {
 
     @Override
     public CategoryResponseDTO execute(Integer id, CategoryUpdateDTO request) {
-        Category category = categoryRepository.findById(id)
+        Category category = categoryRepository.findByIdIncludingInactive(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Category not found with id " + id));
         if (request.getName() != null && !request.getName().equalsIgnoreCase(category.getName())) {
             if (categoryRepository.existsByName(request.getName())) {
@@ -30,6 +30,9 @@ public class UpdateCategoryService implements UpdateCategoryUseCase {
         }
         if (request.getDescription() != null) {
             category.setDescription(request.getDescription());
+        }
+        if (request.getActive() != null) {
+            category.setActive(request.getActive());
         }
         return CreateCategoryService.toResponse(categoryRepository.save(category));
     }

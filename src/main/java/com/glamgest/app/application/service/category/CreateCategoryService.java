@@ -22,6 +22,14 @@ public class CreateCategoryService implements CreateCategoryUseCase {
         if (categoryRepository.existsByName(request.getName())) {
             throw new DuplicateCategoryNameException("Category name already exists: " + request.getName());
         }
+        var inactiveCategory = categoryRepository.findByNameIncludingInactive(request.getName())
+                .filter(category -> !Boolean.TRUE.equals(category.getActive()));
+        if (inactiveCategory.isPresent()) {
+            Category category = inactiveCategory.get();
+            category.setActive(true);
+            category.setDescription(request.getDescription());
+            return toResponse(categoryRepository.save(category));
+        }
         Category category = new Category(null, request.getName(), request.getDescription(), true);
         return toResponse(categoryRepository.save(category));
     }

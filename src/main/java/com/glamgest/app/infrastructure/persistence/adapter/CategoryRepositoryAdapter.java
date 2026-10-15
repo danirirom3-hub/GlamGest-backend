@@ -35,8 +35,18 @@ public class CategoryRepositoryAdapter implements CategoryRepository {
     }
 
     @Override
+    public Optional<Category> findByIdIncludingInactive(Integer id) {
+        return jpaRepository.findByIdIncludingInactive(id).map(this::toModel);
+    }
+
+    @Override
     public List<Category> findAll() {
         return jpaRepository.findAllActive().stream().map(this::toModel).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Category> findAllIncludingInactive() {
+        return jpaRepository.findAllIncludingInactive().stream().map(this::toModel).collect(Collectors.toList());
     }
 
     @Override
@@ -45,8 +55,18 @@ public class CategoryRepositoryAdapter implements CategoryRepository {
     }
 
     @Override
+    public boolean hasServices(Integer id) {
+        return jpaRepository.hasServices(id);
+    }
+
+    @Override
     public boolean existsByName(String name) {
         return jpaRepository.existsActiveByName(name);
+    }
+
+    @Override
+    public Optional<Category> findByNameIncludingInactive(String name) {
+        return jpaRepository.findByNameIncludingInactive(name).map(this::toModel);
     }
 
     private Category toModel(Categories entity) {

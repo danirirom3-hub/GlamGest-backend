@@ -5,4 +5,5 @@ import java.util.List;
 
 public interface GetAllCategoriesUseCase {
     List<CategoryResponseDTO> execute();
+    List<CategoryResponseDTO> executeIncludingInactive();
 }

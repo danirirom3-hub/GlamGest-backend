@@ -1,6 +1,7 @@
 package com.glamgest.app.infrastructure.persistence.adapter;
 
 import com.glamgest.app.domain.model.Client;
+import com.glamgest.app.domain.model.ClientPage;
 import com.glamgest.app.domain.repository.ClientRepository;
 import com.glamgest.app.infrastructure.persistence.entity.Clients;
 import com.glamgest.app.infrastructure.persistence.entity.Users;
@@ -10,6 +11,8 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 @Repository
 public class ClientRepositoryAdapter implements ClientRepository {
@@ -66,6 +69,21 @@ public class ClientRepositoryAdapter implements ClientRepository {
     @Override
     public List<Client> findAll() {
         return jpaClientRepository.findAllActive().stream().map(this::toModel).collect(Collectors.toList());
+    }
+
+    @Override
+    public ClientPage findPage(String search, String sort, int page, int size) {
+        Sort ordering = switch (sort) {
+            case "oldest" -> Sort.by(Sort.Direction.ASC, "registrationDate");
+            case "name-asc" -> Sort.by(Sort.Direction.ASC, "name");
+            case "name-desc" -> Sort.by(Sort.Direction.DESC, "name");
+            default -> Sort.by(Sort.Direction.DESC, "registrationDate");
+        };
+        var result = jpaClientRepository.findActivePage(
+                search == null || search.isBlank() ? null : search.trim(),
+                PageRequest.of(Math.max(page, 0), Math.min(Math.max(size, 1), 100), ordering));
+        return new ClientPage(result.getContent().stream().map(this::toModel).toList(), result.getNumber(),
+                result.getSize(), result.getTotalElements(), result.getTotalPages());
     }
 
     private Clients toEntity(Client client) {

@@ -26,12 +26,12 @@ public class UpdateClientService implements UpdateClientUseCase {
 
         if (!java.util.Objects.equals(existingClient.getEmail(), clientUpdateDTO.getEmail())
                 && clientRepository.existsByEmail(clientUpdateDTO.getEmail())) {
-            throw new DuplicateClientEmailException("Client email already exists: " + clientUpdateDTO.getEmail());
+            throw new DuplicateClientEmailException("El correo ya está registrado para otro cliente.");
         }
 
         if (!java.util.Objects.equals(existingClient.getPhone(), clientUpdateDTO.getPhone())
                 && clientRepository.existsByPhone(clientUpdateDTO.getPhone())) {
-            throw new DuplicateClientPhoneException("Client phone already exists: " + clientUpdateDTO.getPhone());
+            throw new DuplicateClientPhoneException("El teléfono ya está registrado para otro cliente.");
         }
 
         Client clientToUpdate = new Client(

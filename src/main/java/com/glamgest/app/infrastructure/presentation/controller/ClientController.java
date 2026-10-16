@@ -57,9 +57,13 @@ public class ClientController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getAllClients() {
-        List<ClientResponseDTO> clients = getAllClientsUseCase.execute();
-        return BuilderHelper.buildResponse(clients, "Clientes obtenidos", HttpStatus.OK, true);
+    public ResponseEntity<?> getAllClients(
+            @RequestParam(required = false) String search,
+            @RequestParam(defaultValue = "recent") String sort,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "25") int size) {
+        return BuilderHelper.buildResponse(getAllClientsUseCase.execute(search, sort, page, size),
+                "Clientes obtenidos", HttpStatus.OK, true);
     }
 
     @GetMapping("/me")

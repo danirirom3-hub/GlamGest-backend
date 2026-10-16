@@ -39,12 +39,12 @@ public class CreateClientService implements CreateClientUseCase {
 
         if (clientRepository.existsByEmail(clientRequestDTO.getEmail())) {
             logger.warn("Intento de crear cliente con email duplicado: {}", clientRequestDTO.getEmail());
-            throw new DuplicateClientEmailException("Client email already exists: " + clientRequestDTO.getEmail());
+            throw new DuplicateClientEmailException("El correo ya está registrado para otro cliente.");
         }
 
         if (clientRepository.existsByPhone(clientRequestDTO.getPhone())) {
             logger.warn("Intento de crear cliente con teléfono duplicado: {}", clientRequestDTO.getPhone());
-            throw new DuplicateClientPhoneException("Client phone already exists: " + clientRequestDTO.getPhone());
+            throw new DuplicateClientPhoneException("El teléfono ya está registrado para otro cliente.");
         }
 
         Integer userId = null;

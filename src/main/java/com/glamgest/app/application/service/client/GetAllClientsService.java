@@ -1,6 +1,7 @@
 package com.glamgest.app.application.service.client;
 
 import com.glamgest.app.application.dto.client.ClientResponseDTO;
+import com.glamgest.app.application.dto.client.ClientPageResponseDTO;
 import com.glamgest.app.application.usecase.client.GetAllClientsUseCase;
 import com.glamgest.app.domain.model.Client;
 import com.glamgest.app.domain.repository.ClientRepository;
@@ -21,6 +22,13 @@ public class GetAllClientsService implements GetAllClientsUseCase {
     @Override
     public List<ClientResponseDTO> execute() {
         return clientRepository.findAll().stream().map(this::toResponseDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public ClientPageResponseDTO execute(String search, String sort, int page, int size) {
+        var result = clientRepository.findPage(search, sort, page, size);
+        return new ClientPageResponseDTO(result.items().stream().map(this::toResponseDTO).toList(),
+                result.page(), result.size(), result.totalItems(), result.totalPages());
     }
 
     private ClientResponseDTO toResponseDTO(Client client) {

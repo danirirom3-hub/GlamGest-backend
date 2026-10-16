@@ -10,15 +10,15 @@ public class ClientUpdateDTO {
     @JsonIgnore
     private Integer id;
 
-    @NotBlank
+    @NotBlank(message = "El nombre es obligatorio")
     private String name;
 
-    @NotBlank
-    @Email
+    @NotBlank(message = "El correo es obligatorio")
+    @Email(message = "El correo no tiene un formato válido")
     private String email;
 
-    @NotBlank
-    @Pattern(regexp = "^\\+?[0-9\\-\\s]{7,20}$", message = "Client phone must contain only numbers, spaces, dashes and may start with +")
+    @NotBlank(message = "El teléfono es obligatorio")
+    @Pattern(regexp = "^\\+?[0-9\\-\\s]{7,20}$", message = "El teléfono solo puede contener números, espacios, guiones y un signo + inicial")
     private String phone;
 
     public ClientUpdateDTO() {

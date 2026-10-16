@@ -2,6 +2,8 @@ package com.glamgest.app.infrastructure.persistence.repository;
 
 import com.glamgest.app.infrastructure.persistence.entity.Clients;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -31,6 +33,16 @@ public interface JpaClientRepository extends JpaRepository<Clients, Integer> {
 
     @Query("SELECT c FROM Clients c WHERE c.active = true")
     java.util.List<Clients> findAllActive();
+
+    @Query("""
+            SELECT c FROM Clients c
+            WHERE c.active = true
+              AND (:search IS NULL
+                   OR LOWER(c.name) LIKE LOWER(CONCAT('%', :search, '%'))
+                   OR LOWER(c.email) LIKE LOWER(CONCAT('%', :search, '%'))
+                   OR c.phone LIKE CONCAT('%', :search, '%'))
+            """)
+    Page<Clients> findActivePage(@Param("search") String search, Pageable pageable);
 
     @Query("SELECT COUNT(c) FROM Clients c WHERE c.registrationDate >= :from AND c.registrationDate < :to")
     long countRegisteredBetween(@Param("from") LocalDateTime from, @Param("to") LocalDateTime to);

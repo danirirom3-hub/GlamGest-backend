@@ -1,6 +1,7 @@
 package com.glamgest.app.infrastructure.presentation.controller;
 
 import com.glamgest.app.application.service.backup.BackupService;
+import com.glamgest.app.infrastructure.configuration.AuditLogContext;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ContentDisposition;
@@ -24,14 +25,18 @@ import java.util.List;
 public class BackupController {
 
     private final BackupService backupService;
+    private final AuditLogContext auditLogContext;
 
-    public BackupController(BackupService backupService) {
+    public BackupController(BackupService backupService, AuditLogContext auditLogContext) {
         this.backupService = backupService;
+        this.auditLogContext = auditLogContext;
     }
 
     @PostMapping
     public ResponseEntity<BackupService.BackupInfo> create() {
-        return ResponseEntity.ok(backupService.createBackup());
+        BackupService.BackupInfo backup = backupService.createBackup();
+        auditLogContext.setResource(backup.id(), backup.id());
+        return ResponseEntity.ok(backup);
     }
 
     @GetMapping
@@ -52,12 +57,15 @@ public class BackupController {
 
     @PostMapping("/{id}/restore")
     public ResponseEntity<BackupService.BackupInfo> restore(@PathVariable String id) {
-        return ResponseEntity.ok(backupService.restore(id));
+        BackupService.BackupInfo backup = backupService.restore(id);
+        auditLogContext.setResource(backup.id(), backup.id());
+        return ResponseEntity.ok(backup);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable String id) {
         backupService.delete(id);
+        auditLogContext.setResource(id, id);
         return ResponseEntity.noContent().build();
     }
 }

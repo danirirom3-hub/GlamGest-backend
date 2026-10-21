@@ -45,6 +45,9 @@ public class AuditLogs {
     @Column(name = "resource_id", length = 100)
     private String resourceId;
 
+    @Column(name = "resource_name", length = 255)
+    private String resourceName;
+
     @Column(name = "http_method", nullable = false, length = 10)
     private String httpMethod;
 
@@ -81,6 +84,8 @@ public class AuditLogs {
     public void setModule(String module) { this.module = module; }
     public String getResourceId() { return resourceId; }
     public void setResourceId(String resourceId) { this.resourceId = resourceId; }
+    public String getResourceName() { return resourceName; }
+    public void setResourceName(String resourceName) { this.resourceName = resourceName; }
     public String getHttpMethod() { return httpMethod; }
     public void setHttpMethod(String httpMethod) { this.httpMethod = httpMethod; }
     public String getEndpoint() { return endpoint; }

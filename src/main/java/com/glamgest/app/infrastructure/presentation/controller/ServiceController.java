@@ -9,6 +9,7 @@ import com.glamgest.app.application.usecase.service.GetAllServicesUseCase;
 import com.glamgest.app.application.usecase.service.GetServiceByIdUseCase;
 import com.glamgest.app.application.usecase.service.UpdateServiceUseCase;
 import com.glamgest.app.infrastructure.presentation.helper.BuilderHelper;
+import com.glamgest.app.infrastructure.configuration.AuditLogContext;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,22 +27,26 @@ public class ServiceController {
     private final GetServiceByIdUseCase getServiceByIdUseCase;
     private final UpdateServiceUseCase updateServiceUseCase;
     private final DeleteServiceUseCase deleteServiceUseCase;
+    private final AuditLogContext auditLogContext;
 
     public ServiceController(CreateServiceUseCase createServiceUseCase,
                              GetAllServicesUseCase getAllServicesUseCase,
                              GetServiceByIdUseCase getServiceByIdUseCase,
                              UpdateServiceUseCase updateServiceUseCase,
-                             DeleteServiceUseCase deleteServiceUseCase) {
+                             DeleteServiceUseCase deleteServiceUseCase,
+                             AuditLogContext auditLogContext) {
         this.createServiceUseCase = createServiceUseCase;
         this.getAllServicesUseCase = getAllServicesUseCase;
         this.getServiceByIdUseCase = getServiceByIdUseCase;
         this.updateServiceUseCase = updateServiceUseCase;
         this.deleteServiceUseCase = deleteServiceUseCase;
+        this.auditLogContext = auditLogContext;
     }
 
     @PostMapping
     public ResponseEntity<?> createService(@Valid @RequestBody ServiceRequestDTO serviceRequestDTO) {
         ServiceResponseDTO response = createServiceUseCase.execute(serviceRequestDTO);
+        auditLogContext.setResource(response.getId().toString(), response.getName());
         return BuilderHelper.buildResponse(response, "Service created successfully", HttpStatus.CREATED, true);
     }
 
@@ -67,12 +72,14 @@ public class ServiceController {
     @PutMapping("/{id}")
     public ResponseEntity<?> updateService(@PathVariable Integer id, @Valid @RequestBody ServiceUpdateDTO serviceUpdateDTO) {
         ServiceResponseDTO response = updateServiceUseCase.execute(id, serviceUpdateDTO);
+        auditLogContext.setResource(response.getId().toString(), response.getName());
         return BuilderHelper.buildResponse(response, "Service updated successfully", HttpStatus.OK, true);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteService(@PathVariable Integer id) {
-        deleteServiceUseCase.execute(id);
+        String serviceName = deleteServiceUseCase.execute(id);
+        auditLogContext.setResource(id.toString(), serviceName);
         return BuilderHelper.buildResponse(null, "Service deactivated successfully", HttpStatus.OK, true);
     }
 }

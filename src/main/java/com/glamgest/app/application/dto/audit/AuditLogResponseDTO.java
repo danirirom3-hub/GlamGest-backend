@@ -11,6 +11,7 @@ public record AuditLogResponseDTO(
         String action,
         String module,
         String resourceId,
+        String resourceName,
         String httpMethod,
         String endpoint,
         Integer statusCode,

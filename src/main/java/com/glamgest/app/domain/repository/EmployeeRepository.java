@@ -9,6 +9,8 @@ public interface EmployeeRepository {
 
     Optional<Employee> findById(Integer id);
 
+    Optional<Employee> findByIdIncludingInactive(Integer id);
+
     Optional<Employee> findByPhone(String phone);
 
     boolean existsByPhone(String phone);

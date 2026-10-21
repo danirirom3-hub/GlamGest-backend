@@ -9,7 +9,9 @@ import com.glamgest.app.application.usecase.appointment.DeleteAppointmentUseCase
 import com.glamgest.app.application.usecase.appointment.GetAllAppointmentsUseCase;
 import com.glamgest.app.application.usecase.appointment.UpdateAppointmentUseCase;
 import com.glamgest.app.application.usecase.appointment.ChangeAppointmentStatusUseCase;
+import com.glamgest.app.application.service.audit.AuditLogResourceNameResolver;
 import com.glamgest.app.infrastructure.presentation.helper.BuilderHelper;
+import com.glamgest.app.infrastructure.configuration.AuditLogContext;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,17 +31,23 @@ public class AppointmentController {
     private final UpdateAppointmentUseCase updateAppointmentUseCase;
     private final DeleteAppointmentUseCase deleteAppointmentUseCase;
     private final ChangeAppointmentStatusUseCase changeAppointmentStatusUseCase;
+    private final AuditLogContext auditLogContext;
+    private final AuditLogResourceNameResolver auditLogResourceNameResolver;
 
     public AppointmentController(CreateAppointmentUseCase createAppointmentUseCase,
                                  GetAllAppointmentsUseCase getAllAppointmentsUseCase,
                                  UpdateAppointmentUseCase updateAppointmentUseCase,
-                                  DeleteAppointmentUseCase deleteAppointmentUseCase,
-                                  ChangeAppointmentStatusUseCase changeAppointmentStatusUseCase) {
+                                   DeleteAppointmentUseCase deleteAppointmentUseCase,
+                                   ChangeAppointmentStatusUseCase changeAppointmentStatusUseCase,
+                                   AuditLogContext auditLogContext,
+                                   AuditLogResourceNameResolver auditLogResourceNameResolver) {
         this.createAppointmentUseCase = createAppointmentUseCase;
         this.getAllAppointmentsUseCase = getAllAppointmentsUseCase;
         this.updateAppointmentUseCase = updateAppointmentUseCase;
         this.deleteAppointmentUseCase = deleteAppointmentUseCase;
         this.changeAppointmentStatusUseCase = changeAppointmentStatusUseCase;
+        this.auditLogContext = auditLogContext;
+        this.auditLogResourceNameResolver = auditLogResourceNameResolver;
     }
 
     @PostMapping
@@ -50,6 +58,7 @@ public class AppointmentController {
         }
 
         AppointmentResponseDTO response = createAppointmentUseCase.execute(appointmentRequestDTO);
+        auditLogContext.setResource(response.getId().toString(), auditLogResourceNameResolver.appointment(response.getId()));
         return BuilderHelper.buildResponse(response, "Cita creada", HttpStatus.CREATED, true);
     }
 
@@ -76,12 +85,14 @@ public class AppointmentController {
         }
 
         AppointmentResponseDTO response = updateAppointmentUseCase.execute(appointmentUpdateDTO);
+        auditLogContext.setResource(response.getId().toString(), auditLogResourceNameResolver.appointment(response.getId()));
         return BuilderHelper.buildResponse(response, "Cita actualizada", HttpStatus.OK, true);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteAppointment(@PathVariable Integer id) {
         deleteAppointmentUseCase.execute(id);
+        auditLogContext.setResource(id.toString(), auditLogResourceNameResolver.appointment(id));
         return BuilderHelper.buildResponse(null, "Cita cancelada", HttpStatus.NO_CONTENT, true);
     }
 
@@ -89,6 +100,7 @@ public class AppointmentController {
     public ResponseEntity<?> changeStatus(@PathVariable Integer id,
                                           @Valid @RequestBody AppointmentStatusRequestDTO request) {
         AppointmentResponseDTO response = changeAppointmentStatusUseCase.execute(id, request.status());
+        auditLogContext.setResource(response.getId().toString(), auditLogResourceNameResolver.appointment(response.getId()));
         return BuilderHelper.buildResponse(response, "Estado de cita actualizado", HttpStatus.OK, true);
     }
 

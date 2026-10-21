@@ -5,6 +5,7 @@ import com.glamgest.app.application.dto.audit.AuditLogResponseDTO;
 import com.glamgest.app.infrastructure.persistence.entity.AuditLogs;
 import com.glamgest.app.infrastructure.persistence.repository.JpaAuditLogRepository;
 import com.glamgest.app.domain.repository.UserRepository;
+import com.glamgest.app.infrastructure.configuration.AuditLogContext;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
@@ -55,7 +56,10 @@ public class AuditLogService {
         log.setStatusCode(statusCode);
         log.setAction(actionFor(request.getMethod(), statusCode));
         log.setModule(moduleFor(path));
-        log.setResourceId(resourceIdFor(path));
+        String resourceId = (String) request.getAttribute(AuditLogContext.RESOURCE_ID_ATTRIBUTE);
+        log.setResourceId(resourceId == null ? resourceIdFor(path) : trim(resourceId, 100));
+        String resourceName = trim((String) request.getAttribute(AuditLogContext.RESOURCE_NAME_ATTRIBUTE), 255);
+        log.setResourceName(resourceName);
         log.setIpAddress(request.getRemoteAddr());
         log.setUserAgent(trim(request.getHeader("User-Agent"), 500));
 
@@ -71,7 +75,7 @@ public class AuditLogService {
                 ? (String) request.getAttribute(ERROR_MESSAGE_ATTRIBUTE)
                 : safeMessage(failure);
         log.setErrorMessage(trim(errorMessage, 2000));
-        log.setDescription(descriptionFor(log, errorMessage));
+        log.setDescription(descriptionFor(log, errorMessage, resourceName));
 
         try {
             repository.save(log);
@@ -102,7 +106,7 @@ public class AuditLogService {
 
     private AuditLogResponseDTO toResponse(AuditLogs log) {
         return new AuditLogResponseDTO(log.getId(), log.getOccurredAt(), log.getUserId(), log.getUserEmail(),
-                log.getRole(), log.getAction(), log.getModule(), log.getResourceId(), log.getHttpMethod(),
+                log.getRole(), log.getAction(), log.getModule(), log.getResourceId(), log.getResourceName(), log.getHttpMethod(),
                 log.getEndpoint(), log.getStatusCode(), log.getDescription(), log.getIpAddress(),
                 log.getUserAgent(), log.getErrorMessage());
     }
@@ -127,6 +131,7 @@ public class AuditLogService {
             case "clients" -> "clients";
             case "employees" -> "employees";
             case "reports" -> "reports";
+            case "roles" -> "roles";
             case "sales" -> "sales";
             case "services" -> "services";
             case "users" -> "users";
@@ -139,18 +144,19 @@ public class AuditLogService {
         return matcher.find() ? matcher.group(1) : null;
     }
 
-    private String descriptionFor(AuditLogs log, String errorMessage) {
+    private String descriptionFor(AuditLogs log, String errorMessage, String resourceName) {
         String module = moduleLabel(log.getModule());
         if (log.getStatusCode() >= 400) {
             return "No se pudo completar la operación en el módulo de " + module + "."
                     + (errorMessage == null || errorMessage.isBlank() ? "" : " Motivo: " + errorMessage);
         }
-        return switch (log.getAction()) {
+        String description = switch (log.getAction()) {
             case "CREATE" -> "Se creó un registro en el módulo de " + module + ".";
             case "UPDATE" -> "Se actualizó un registro en el módulo de " + module + ".";
             case "DELETE" -> "Se eliminó o desactivó un registro en el módulo de " + module + ".";
             default -> "Se realizó una operación en el módulo de " + module + ".";
         };
+        return resourceName == null ? description : description + " Recurso: " + resourceName + ".";
     }
 
     private String moduleLabel(String module) {
@@ -161,6 +167,7 @@ public class AuditLogService {
             case "clients" -> "clientes";
             case "employees" -> "empleados";
             case "reports" -> "reportes";
+            case "roles" -> "roles";
             case "sales" -> "ventas";
             case "services" -> "servicios";
             case "users" -> "usuarios";

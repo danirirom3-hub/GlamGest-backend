@@ -15,10 +15,10 @@ public class DeleteUserService implements DeleteUserUseCase {
     }
 
     @Override
-    public void execute(Integer id) {
-        if (!userRepository.findById(id).isPresent()) {
-            throw new ResourceNotFoundException("User not found with id " + id);
-        }
+    public String execute(Integer id) {
+        var user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id " + id));
         userRepository.deleteById(id);
+        return user.getName();
     }
 }

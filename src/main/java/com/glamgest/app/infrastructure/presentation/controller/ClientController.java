@@ -10,6 +10,7 @@ import com.glamgest.app.application.usecase.client.GetClientByIdUseCase;
 import com.glamgest.app.application.usecase.client.GetMyClientUseCase;
 import com.glamgest.app.application.usecase.client.UpdateClientUseCase;
 import com.glamgest.app.infrastructure.presentation.helper.BuilderHelper;
+import com.glamgest.app.infrastructure.configuration.AuditLogContext;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,19 +31,22 @@ public class ClientController {
     private final UpdateClientUseCase updateClientUseCase;
     private final DeleteClientUseCase deleteClientUseCase;
     private final GetMyClientUseCase getMyClientUseCase;
+    private final AuditLogContext auditLogContext;
 
     public ClientController(CreateClientUseCase createClientUseCase,
                             GetAllClientsUseCase getAllClientsUseCase,
                             GetClientByIdUseCase getClientByIdUseCase,
                             UpdateClientUseCase updateClientUseCase,
                             DeleteClientUseCase deleteClientUseCase,
-                            GetMyClientUseCase getMyClientUseCase) {
+                            GetMyClientUseCase getMyClientUseCase,
+                            AuditLogContext auditLogContext) {
         this.createClientUseCase = createClientUseCase;
         this.getAllClientsUseCase = getAllClientsUseCase;
         this.getClientByIdUseCase = getClientByIdUseCase;
         this.updateClientUseCase = updateClientUseCase;
         this.deleteClientUseCase = deleteClientUseCase;
         this.getMyClientUseCase = getMyClientUseCase;
+        this.auditLogContext = auditLogContext;
     }
 
     @PostMapping
@@ -53,6 +57,7 @@ public class ClientController {
         }
 
         ClientResponseDTO createdClient = createClientUseCase.execute(clientRequestDTO);
+        auditLogContext.setResource(createdClient.getId().toString(), createdClient.getName());
         return BuilderHelper.buildResponse(createdClient, "Cliente creado", HttpStatus.CREATED, true);
     }
 
@@ -87,12 +92,14 @@ public class ClientController {
 
         clientUpdateDTO.setId(id);
         ClientResponseDTO updatedClient = updateClientUseCase.execute(clientUpdateDTO);
+        auditLogContext.setResource(updatedClient.getId().toString(), updatedClient.getName());
         return BuilderHelper.buildResponse(updatedClient, "Cliente actualizado", HttpStatus.OK, true);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteClient(@PathVariable Integer id) {
-        deleteClientUseCase.execute(id);
+        String clientName = deleteClientUseCase.execute(id);
+        auditLogContext.setResource(id.toString(), clientName);
         return BuilderHelper.buildResponse(null, "Cliente desactivado", HttpStatus.NO_CONTENT, true);
     }
 

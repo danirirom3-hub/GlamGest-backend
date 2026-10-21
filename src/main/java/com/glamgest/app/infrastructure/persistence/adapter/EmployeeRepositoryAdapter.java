@@ -31,6 +31,16 @@ public class EmployeeRepositoryAdapter implements EmployeeRepository {
     }
 
     @Override
+    public Optional<Employee> findByIdIncludingInactive(Integer id) {
+        return jpaEmployeeRepository.findById(id)
+                .map(entity -> new Employee(
+                        entity.getEmployeeId(),
+                        entity.getName(),
+                        entity.getPhone(),
+                        entity.getActive()));
+    }
+
+    @Override
     public Optional<Employee> findByPhone(String phone) {
         return jpaEmployeeRepository.findByPhone(phone)
                 .filter(entity -> entity.getActive() != null && entity.getActive())

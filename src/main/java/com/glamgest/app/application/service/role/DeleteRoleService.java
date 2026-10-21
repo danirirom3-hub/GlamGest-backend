@@ -15,10 +15,10 @@ public class DeleteRoleService implements DeleteRoleUseCase {
     }
 
     @Override
-    public void execute(Integer id) {
-        if (!roleRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Role not found with id " + id);
-        }
+    public String execute(Integer id) {
+        var role = roleRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Role not found with id " + id));
         roleRepository.deleteById(id);
+        return role.getName();
     }
 }

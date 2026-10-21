@@ -9,6 +9,7 @@ import com.glamgest.app.application.usecase.role.GetAllRolesUseCase;
 import com.glamgest.app.application.usecase.role.GetRoleByIdUseCase;
 import com.glamgest.app.application.usecase.role.UpdateRoleUseCase;
 import com.glamgest.app.infrastructure.presentation.helper.BuilderHelper;
+import com.glamgest.app.infrastructure.configuration.AuditLogContext;
 
 import jakarta.validation.Valid;
 
@@ -30,17 +31,20 @@ public class RoleController {
     private final UpdateRoleUseCase updateRoleUseCase;
     private final DeleteRoleUseCase deleteRoleUseCase;
     private final GetAllRolesUseCase getAllRolesUseCase;
+    private final AuditLogContext auditLogContext;
 
     public RoleController(GetRoleByIdUseCase getRoleByIdUseCase,
             CreateRoleUseCase createRoleUseCase,
             UpdateRoleUseCase updateRoleUseCase,
             DeleteRoleUseCase deleteRoleUseCase,
-            GetAllRolesUseCase getAllRolesUseCase) {
+            GetAllRolesUseCase getAllRolesUseCase,
+            AuditLogContext auditLogContext) {
         this.getRoleByIdUseCase = getRoleByIdUseCase;
         this.createRoleUseCase = createRoleUseCase;
         this.updateRoleUseCase = updateRoleUseCase;
         this.deleteRoleUseCase = deleteRoleUseCase;
         this.getAllRolesUseCase = getAllRolesUseCase;
+        this.auditLogContext = auditLogContext;
     }
 
     @GetMapping("/{id}")
@@ -56,6 +60,7 @@ public class RoleController {
         }
 
         RoleResponseDTO createdRole = createRoleUseCase.execute(roleRequestDTO);
+        auditLogContext.setResource(createdRole.getId().toString(), createdRole.getName());
         return BuilderHelper.buildResponse(createdRole, "rol creado", HttpStatus.CREATED, true);
     }
 
@@ -69,12 +74,14 @@ public class RoleController {
 
         roleUpdateDTO.setId(id);
         RoleResponseDTO updatedRole = updateRoleUseCase.execute(roleUpdateDTO);
+        auditLogContext.setResource(updatedRole.getId().toString(), updatedRole.getName());
         return BuilderHelper.buildResponse(updatedRole, "rol actualizado", HttpStatus.OK, true);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteRole(@PathVariable Integer id) {
-        deleteRoleUseCase.execute(id);
+        String roleName = deleteRoleUseCase.execute(id);
+        auditLogContext.setResource(id.toString(), roleName);
         return BuilderHelper.buildResponse(null, "rol desactivado", HttpStatus.NO_CONTENT, true);
     }
 

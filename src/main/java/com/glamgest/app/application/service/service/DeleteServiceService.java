@@ -15,10 +15,10 @@ public class DeleteServiceService implements DeleteServiceUseCase {
     }
 
     @Override
-    public void execute(Integer id) {
-        if (!serviceRepository.findById(id).isPresent()) {
-            throw new ServiceNotFoundException("Service not found with id: " + id);
-        }
+    public String execute(Integer id) {
+        var service = serviceRepository.findById(id)
+                .orElseThrow(() -> new ServiceNotFoundException("Service not found with id: " + id));
         serviceRepository.deleteById(id);
+        return service.getName();
     }
 }

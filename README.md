@@ -163,7 +163,7 @@ Los endpoints devuelven el archivo directamente como descarga (`application/pdf`
 
 ## Auditoría y logs
 
-Las operaciones de escritura de la API se registran automáticamente en `logs`. Se incluyen las acciones exitosas y fallidas realizadas por administradores, empleados y clientes. Las peticiones de lectura, autenticación y los datos sensibles como contraseñas y tokens no se almacenan.
+Las operaciones de escritura de la API se registran automáticamente en `logs`. Se incluyen las acciones exitosas y fallidas realizadas por administradores, empleados y clientes. Las peticiones de lectura, autenticación y los datos sensibles como contraseñas y tokens no se almacenan. Las operaciones exitosas guardan también el identificador y, cuando corresponde, el nombre visible del recurso afectado para enriquecer la descripción en la interfaz.
 
 La consulta está restringida a administradores mediante:
 
@@ -171,6 +171,6 @@ La consulta está restringida a administradores mediante:
 
 Admite los filtros opcionales `from`, `to`, `user`, `action`, `module`, `status` y `text`, además de `page` y `size`. La respuesta contiene un máximo de 100 registros por página y se ordena del más reciente al más antiguo.
 
-Los logs se conservan durante 365 días por defecto y se eliminan automáticamente. El período puede modificarse con `AUDIT_RETENTION_DAYS`. Para bases existentes con `SPRING_JPA_HIBERNATE_DDL_AUTO=validate`, aplicar `database/migration/V9__add_audit_logs.sql` antes de iniciar el backend.
+Los logs se conservan durante 365 días por defecto y se eliminan automáticamente. El período puede modificarse con `AUDIT_RETENTION_DAYS`. Para bases existentes con `SPRING_JPA_HIBERNATE_DDL_AUTO=validate`, aplicar `database/migration/V9__add_audit_logs.sql` si la tabla aún no existe y `database/migration/V10__add_audit_log_resource_name.sql` para agregar el nombre del recurso. Los registros anteriores conservan sus descripciones originales y no se modifican.
 
 Al crear un servicio con un nombre que ya pertenece a un servicio inactivo, el backend actualiza y reactiva el mismo registro conservando su identificador. Si el nombre pertenece a un servicio activo, devuelve `409 Conflict`.

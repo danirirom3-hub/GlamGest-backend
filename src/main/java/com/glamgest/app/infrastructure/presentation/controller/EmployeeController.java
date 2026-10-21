@@ -9,6 +9,7 @@ import com.glamgest.app.application.usecase.employee.GetAllEmployeesUseCase;
 import com.glamgest.app.application.usecase.employee.GetEmployeeByIdUseCase;
 import com.glamgest.app.application.usecase.employee.UpdateEmployeeUseCase;
 import com.glamgest.app.infrastructure.presentation.helper.BuilderHelper;
+import com.glamgest.app.infrastructure.configuration.AuditLogContext;
 
 import jakarta.validation.Valid;
 
@@ -30,17 +31,20 @@ public class EmployeeController {
     private final UpdateEmployeeUseCase updateEmployeeUseCase;
     private final DeleteEmployeeUseCase deleteEmployeeUseCase;
     private final GetAllEmployeesUseCase getAllEmployeesUseCase;
+    private final AuditLogContext auditLogContext;
 
     public EmployeeController(GetEmployeeByIdUseCase getEmployeeByIdUseCase,
             CreateEmployeeUseCase createEmployeeUseCase,
             UpdateEmployeeUseCase updateEmployeeUseCase,
             DeleteEmployeeUseCase deleteEmployeeUseCase,
-            GetAllEmployeesUseCase getAllEmployeesUseCase) {
+            GetAllEmployeesUseCase getAllEmployeesUseCase,
+            AuditLogContext auditLogContext) {
         this.getEmployeeByIdUseCase = getEmployeeByIdUseCase;
         this.createEmployeeUseCase = createEmployeeUseCase;
         this.updateEmployeeUseCase = updateEmployeeUseCase;
         this.deleteEmployeeUseCase = deleteEmployeeUseCase;
         this.getAllEmployeesUseCase = getAllEmployeesUseCase;
+        this.auditLogContext = auditLogContext;
     }
 
     @GetMapping("/{id}")
@@ -56,6 +60,7 @@ public class EmployeeController {
         }
 
         EmployeeResponseDTO createdEmployee = createEmployeeUseCase.execute(employeeRequestDTO);
+        auditLogContext.setResource(createdEmployee.getId().toString(), createdEmployee.getName());
         return BuilderHelper.buildResponse(createdEmployee, "empleado creado", HttpStatus.CREATED, true);
     }
 
@@ -69,12 +74,14 @@ public class EmployeeController {
 
         employeeUpdateDTO.setId(id);
         EmployeeResponseDTO updatedEmployee = updateEmployeeUseCase.execute(employeeUpdateDTO);
+        auditLogContext.setResource(updatedEmployee.getId().toString(), updatedEmployee.getName());
         return BuilderHelper.buildResponse(updatedEmployee, "empleado actualizado", HttpStatus.OK, true);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteEmployee(@PathVariable Integer id) {
-        deleteEmployeeUseCase.execute(id);
+        String employeeName = deleteEmployeeUseCase.execute(id);
+        auditLogContext.setResource(id.toString(), employeeName);
         return BuilderHelper.buildResponse(null, "empleado desactivado", HttpStatus.NO_CONTENT, true);
     }
 

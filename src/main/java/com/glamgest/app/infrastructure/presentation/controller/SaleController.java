@@ -8,6 +8,8 @@ import com.glamgest.app.application.usecase.sale.DeleteSaleUseCase;
 import com.glamgest.app.application.usecase.sale.GetAllSalesUseCase;
 import com.glamgest.app.application.usecase.sale.UpdateSaleUseCase;
 import com.glamgest.app.infrastructure.presentation.helper.BuilderHelper;
+import com.glamgest.app.infrastructure.configuration.AuditLogContext;
+import com.glamgest.app.application.service.audit.AuditLogResourceNameResolver;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,15 +28,21 @@ public class SaleController {
     private final GetAllSalesUseCase getAllSalesUseCase;
     private final UpdateSaleUseCase updateSaleUseCase;
     private final DeleteSaleUseCase deleteSaleUseCase;
+    private final AuditLogContext auditLogContext;
+    private final AuditLogResourceNameResolver auditLogResourceNameResolver;
 
     public SaleController(CreateSaleUseCase createSaleUseCase,
                           GetAllSalesUseCase getAllSalesUseCase,
                           UpdateSaleUseCase updateSaleUseCase,
-                          DeleteSaleUseCase deleteSaleUseCase) {
+                          DeleteSaleUseCase deleteSaleUseCase,
+                          AuditLogContext auditLogContext,
+                          AuditLogResourceNameResolver auditLogResourceNameResolver) {
         this.createSaleUseCase = createSaleUseCase;
         this.getAllSalesUseCase = getAllSalesUseCase;
         this.updateSaleUseCase = updateSaleUseCase;
         this.deleteSaleUseCase = deleteSaleUseCase;
+        this.auditLogContext = auditLogContext;
+        this.auditLogResourceNameResolver = auditLogResourceNameResolver;
     }
 
     @PostMapping
@@ -45,6 +53,7 @@ public class SaleController {
         }
 
         SaleResponseDTO response = createSaleUseCase.execute(saleRequestDTO);
+        auditLogContext.setResource(response.getId().toString(), auditLogResourceNameResolver.sale(response.getId()));
         return BuilderHelper.buildResponse(response, "Venta creada", HttpStatus.CREATED, true);
     }
 
@@ -64,12 +73,14 @@ public class SaleController {
 
         saleUpdateDTO.setId(id);
         SaleResponseDTO response = updateSaleUseCase.execute(saleUpdateDTO);
+        auditLogContext.setResource(response.getId().toString(), auditLogResourceNameResolver.sale(response.getId()));
         return BuilderHelper.buildResponse(response, "Venta actualizada", HttpStatus.OK, true);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteSale(@PathVariable Integer id) {
         deleteSaleUseCase.execute(id);
+        auditLogContext.setResource(id.toString(), auditLogResourceNameResolver.sale(id));
         return BuilderHelper.buildResponse(null, "Venta anulada", HttpStatus.NO_CONTENT, true);
     }
 

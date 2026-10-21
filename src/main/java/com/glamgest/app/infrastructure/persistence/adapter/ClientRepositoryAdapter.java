@@ -38,6 +38,11 @@ public class ClientRepositoryAdapter implements ClientRepository {
     }
 
     @Override
+    public Optional<Client> findByIdIncludingInactive(Integer id) {
+        return jpaClientRepository.findById(id).map(this::toModel);
+    }
+
+    @Override
     public Optional<Client> findByEmail(String email) {
         return jpaClientRepository.findByEmail(email).map(this::toModel);
     }

@@ -16,15 +16,15 @@ public class DeleteCategoryService implements DeleteCategoryUseCase {
     }
 
     @Override
-    public void execute(Integer id) {
-        if (categoryRepository.findById(id).isEmpty()) {
-            throw new ResourceNotFoundException("Category not found with id " + id);
-        }
+    public String execute(Integer id) {
+        var category = categoryRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Category not found with id " + id));
         if (categoryRepository.hasServices(id)) {
             throw new OperationNotAllowedException(
                     "No se puede desactivar una categoría que tiene servicios relacionados. "
                             + "Retira la categoría de esos servicios primero.");
         }
         categoryRepository.deleteById(id);
+        return category.getName();
     }
 }

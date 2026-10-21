@@ -15,10 +15,10 @@ public class DeleteClientService implements DeleteClientUseCase {
     }
 
     @Override
-    public void execute(Integer id) {
-        if (clientRepository.findById(id).isEmpty()) {
-            throw new ResourceNotFoundException("Client not found with id " + id);
-        }
+    public String execute(Integer id) {
+        var client = clientRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Client not found with id " + id));
         clientRepository.deleteById(id);
+        return client.getName();
     }
 }

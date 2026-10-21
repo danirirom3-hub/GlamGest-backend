@@ -24,6 +24,7 @@ public interface JpaAuditLogRepository extends JpaRepository<AuditLogs, Long> {
               AND (:module IS NULL OR l.module = :module)
               AND (:status IS NULL OR l.statusCode = :status)
               AND (:text IS NULL OR LOWER(l.description) LIKE LOWER(CONCAT('%', :text, '%'))
+                   OR LOWER(l.resourceName) LIKE LOWER(CONCAT('%', :text, '%'))
                    OR LOWER(l.endpoint) LIKE LOWER(CONCAT('%', :text, '%')))
             ORDER BY l.occurredAt DESC
             """)

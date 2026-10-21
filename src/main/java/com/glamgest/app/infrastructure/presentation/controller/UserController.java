@@ -9,6 +9,7 @@ import com.glamgest.app.application.usecase.user.GetAllUsersUseCase;
 import com.glamgest.app.application.usecase.user.GetUserByIdUseCase;
 import com.glamgest.app.application.usecase.user.UpdateUserUseCase;
 import com.glamgest.app.infrastructure.presentation.helper.BuilderHelper;
+import com.glamgest.app.infrastructure.configuration.AuditLogContext;
 
 import jakarta.validation.Valid;
 
@@ -30,17 +31,20 @@ public class UserController {
     private final UpdateUserUseCase updateUserUseCase;
     private final DeleteUserUseCase deleteUserUseCase;
     private final GetAllUsersUseCase getAllUsersUseCase;
+    private final AuditLogContext auditLogContext;
 
     public UserController(GetUserByIdUseCase getUserByIdUseCase,
             CreateUserUseCase createUserUseCase,
             UpdateUserUseCase updateUserUseCase,
             DeleteUserUseCase deleteUserUseCase,
-            GetAllUsersUseCase getAllUsersUseCase) {
+            GetAllUsersUseCase getAllUsersUseCase,
+            AuditLogContext auditLogContext) {
         this.getUserByIdUseCase = getUserByIdUseCase;
         this.createUserUseCase = createUserUseCase;
         this.updateUserUseCase = updateUserUseCase;
         this.deleteUserUseCase = deleteUserUseCase;
         this.getAllUsersUseCase = getAllUsersUseCase;
+        this.auditLogContext = auditLogContext;
     }
 
     @GetMapping("/{id}")
@@ -56,6 +60,7 @@ public class UserController {
         }
 
         UserResponseDTO createdUser = createUserUseCase.execute(userRequestDTO);
+        auditLogContext.setResource(createdUser.getId().toString(), createdUser.getName());
         return BuilderHelper.buildResponse(createdUser, "usuario creado", HttpStatus.CREATED, true);
     }
 
@@ -69,12 +74,14 @@ public class UserController {
 
         userUpdateDTO.setId(id);
         UserResponseDTO updatedUser = updateUserUseCase.execute(userUpdateDTO);
+        auditLogContext.setResource(updatedUser.getId().toString(), updatedUser.getName());
         return BuilderHelper.buildResponse(updatedUser, "usuario actualizado", HttpStatus.OK, true);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable Integer id) {
-        deleteUserUseCase.execute(id);
+        String userName = deleteUserUseCase.execute(id);
+        auditLogContext.setResource(id.toString(), userName);
         return BuilderHelper.buildResponse(null, "usuario desactivado", HttpStatus.NO_CONTENT, true);
     }
 

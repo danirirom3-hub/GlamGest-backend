@@ -12,6 +12,8 @@ public interface ClientRepository {
 
     Optional<Client> findById(Integer id);
 
+    Optional<Client> findByIdIncludingInactive(Integer id);
+
     Optional<Client> findByEmail(String email);
 
     Optional<Client> findByPhone(String phone);

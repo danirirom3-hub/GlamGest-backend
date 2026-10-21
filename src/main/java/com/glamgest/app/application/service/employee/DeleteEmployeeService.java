@@ -15,10 +15,10 @@ public class DeleteEmployeeService implements DeleteEmployeeUseCase {
     }
 
     @Override
-    public void execute(Integer id) {
-        if (!employeeRepository.findById(id).isPresent()) {
-            throw new ResourceNotFoundException("Employee not found with id " + id);
-        }
+    public String execute(Integer id) {
+        var employee = employeeRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Employee not found with id " + id));
         employeeRepository.deleteById(id);
+        return employee.getName();
     }
 }

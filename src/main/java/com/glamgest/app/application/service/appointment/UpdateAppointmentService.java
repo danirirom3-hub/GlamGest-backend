@@ -17,6 +17,7 @@ import com.glamgest.app.domain.repository.UserRepository;
 import com.glamgest.app.common.constant.AppointmentStatusRules;
 import com.glamgest.app.common.exception.ScheduleConflictException;
 import com.glamgest.app.common.validation.DurationRules;
+import com.glamgest.app.application.service.schedule.BusinessScheduleService;
 
 import java.util.Date;
 
@@ -29,18 +30,21 @@ public class UpdateAppointmentService implements UpdateAppointmentUseCase {
     private final JpaServiceRepository jpaServiceRepository;
     private final ClientRepository clientRepository;
     private final UserRepository userRepository;
+    private final BusinessScheduleService businessScheduleService;
 
     public UpdateAppointmentService(AppointmentRepository appointmentRepository,
                                    JpaClientRepository jpaClientRepository,
                                    JpaEmployeeRepository jpaEmployeeRepository,
                                    JpaServiceRepository jpaServiceRepository,
-                                   ClientRepository clientRepository, UserRepository userRepository) {
+                                   ClientRepository clientRepository, UserRepository userRepository,
+                                   BusinessScheduleService businessScheduleService) {
         this.appointmentRepository = appointmentRepository;
         this.jpaClientRepository = jpaClientRepository;
         this.jpaEmployeeRepository = jpaEmployeeRepository;
         this.jpaServiceRepository = jpaServiceRepository;
         this.clientRepository = clientRepository;
         this.userRepository = userRepository;
+        this.businessScheduleService = businessScheduleService;
     }
 
     @Override
@@ -83,6 +87,8 @@ public class UpdateAppointmentService implements UpdateAppointmentUseCase {
         if (!"CANCELLED".equalsIgnoreCase(status) && !"NO_SHOW".equalsIgnoreCase(status)) {
             ensureNoOverlap(appointmentUpdateDTO.getEmployeeId(), appointmentUpdateDTO.getAppointmentDatetime(),
                     durationMinutes, appointmentUpdateDTO.getId());
+            businessScheduleService.validateAppointment(appointmentUpdateDTO.getAppointmentDatetime(),
+                    clientId, appointmentUpdateDTO.getEmployeeId(), durationMinutes, appointmentUpdateDTO.getId());
         }
         Appointment updatedAppointment = new Appointment(
                 appointmentUpdateDTO.getId(),

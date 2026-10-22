@@ -16,14 +16,23 @@ import com.glamgest.app.infrastructure.persistence.repository.JpaAppointmentRepo
 import com.glamgest.app.infrastructure.persistence.repository.JpaClientRepository;
 import com.glamgest.app.infrastructure.persistence.repository.JpaEmployeeRepository;
 import com.glamgest.app.infrastructure.persistence.repository.JpaSalesRepository;
+import com.glamgest.app.infrastructure.persistence.repository.JpaSaleDetailsRepository;
 import com.glamgest.app.infrastructure.persistence.repository.JpaServiceRepository;
 import com.glamgest.app.infrastructure.persistence.repository.JpaUserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,19 +44,25 @@ public class CreateSaleService implements CreateSaleUseCase {
     private final JpaAppointmentRepository jpaAppointmentRepository;
     private final JpaEmployeeRepository jpaEmployeeRepository;
     private final JpaServiceRepository jpaServiceRepository;
+    private final JpaSaleDetailsRepository jpaSaleDetailsRepository;
+    private final ZoneId businessZone;
 
     public CreateSaleService(JpaSalesRepository jpaSalesRepository,
                              JpaClientRepository jpaClientRepository,
                              JpaUserRepository jpaUserRepository,
                              JpaAppointmentRepository jpaAppointmentRepository,
                              JpaEmployeeRepository jpaEmployeeRepository,
-                             JpaServiceRepository jpaServiceRepository) {
+                             JpaServiceRepository jpaServiceRepository,
+                             JpaSaleDetailsRepository jpaSaleDetailsRepository,
+                             @Value("${business.time-zone:America/Bogota}") String businessTimeZone) {
         this.jpaSalesRepository = jpaSalesRepository;
         this.jpaClientRepository = jpaClientRepository;
         this.jpaUserRepository = jpaUserRepository;
         this.jpaAppointmentRepository = jpaAppointmentRepository;
         this.jpaEmployeeRepository = jpaEmployeeRepository;
         this.jpaServiceRepository = jpaServiceRepository;
+        this.jpaSaleDetailsRepository = jpaSaleDetailsRepository;
+        this.businessZone = ZoneId.of(businessTimeZone);
     }
 
     @Override
@@ -56,6 +71,8 @@ public class CreateSaleService implements CreateSaleUseCase {
         if (saleRequestDTO.getSaleDetails() == null || saleRequestDTO.getSaleDetails().isEmpty()) {
             throw new IllegalArgumentException("Sale must contain at least one sale detail");
         }
+
+        Map<Integer, Appointments> selectedAppointments = loadAndValidateAppointments(saleRequestDTO);
 
         Sales sale = new Sales();
         sale.setSaleDatetime(new Date());
@@ -74,7 +91,7 @@ public class CreateSaleService implements CreateSaleUseCase {
         sale.setPaymentType(saleRequestDTO.getPaymentType());
 
         List<SaleDetails> saleDetails = saleRequestDTO.getSaleDetails().stream()
-                .map(detailRequest -> buildSaleDetail(detailRequest, sale))
+                .map(detailRequest -> buildSaleDetail(detailRequest, sale, selectedAppointments))
                 .collect(Collectors.toList());
 
         int total = saleDetails.stream()
@@ -86,17 +103,59 @@ public class CreateSaleService implements CreateSaleUseCase {
         saleDetails.forEach(detail -> detail.setSaleId(sale));
 
         Sales savedSale = jpaSalesRepository.save(sale);
+        selectedAppointments.values().forEach(appointment -> {
+            appointment.setStatus(Constant.APPOINTMENT_STATUS_COMPLETED);
+            jpaAppointmentRepository.save(appointment);
+        });
         return toSaleResponseDTO(savedSale);
     }
 
-    private SaleDetails buildSaleDetail(SaleDetailRequestDTO detailRequest, Sales sale) {
+    private Map<Integer, Appointments> loadAndValidateAppointments(SaleRequestDTO request) {
+        List<Integer> appointmentIds = request.getSaleDetails().stream()
+                .map(SaleDetailRequestDTO::getAppointmentId)
+                .filter(id -> id != null)
+                .toList();
+        if (new HashSet<>(appointmentIds).size() != appointmentIds.size()) {
+            throw new IllegalArgumentException("Each appointment can only be billed once per sale");
+        }
+        if (appointmentIds.isEmpty()) return Map.of();
+
+        Set<Integer> alreadyBilled = jpaSaleDetailsRepository.findActivelyBilledAppointmentIds(appointmentIds);
+        if (!alreadyBilled.isEmpty()) {
+            throw new IllegalArgumentException("Appointment " + alreadyBilled.iterator().next() + " is already billed");
+        }
+
+        Map<Integer, Appointments> selected = new HashMap<>();
+        LocalDate businessDate = null;
+        for (Integer appointmentId : appointmentIds) {
+            Appointments appointment = jpaAppointmentRepository.findById(appointmentId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Appointment not found with id " + appointmentId));
+            if (Constant.APPOINTMENT_STATUS_CANCELLED.equalsIgnoreCase(appointment.getStatus())
+                    || Constant.APPOINTMENT_STATUS_NO_SHOW.equalsIgnoreCase(appointment.getStatus())) {
+                throw new IllegalArgumentException("No se puede facturar una cita cancelada o no asistida");
+            }
+            if (!Objects.equals(appointment.getClientId().getClientId(), request.getClientId())) {
+                throw new IllegalArgumentException("All appointments in a sale must belong to the selected client");
+            }
+            LocalDate appointmentDate = appointment.getAppointmentDatetime().toInstant()
+                    .atZone(businessZone).toLocalDate();
+            if (businessDate != null && !businessDate.equals(appointmentDate)) {
+                throw new IllegalArgumentException("All appointments in a sale must have the same business date");
+            }
+            businessDate = appointmentDate;
+            selected.put(appointmentId, appointment);
+        }
+        return selected;
+    }
+
+    private SaleDetails buildSaleDetail(SaleDetailRequestDTO detailRequest, Sales sale,
+                                        Map<Integer, Appointments> selectedAppointments) {
         Appointments appointment = null;
         if (detailRequest.getAppointmentId() != null) {
-            appointment = jpaAppointmentRepository.findById(detailRequest.getAppointmentId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Appointment not found with id " + detailRequest.getAppointmentId()));
-            if ("CANCELLED".equalsIgnoreCase(appointment.getStatus())
-                    || "NO_SHOW".equalsIgnoreCase(appointment.getStatus())) {
-                throw new IllegalArgumentException("No se puede facturar una cita cancelada o no asistida");
+            appointment = selectedAppointments.get(detailRequest.getAppointmentId());
+            if (detailRequest.getServiceId() != null
+                    && !detailRequest.getServiceId().equals(appointment.getServiceId().getServiceId())) {
+                throw new IllegalArgumentException("A sale appointment line must use the service assigned to that appointment");
             }
         }
 

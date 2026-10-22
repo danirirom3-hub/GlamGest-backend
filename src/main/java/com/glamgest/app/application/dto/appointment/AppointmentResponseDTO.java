@@ -13,6 +13,8 @@ public class AppointmentResponseDTO {
     private Integer serviceId;
     private Integer userId;
     private Integer durationMinutes;
+    private Boolean billed;
+    private Integer performedByEmployeeId;
 
     public AppointmentResponseDTO() {
     }
@@ -96,4 +98,12 @@ public class AppointmentResponseDTO {
     public Integer getDurationMinutes() { return durationMinutes; }
 
     public void setDurationMinutes(Integer durationMinutes) { this.durationMinutes = durationMinutes; }
+
+    public Boolean getBilled() { return billed; }
+
+    public void setBilled(Boolean billed) { this.billed = billed; }
+
+    public Integer getPerformedByEmployeeId() { return performedByEmployeeId; }
+
+    public void setPerformedByEmployeeId(Integer performedByEmployeeId) { this.performedByEmployeeId = performedByEmployeeId; }
 }

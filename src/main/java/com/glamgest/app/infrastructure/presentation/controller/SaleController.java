@@ -3,6 +3,7 @@ package com.glamgest.app.infrastructure.presentation.controller;
 import com.glamgest.app.application.dto.sale.SaleRequestDTO;
 import com.glamgest.app.application.dto.sale.SaleResponseDTO;
 import com.glamgest.app.application.dto.sale.SaleUpdateDTO;
+import com.glamgest.app.application.service.sale.CashierGroupService;
 import com.glamgest.app.application.usecase.sale.CreateSaleUseCase;
 import com.glamgest.app.application.usecase.sale.DeleteSaleUseCase;
 import com.glamgest.app.application.usecase.sale.GetAllSalesUseCase;
@@ -30,19 +31,22 @@ public class SaleController {
     private final DeleteSaleUseCase deleteSaleUseCase;
     private final AuditLogContext auditLogContext;
     private final AuditLogResourceNameResolver auditLogResourceNameResolver;
+    private final CashierGroupService cashierGroupService;
 
     public SaleController(CreateSaleUseCase createSaleUseCase,
                           GetAllSalesUseCase getAllSalesUseCase,
                           UpdateSaleUseCase updateSaleUseCase,
                           DeleteSaleUseCase deleteSaleUseCase,
                           AuditLogContext auditLogContext,
-                          AuditLogResourceNameResolver auditLogResourceNameResolver) {
+                          AuditLogResourceNameResolver auditLogResourceNameResolver,
+                          CashierGroupService cashierGroupService) {
         this.createSaleUseCase = createSaleUseCase;
         this.getAllSalesUseCase = getAllSalesUseCase;
         this.updateSaleUseCase = updateSaleUseCase;
         this.deleteSaleUseCase = deleteSaleUseCase;
         this.auditLogContext = auditLogContext;
         this.auditLogResourceNameResolver = auditLogResourceNameResolver;
+        this.cashierGroupService = cashierGroupService;
     }
 
     @PostMapping
@@ -61,6 +65,12 @@ public class SaleController {
     public ResponseEntity<?> getAllSales() {
         List<SaleResponseDTO> sales = getAllSalesUseCase.execute();
         return BuilderHelper.buildResponse(sales, "Ventas obtenidas", HttpStatus.OK, true);
+    }
+
+    @GetMapping("/cashier-group")
+    public ResponseEntity<?> getCashierGroup(@RequestParam Integer appointmentId) {
+        return BuilderHelper.buildResponse(cashierGroupService.getForAppointment(appointmentId),
+                "Citas disponibles para caja", HttpStatus.OK, true);
     }
 
     @PutMapping("/{id}")

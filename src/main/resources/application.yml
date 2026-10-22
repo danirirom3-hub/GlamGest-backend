@@ -1,6 +1,9 @@
 server:
   port: ${PORT:8080}
 
+business:
+  time-zone: ${BUSINESS_TIME_ZONE:America/Bogota}
+
 spring:
   datasource:
     # Corregido: Se agregó '_db' para coincidir con tu MySQL Workbench
@@ -18,7 +21,11 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
         format_sql: true
-  open-in-view: false
+        jdbc:
+          time_zone: ${BUSINESS_TIME_ZONE:America/Bogota}
+    open-in-view: false
+  jackson:
+    time-zone: ${BUSINESS_TIME_ZONE:America/Bogota}
 
 jwt:
   secret: ${JWT_SECRET}

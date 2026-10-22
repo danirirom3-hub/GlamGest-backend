@@ -4,12 +4,14 @@ import com.glamgest.app.application.dto.appointment.AppointmentRequestDTO;
 import com.glamgest.app.application.dto.appointment.AppointmentResponseDTO;
 import com.glamgest.app.application.dto.appointment.AppointmentUpdateDTO;
 import com.glamgest.app.application.dto.appointment.AppointmentStatusRequestDTO;
+import com.glamgest.app.application.dto.appointment.AppointmentBatchRequestDTO;
 import com.glamgest.app.application.usecase.appointment.CreateAppointmentUseCase;
 import com.glamgest.app.application.usecase.appointment.DeleteAppointmentUseCase;
 import com.glamgest.app.application.usecase.appointment.GetAllAppointmentsUseCase;
 import com.glamgest.app.application.usecase.appointment.UpdateAppointmentUseCase;
 import com.glamgest.app.application.usecase.appointment.ChangeAppointmentStatusUseCase;
 import com.glamgest.app.application.service.audit.AuditLogResourceNameResolver;
+import com.glamgest.app.application.service.appointment.CreateAppointmentBatchService;
 import com.glamgest.app.infrastructure.presentation.helper.BuilderHelper;
 import com.glamgest.app.infrastructure.configuration.AuditLogContext;
 import jakarta.validation.Valid;
@@ -33,6 +35,7 @@ public class AppointmentController {
     private final ChangeAppointmentStatusUseCase changeAppointmentStatusUseCase;
     private final AuditLogContext auditLogContext;
     private final AuditLogResourceNameResolver auditLogResourceNameResolver;
+    private final CreateAppointmentBatchService createAppointmentBatchService;
 
     public AppointmentController(CreateAppointmentUseCase createAppointmentUseCase,
                                  GetAllAppointmentsUseCase getAllAppointmentsUseCase,
@@ -40,7 +43,8 @@ public class AppointmentController {
                                    DeleteAppointmentUseCase deleteAppointmentUseCase,
                                    ChangeAppointmentStatusUseCase changeAppointmentStatusUseCase,
                                    AuditLogContext auditLogContext,
-                                   AuditLogResourceNameResolver auditLogResourceNameResolver) {
+                                   AuditLogResourceNameResolver auditLogResourceNameResolver,
+                                   CreateAppointmentBatchService createAppointmentBatchService) {
         this.createAppointmentUseCase = createAppointmentUseCase;
         this.getAllAppointmentsUseCase = getAllAppointmentsUseCase;
         this.updateAppointmentUseCase = updateAppointmentUseCase;
@@ -48,6 +52,7 @@ public class AppointmentController {
         this.changeAppointmentStatusUseCase = changeAppointmentStatusUseCase;
         this.auditLogContext = auditLogContext;
         this.auditLogResourceNameResolver = auditLogResourceNameResolver;
+        this.createAppointmentBatchService = createAppointmentBatchService;
     }
 
     @PostMapping
@@ -60,6 +65,18 @@ public class AppointmentController {
         AppointmentResponseDTO response = createAppointmentUseCase.execute(appointmentRequestDTO);
         auditLogContext.setResource(response.getId().toString(), auditLogResourceNameResolver.appointment(response.getId()));
         return BuilderHelper.buildResponse(response, "Cita creada", HttpStatus.CREATED, true);
+    }
+
+    @PostMapping("/batch")
+    public ResponseEntity<?> createAppointmentBatch(@Valid @RequestBody AppointmentBatchRequestDTO request) {
+        List<AppointmentResponseDTO> responses = createAppointmentBatchService.create(request);
+        String resourceIds = responses.stream().map(response -> response.getId().toString())
+                .collect(java.util.stream.Collectors.joining(","));
+        String resourceNames = responses.stream()
+                .map(response -> auditLogResourceNameResolver.appointment(response.getId()))
+                .collect(java.util.stream.Collectors.joining("; "));
+        auditLogContext.setResource(resourceIds, resourceNames);
+        return BuilderHelper.buildResponse(responses, "Citas creadas", HttpStatus.CREATED, true);
     }
 
     @GetMapping

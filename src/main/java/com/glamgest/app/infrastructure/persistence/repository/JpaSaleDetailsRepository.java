@@ -7,9 +7,20 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Collection;
+import java.util.Set;
 
 @Repository
 public interface JpaSaleDetailsRepository extends JpaRepository<SaleDetails, Integer> {
+    @Query("SELECT DISTINCT detail.appointmentId.appointmentId FROM SaleDetails detail "
+            + "WHERE detail.appointmentId.appointmentId IN :appointmentIds AND detail.saleId.status = 'ACTIVE'")
+    Set<Integer> findActivelyBilledAppointmentIds(@Param("appointmentIds") Collection<Integer> appointmentIds);
+
+    @Query("SELECT DISTINCT detail.appointmentId.appointmentId, detail.employeeId.employeeId "
+            + "FROM SaleDetails detail WHERE detail.appointmentId.appointmentId IN :appointmentIds "
+            + "AND detail.saleId.status = 'ACTIVE'")
+    List<Object[]> findActiveBillingEmployeesByAppointmentIds(@Param("appointmentIds") Collection<Integer> appointmentIds);
+
     @Query(value = "SELECT sd.service_id, s.name, COALESCE(SUM(sd.quantity), 0), COALESCE(SUM(sd.subtotal), 0) "
             + "FROM sale_details sd JOIN sales sa ON sa.sale_id = sd.sale_id "
             + "JOIN services s ON s.service_id = sd.service_id "

@@ -16,12 +16,15 @@ import com.glamgest.app.domain.repository.EmployeeRepository;
 import com.glamgest.app.domain.repository.ServiceRepository;
 import com.glamgest.app.domain.repository.UserRepository;
 import com.glamgest.app.application.service.email.EmailClientService;
+import com.glamgest.app.application.service.schedule.BusinessScheduleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import java.util.Date;
 
 @org.springframework.stereotype.Service
@@ -35,19 +38,22 @@ public class CreateAppointmentService implements CreateAppointmentUseCase {
     private final ServiceRepository serviceRepository;
     private final UserRepository userRepository;
     private final EmailClientService emailClientService;
+    private final BusinessScheduleService businessScheduleService;
 
     public CreateAppointmentService(AppointmentRepository appointmentRepository,
             ClientRepository clientRepository,
             EmployeeRepository employeeRepository,
             ServiceRepository serviceRepository,
             UserRepository userRepository,
-            EmailClientService emailClientService) {
+            EmailClientService emailClientService,
+            BusinessScheduleService businessScheduleService) {
         this.appointmentRepository = appointmentRepository;
         this.clientRepository = clientRepository;
         this.employeeRepository = employeeRepository;
         this.serviceRepository = serviceRepository;
         this.userRepository = userRepository;
         this.emailClientService = emailClientService;
+        this.businessScheduleService = businessScheduleService;
     }
 
     @Override
@@ -98,6 +104,8 @@ public class CreateAppointmentService implements CreateAppointmentUseCase {
                 ? DurationRules.validate(appointmentRequestDTO.getDurationMinutes())
                 : DurationRules.validate(service.getDurationMinutes());
         ensureNoOverlap(employeeId, appointmentRequestDTO.getAppointmentDatetime(), durationMinutes, null);
+        businessScheduleService.validateAppointment(
+                appointmentRequestDTO.getAppointmentDatetime(), selectedClientId, employeeId, durationMinutes, null);
 
         Appointment appointment = new Appointment();
         appointment.setAppointmentDatetime(appointmentRequestDTO.getAppointmentDatetime());
@@ -111,13 +119,7 @@ public class CreateAppointmentService implements CreateAppointmentUseCase {
 
         Appointment saved = appointmentRepository.save(appointment);
 
-        // Envía una confirmación al cliente después de guardar la cita.
-        try {
-            sendConfirmationEmail(client, saved);
-        } catch (Exception e) {
-            logger.error("Error al enviar correo de confirmación al cliente: {}", e.getMessage(), e);
-            // El correo es una notificación secundaria y no bloquea la creación de la cita.
-        }
+        sendConfirmationEmailAfterCommit(client, saved);
 
         AppointmentResponseDTO response = new AppointmentResponseDTO();
         response.setId(saved.getId());
@@ -131,6 +133,27 @@ public class CreateAppointmentService implements CreateAppointmentUseCase {
         response.setDurationMinutes(saved.getDurationMinutes());
 
         return response;
+    }
+
+    private void sendConfirmationEmailAfterCommit(Client client, Appointment appointment) {
+        Runnable send = () -> {
+            try {
+                sendConfirmationEmail(client, appointment);
+            } catch (Exception e) {
+                logger.error("Error al enviar correo de confirmación al cliente: {}", e.getMessage(), e);
+                // El correo es una notificación secundaria y no bloquea la creación de la cita.
+            }
+        };
+        if (!TransactionSynchronizationManager.isSynchronizationActive()) {
+            send.run();
+            return;
+        }
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                send.run();
+            }
+        });
     }
 
     private void ensureNoOverlap(Integer employeeId, Date start, Integer durationMinutes, Integer appointmentId) {

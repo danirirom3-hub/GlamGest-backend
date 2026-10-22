@@ -14,6 +14,7 @@ import com.glamgest.app.infrastructure.persistence.repository.JpaAppointmentRepo
 import com.glamgest.app.infrastructure.persistence.repository.JpaClientRepository;
 import com.glamgest.app.infrastructure.persistence.repository.JpaEmployeeRepository;
 import com.glamgest.app.infrastructure.persistence.repository.JpaSalesRepository;
+import com.glamgest.app.infrastructure.persistence.repository.JpaSaleDetailsRepository;
 import com.glamgest.app.infrastructure.persistence.repository.JpaServiceRepository;
 import com.glamgest.app.infrastructure.persistence.repository.JpaUserRepository;
 import org.junit.jupiter.api.Test;
@@ -39,6 +40,7 @@ class CreateSaleServiceTest {
         JpaAppointmentRepository jpaAppointmentRepository = mock(JpaAppointmentRepository.class);
         JpaEmployeeRepository jpaEmployeeRepository = mock(JpaEmployeeRepository.class);
         JpaServiceRepository jpaServiceRepository = mock(JpaServiceRepository.class);
+        JpaSaleDetailsRepository jpaSaleDetailsRepository = mock(JpaSaleDetailsRepository.class);
 
         CreateSaleService service = new CreateSaleService(
                 jpaSalesRepository,
@@ -46,7 +48,9 @@ class CreateSaleServiceTest {
                 jpaUserRepository,
                 jpaAppointmentRepository,
                 jpaEmployeeRepository,
-                jpaServiceRepository
+                jpaServiceRepository,
+                jpaSaleDetailsRepository,
+                "America/Bogota"
         );
 
         SaleRequestDTO request = new SaleRequestDTO();
@@ -102,6 +106,7 @@ class CreateSaleServiceTest {
         JpaAppointmentRepository jpaAppointmentRepository = mock(JpaAppointmentRepository.class);
         JpaEmployeeRepository jpaEmployeeRepository = mock(JpaEmployeeRepository.class);
         JpaServiceRepository jpaServiceRepository = mock(JpaServiceRepository.class);
+        JpaSaleDetailsRepository jpaSaleDetailsRepository = mock(JpaSaleDetailsRepository.class);
 
         CreateSaleService service = new CreateSaleService(
                 jpaSalesRepository,
@@ -109,7 +114,9 @@ class CreateSaleServiceTest {
                 jpaUserRepository,
                 jpaAppointmentRepository,
                 jpaEmployeeRepository,
-                jpaServiceRepository
+                jpaServiceRepository,
+                jpaSaleDetailsRepository,
+                "America/Bogota"
         );
 
         SaleRequestDTO request = new SaleRequestDTO();

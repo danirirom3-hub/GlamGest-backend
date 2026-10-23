@@ -77,6 +77,15 @@ class BusinessScheduleServiceTest {
         assertThrows(ScheduleConflictException.class, () -> scheduleService.validateAppointment(afterClosing, 1, 2, 30, null));
     }
 
+    @Test
+    void rejectsAppointmentsThatDoNotStartOnAQuarterHour() {
+        LocalDate date = LocalDate.now(ZoneId.of("America/Bogota")).plusDays(10);
+        Date offGridStart = Date.from(date.atTime(10, 5).atZone(ZoneId.of("America/Bogota")).toInstant());
+
+        assertThrows(ScheduleConflictException.class,
+                () -> scheduleService.validateAppointment(offGridStart, 1, 2, 30, null));
+    }
+
     private BusinessHours hours(LocalDate date, LocalTime open, LocalTime close, boolean closed) {
         BusinessHours hours = new BusinessHours();
         hours.setDayOfWeek(date.getDayOfWeek().getValue());

@@ -17,10 +17,9 @@ public class DeleteSaleService implements DeleteSaleUseCase {
 
     @Override
     public void execute(Integer id) {
-        if (!saleRepository.findById(id).isPresent()) {
-            throw new ResourceNotFoundException("Sale not found with id " + id);
-        }
-        if ("VOIDED".equals(saleRepository.findById(id).get().getStatus())) {
+        var sale = saleRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Sale not found with id " + id));
+        if ("VOIDED".equals(sale.getStatus())) {
             throw new OperationNotAllowedException("La venta ya está anulada");
         }
         saleRepository.voidById(id);

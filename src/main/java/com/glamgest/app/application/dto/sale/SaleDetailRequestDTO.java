@@ -1,6 +1,7 @@
 package com.glamgest.app.application.dto.sale;
 
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 
 public class SaleDetailRequestDTO {
 
@@ -10,6 +11,8 @@ public class SaleDetailRequestDTO {
 
     @Positive(message = "La cantidad debe ser mayor a cero")
     private Integer quantity;
+
+    @PositiveOrZero(message = "El precio unitario no puede ser negativo")
     private Integer unitPrice;
 
     public Integer getAppointmentId() {

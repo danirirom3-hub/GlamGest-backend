@@ -212,6 +212,10 @@ public class BusinessScheduleService {
     public void validateAppointment(Date appointmentDate, Integer clientId, Integer employeeId,
                                     Integer durationMinutes, Integer ignoredAppointmentId) {
         LocalDateTime startsAt = appointmentDate.toInstant().atZone(businessZone).toLocalDateTime();
+        LocalTime startTime = startsAt.toLocalTime();
+        if (startTime.getMinute() % SLOT_MINUTES != 0 || startTime.getSecond() != 0 || startTime.getNano() != 0) {
+            throw new ScheduleConflictException("La cita debe iniciar en un intervalo de 15 minutos.");
+        }
         LocalDateTime endsAt = startsAt.plusMinutes(durationMinutes);
         BusinessHoursDTO hours = hoursFor(startsAt.toLocalDate(), null);
         if (hours.closed() || startsAt.toLocalTime().isBefore(hours.opensAt())

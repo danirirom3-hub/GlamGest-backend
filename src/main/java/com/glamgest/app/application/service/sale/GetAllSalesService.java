@@ -5,6 +5,7 @@ import com.glamgest.app.application.dto.sale.SaleResponseDTO;
 import com.glamgest.app.application.usecase.sale.GetAllSalesUseCase;
 import com.glamgest.app.domain.repository.SaleRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,6 +20,7 @@ public class GetAllSalesService implements GetAllSalesUseCase {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<SaleResponseDTO> execute() {
         return saleRepository.findAll().stream()
                 .map(sale -> {

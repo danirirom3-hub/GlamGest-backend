@@ -60,9 +60,6 @@ public class SecurityConfig {
                          .requestMatchers(HttpMethod.GET, "/api/schedule/availability").hasAnyAuthority("ADMIN", "EMPLOYEE", "CLIENT")
                          .requestMatchers(HttpMethod.GET, "/api/schedule/business-hours").hasAnyAuthority("ADMIN", "EMPLOYEE")
                          .requestMatchers("/api/schedule/**").hasAuthority("ADMIN")
-                         .requestMatchers(HttpMethod.GET, "/api/schedule/availability").hasAnyAuthority("ADMIN", "EMPLOYEE", "CLIENT")
-                         .requestMatchers(HttpMethod.GET, "/api/schedule/business-hours").hasAnyAuthority("ADMIN", "EMPLOYEE")
-                         .requestMatchers("/api/schedule/**").hasAuthority("ADMIN")
 
                         .requestMatchers(HttpMethod.POST, "/api/users").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.GET,"/api/users").hasAuthority("ADMIN")

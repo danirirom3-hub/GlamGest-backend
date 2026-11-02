@@ -31,12 +31,16 @@ public interface JpaClientRepository extends JpaRepository<Clients, Integer> {
     @Query("SELECT COUNT(c) > 0 FROM Clients c WHERE c.phone = :phone AND c.active = true")
     boolean existsByPhone(@Param("phone") String phone);
 
-    @Query("SELECT c FROM Clients c WHERE c.active = true")
+    @Query("SELECT c FROM Clients c WHERE c.active = true AND c.systemClient = false")
     java.util.List<Clients> findAllActive();
+
+    @Query("SELECT c FROM Clients c WHERE c.active = true AND c.systemClient = true")
+    Optional<Clients> findSystemClient();
 
     @Query("""
             SELECT c FROM Clients c
             WHERE c.active = true
+              AND c.systemClient = false
               AND (:search IS NULL
                    OR LOWER(c.name) LIKE LOWER(CONCAT('%', :search, '%'))
                    OR LOWER(c.email) LIKE LOWER(CONCAT('%', :search, '%'))

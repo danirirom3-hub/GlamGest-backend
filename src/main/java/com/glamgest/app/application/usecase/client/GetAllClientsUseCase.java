@@ -10,4 +10,6 @@ public interface GetAllClientsUseCase {
     List<ClientResponseDTO> execute();
 
     ClientPageResponseDTO execute(String search, String sort, int page, int size);
+
+    ClientResponseDTO executeSystem();
 }

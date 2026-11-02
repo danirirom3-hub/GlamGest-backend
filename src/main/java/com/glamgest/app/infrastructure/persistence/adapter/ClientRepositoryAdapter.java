@@ -57,6 +57,11 @@ public class ClientRepositoryAdapter implements ClientRepository {
     }
 
     @Override
+    public Optional<Client> findSystemClient() {
+        return jpaClientRepository.findSystemClient().map(this::toModel);
+    }
+
+    @Override
     public boolean existsByEmail(String email) {
         return jpaClientRepository.existsByEmail(email);
     }

@@ -20,6 +20,8 @@ public interface ClientRepository {
 
     Optional<Client> findByUserId(Integer userId);
 
+    Optional<Client> findSystemClient();
+
     boolean existsByEmail(String email);
 
     boolean existsByPhone(String phone);

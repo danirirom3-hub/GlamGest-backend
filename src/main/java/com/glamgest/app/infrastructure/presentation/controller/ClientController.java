@@ -76,6 +76,12 @@ public class ClientController {
         return BuilderHelper.buildResponse(getMyClientUseCase.execute(), "Mi perfil obtenido", HttpStatus.OK, true);
     }
 
+    @GetMapping("/system")
+    public ResponseEntity<?> getSystemClient() {
+        return BuilderHelper.buildResponse(getAllClientsUseCase.executeSystem(),
+                "Cliente de sistema obtenido", HttpStatus.OK, true);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<?> getClientById(@PathVariable Integer id) {
         ClientResponseDTO client = getClientByIdUseCase.execute(id);

@@ -5,6 +5,7 @@ import com.glamgest.app.application.dto.client.ClientPageResponseDTO;
 import com.glamgest.app.application.usecase.client.GetAllClientsUseCase;
 import com.glamgest.app.domain.model.Client;
 import com.glamgest.app.domain.repository.ClientRepository;
+import com.glamgest.app.common.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,6 +30,13 @@ public class GetAllClientsService implements GetAllClientsUseCase {
         var result = clientRepository.findPage(search, sort, page, size);
         return new ClientPageResponseDTO(result.items().stream().map(this::toResponseDTO).toList(),
                 result.page(), result.size(), result.totalItems(), result.totalPages());
+    }
+
+    @Override
+    public ClientResponseDTO executeSystem() {
+        return clientRepository.findSystemClient()
+                .map(this::toResponseDTO)
+                .orElseThrow(() -> new ResourceNotFoundException("Cliente de sistema no encontrado"));
     }
 
     private ClientResponseDTO toResponseDTO(Client client) {

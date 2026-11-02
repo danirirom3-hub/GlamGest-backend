@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Date;
 import java.util.stream.Collectors;
 
 @Repository
@@ -51,6 +52,14 @@ public class SaleRepositoryAdapter implements SaleRepository {
     @Override
     public List<Sale> findAll() {
         return jpaSalesRepository.findAll().stream()
+                .map(this::toModel)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Sale> findAllBetween(Date from, Date to) {
+        return jpaSalesRepository.findBySaleDatetimeGreaterThanEqualAndSaleDatetimeLessThanOrderBySaleDatetimeDesc(from, to)
+                .stream()
                 .map(this::toModel)
                 .collect(Collectors.toList());
     }

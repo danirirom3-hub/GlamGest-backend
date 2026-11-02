@@ -9,6 +9,7 @@ public class ClientResponseDTO {
     private String email;
     private String phone;
     private Date registrationDate;
+    private boolean systemClient;
 
     public ClientResponseDTO() {
     }
@@ -19,6 +20,12 @@ public class ClientResponseDTO {
         this.email = email;
         this.phone = phone;
         this.registrationDate = registrationDate;
+    }
+
+    public ClientResponseDTO(Integer id, String name, String email, String phone, Date registrationDate,
+                             boolean systemClient) {
+        this(id, name, email, phone, registrationDate);
+        this.systemClient = systemClient;
     }
 
     public Integer getId() {
@@ -39,5 +46,9 @@ public class ClientResponseDTO {
 
     public Date getRegistrationDate() {
         return registrationDate;
+    }
+
+    public boolean isSystemClient() {
+        return systemClient;
     }
 }

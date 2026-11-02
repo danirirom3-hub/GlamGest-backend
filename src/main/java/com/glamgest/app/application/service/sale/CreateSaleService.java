@@ -139,6 +139,9 @@ public class CreateSaleService implements CreateSaleUseCase {
             }
             LocalDate appointmentDate = appointment.getAppointmentDatetime().toInstant()
                     .atZone(businessZone).toLocalDate();
+            if (!appointmentDate.equals(LocalDate.now(businessZone))) {
+                throw new IllegalArgumentException("Solo se pueden facturar citas del día actual");
+            }
             if (businessDate != null && !businessDate.equals(appointmentDate)) {
                 throw new IllegalArgumentException("All appointments in a sale must have the same business date");
             }

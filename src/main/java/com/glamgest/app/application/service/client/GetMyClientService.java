@@ -27,6 +27,6 @@ public class GetMyClientService implements GetMyClientUseCase {
         Client client = clientRepository.findByUserId(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("El usuario no tiene perfil de cliente"));
         return new ClientResponseDTO(client.getId(), client.getName(), client.getEmail(), client.getPhone(),
-                client.getRegistrationDate());
+                client.getRegistrationDate(), client.isSystemClient());
     }
 }

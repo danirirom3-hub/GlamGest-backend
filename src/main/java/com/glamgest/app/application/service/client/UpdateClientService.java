@@ -23,6 +23,10 @@ public class UpdateClientService implements UpdateClientUseCase {
     public ClientResponseDTO execute(ClientUpdateDTO clientUpdateDTO) {
         Client existingClient = clientRepository.findById(clientUpdateDTO.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Client not found with id " + clientUpdateDTO.getId()));
+        if (existingClient.isSystemClient()) {
+            throw new com.glamgest.app.common.exception.OperationNotAllowedException(
+                    "El cliente Consumidor final es administrado por el sistema.");
+        }
 
         if (!java.util.Objects.equals(existingClient.getEmail(), clientUpdateDTO.getEmail())
                 && clientRepository.existsByEmail(clientUpdateDTO.getEmail())) {
@@ -39,7 +43,7 @@ public class UpdateClientService implements UpdateClientUseCase {
                 clientUpdateDTO.getName(),
                 clientUpdateDTO.getEmail(),
                 clientUpdateDTO.getPhone(),
-                existingClient.getRegistrationDate(), existingClient.getUserId()
+                existingClient.getRegistrationDate(), existingClient.getUserId(), false
         );
 
         Client updatedClient = clientRepository.save(clientToUpdate);
@@ -49,7 +53,8 @@ public class UpdateClientService implements UpdateClientUseCase {
                 updatedClient.getName(),
                 updatedClient.getEmail(),
                 updatedClient.getPhone(),
-                updatedClient.getRegistrationDate()
+                updatedClient.getRegistrationDate(),
+                updatedClient.isSystemClient()
         );
     }
 }

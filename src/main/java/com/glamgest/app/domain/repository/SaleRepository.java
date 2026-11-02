@@ -4,6 +4,7 @@ import com.glamgest.app.domain.model.Sale;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Date;
 
 public interface SaleRepository {
 
@@ -16,4 +17,6 @@ public interface SaleRepository {
     void voidById(Integer id);
 
     List<Sale> findAll();
+
+    List<Sale> findAllBetween(Date from, Date to);
 }

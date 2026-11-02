@@ -101,6 +101,7 @@ public class ClientRepositoryAdapter implements ClientRepository {
         entity.setPhone(client.getPhone());
         entity.setRegistrationDate(client.getRegistrationDate());
         entity.setActive(true);
+        entity.setSystemClient(client.isSystemClient());
         if (client.getUserId() != null) {
             entity.setUserId(new Users(client.getUserId()));
         }
@@ -114,7 +115,8 @@ public class ClientRepositoryAdapter implements ClientRepository {
                 entity.getEmail(),
                 entity.getPhone(),
                 entity.getRegistrationDate(),
-                entity.getUserId() != null ? entity.getUserId().getUserId() : null
+                entity.getUserId() != null ? entity.getUserId().getUserId() : null,
+                Boolean.TRUE.equals(entity.getSystemClient())
         );
     }
 }

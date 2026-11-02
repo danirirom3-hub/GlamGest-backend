@@ -26,7 +26,8 @@ public class GetClientByIdService implements GetClientByIdUseCase {
                 client.getName(),
                 client.getEmail(),
                 client.getPhone(),
-                client.getRegistrationDate()
+                client.getRegistrationDate(),
+                client.isSystemClient()
         );
     }
 }

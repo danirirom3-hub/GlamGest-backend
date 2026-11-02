@@ -18,6 +18,10 @@ public class DeleteClientService implements DeleteClientUseCase {
     public String execute(Integer id) {
         var client = clientRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Client not found with id " + id));
+        if (client.isSystemClient()) {
+            throw new com.glamgest.app.common.exception.OperationNotAllowedException(
+                    "El cliente Consumidor final no puede eliminarse.");
+        }
         clientRepository.deleteById(id);
         return client.getName();
     }

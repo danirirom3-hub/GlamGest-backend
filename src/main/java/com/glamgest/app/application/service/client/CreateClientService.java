@@ -75,7 +75,8 @@ public class CreateClientService implements CreateClientUseCase {
                 savedClient.getName(),
                 savedClient.getEmail(),
                 savedClient.getPhone(),
-                savedClient.getRegistrationDate()
+                savedClient.getRegistrationDate(),
+                savedClient.isSystemClient()
         );
     }
 }

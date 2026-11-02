@@ -8,21 +8,30 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.stream.Collectors;
 
 @Service
 public class GetAllSalesService implements GetAllSalesUseCase {
 
     private final SaleRepository saleRepository;
+    private final ZoneId businessZone;
 
-    public GetAllSalesService(SaleRepository saleRepository) {
+    public GetAllSalesService(SaleRepository saleRepository,
+                               @org.springframework.beans.factory.annotation.Value("${business.time-zone:America/Bogota}") String businessTimeZone) {
         this.saleRepository = saleRepository;
+        this.businessZone = ZoneId.of(businessTimeZone);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<SaleResponseDTO> execute() {
-        return saleRepository.findAll().stream()
+        LocalDate today = LocalDate.now(businessZone);
+        Date from = Date.from(today.atStartOfDay(businessZone).toInstant());
+        Date to = Date.from(today.plusDays(1).atStartOfDay(businessZone).toInstant());
+        return saleRepository.findAllBetween(from, to).stream()
                 .map(sale -> {
                     SaleResponseDTO response = new SaleResponseDTO(
                         sale.getId(),

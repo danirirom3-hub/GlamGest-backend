@@ -41,6 +41,9 @@ public class CashierGroupService {
 
         Integer clientId = selected.getClientId().getClientId();
         LocalDate businessDate = selected.getAppointmentDatetime().toInstant().atZone(businessZone).toLocalDate();
+        if (!businessDate.equals(LocalDate.now(businessZone))) {
+            throw new OperationNotAllowedException("Solo se pueden enviar a caja citas del día actual.");
+        }
         List<Appointments> sameClientDay = appointmentRepository.findByClientId_ClientId(clientId).stream()
                 .filter(this::isEligible)
                 .filter(appointment -> appointment.getAppointmentDatetime().toInstant().atZone(businessZone)

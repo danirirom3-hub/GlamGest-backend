@@ -37,7 +37,8 @@ public class GetAllClientsService implements GetAllClientsUseCase {
                 client.getName(),
                 client.getEmail(),
                 client.getPhone(),
-                client.getRegistrationDate()
+                client.getRegistrationDate(),
+                client.isSystemClient()
         );
     }
 }

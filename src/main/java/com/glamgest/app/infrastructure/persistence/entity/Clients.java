@@ -29,6 +29,8 @@ public class Clients implements Serializable {
     private Date registrationDate;
     @Column(name = "active", nullable = false)
     private Boolean active;
+    @Column(name = "is_system_client", nullable = false)
+    private Boolean systemClient;
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "user_id", unique = true)
     private Users userId;
@@ -95,6 +97,14 @@ public class Clients implements Serializable {
 
     public void setActive(Boolean active) {
         this.active = active;
+    }
+
+    public Boolean getSystemClient() {
+        return systemClient;
+    }
+
+    public void setSystemClient(Boolean systemClient) {
+        this.systemClient = systemClient;
     }
 
     public Users getUserId() {

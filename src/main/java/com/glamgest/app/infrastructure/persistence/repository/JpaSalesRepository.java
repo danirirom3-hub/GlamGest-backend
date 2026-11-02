@@ -9,9 +9,12 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Date;
 
 @Repository
 public interface JpaSalesRepository extends JpaRepository<Sales, Integer> {
+    List<Sales> findBySaleDatetimeGreaterThanEqualAndSaleDatetimeLessThanOrderBySaleDatetimeDesc(Date from, Date to);
+
     @Query("SELECT COUNT(s) FROM Sales s WHERE s.status = 'ACTIVE' AND s.saleDatetime >= :from AND s.saleDatetime < :to")
     long countActiveBetween(@Param("from") LocalDateTime from, @Param("to") LocalDateTime to);
 

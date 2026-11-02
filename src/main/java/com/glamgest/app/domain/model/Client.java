@@ -10,6 +10,7 @@ public class Client {
     private String phone;
     private Date registrationDate;
     private Integer userId;
+    private boolean systemClient;
 
     public Client() {
     }
@@ -25,6 +26,12 @@ public class Client {
     public Client(Integer id, String name, String email, String phone, Date registrationDate, Integer userId) {
         this(id, name, email, phone, registrationDate);
         this.userId = userId;
+    }
+
+    public Client(Integer id, String name, String email, String phone, Date registrationDate,
+                  Integer userId, boolean systemClient) {
+        this(id, name, email, phone, registrationDate, userId);
+        this.systemClient = systemClient;
     }
 
     public Integer getId() {
@@ -73,5 +80,13 @@ public class Client {
 
     public void setUserId(Integer userId) {
         this.userId = userId;
+    }
+
+    public boolean isSystemClient() {
+        return systemClient;
+    }
+
+    public void setSystemClient(boolean systemClient) {
+        this.systemClient = systemClient;
     }
 }

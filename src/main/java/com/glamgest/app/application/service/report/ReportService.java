@@ -35,10 +35,14 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 @Service
 public class ReportService {
 
+    private static final String BRAND_NAME = "GlamGest";
+    private static final Color BRAND_PURPLE = new Color(91, 67, 173);
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     private static final DateTimeFormatter DATE_TIME_FORMAT = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
@@ -188,23 +192,42 @@ public class ReportService {
     }
 
     private void addTitle(Document document, String title, Period period) throws DocumentException {
-        Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 18, new Color(42, 42, 42));
-        Paragraph heading = new Paragraph(title, titleFont);
-        heading.setAlignment(Element.ALIGN_CENTER);
-        document.add(heading);
+        PdfPTable brandHeader = new PdfPTable(2);
+        brandHeader.setWidthPercentage(100);
+        brandHeader.setWidths(new float[]{1.1f, 3.9f});
+
+        PdfPCell brandCell = new PdfPCell(new Phrase(BRAND_NAME,
+                FontFactory.getFont(FontFactory.HELVETICA_BOLD, 19, Color.WHITE)));
+        brandCell.setBackgroundColor(BRAND_PURPLE);
+        brandCell.setBorderColor(BRAND_PURPLE);
+        brandCell.setPadding(12);
+        brandCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        brandHeader.addCell(brandCell);
+
+        PdfPCell reportCell = new PdfPCell(new Phrase(title,
+                FontFactory.getFont(FontFactory.HELVETICA_BOLD, 16, BRAND_PURPLE)));
+        reportCell.setBackgroundColor(new Color(249, 245, 251));
+        reportCell.setBorderColor(new Color(235, 225, 241));
+        reportCell.setPadding(12);
+        reportCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+        brandHeader.addCell(reportCell);
+        document.add(brandHeader);
+
         Paragraph periodText = new Paragraph("Período: " + period.fromDate().format(DATE_FORMAT) + " - "
-                + period.toDate().format(DATE_FORMAT));
-        periodText.setAlignment(Element.ALIGN_CENTER);
+                + period.toDate().format(DATE_FORMAT), FontFactory.getFont(FontFactory.HELVETICA, 10, new Color(90, 90, 90)));
+        periodText.setAlignment(Element.ALIGN_RIGHT);
+        periodText.setSpacingBefore(8);
         document.add(periodText);
         document.add(new Paragraph(" "));
     }
 
     private void addSummaryTable(Document document, DashboardSummaryDTO summary) throws DocumentException {
+        addSectionTitle(document, "Resumen del período");
         PdfPTable table = table(2, new float[]{2, 1});
         addHeaders(table, "Indicador", "Valor");
-        addCells(table, "Ingresos totales", String.valueOf(summary.totalRevenue()));
+        addCells(table, "Ingresos totales", formatAmount(summary.totalRevenue()));
         addCells(table, "Ventas", String.valueOf(summary.totalSales()));
-        addCells(table, "Ticket promedio", summary.averageTicket().toPlainString());
+        addCells(table, "Ticket promedio", formatAmount(summary.averageTicket().longValue()));
         addCells(table, "Nuevos clientes", String.valueOf(summary.newClients()));
         addCells(table, "Citas", String.valueOf(summary.totalAppointments()));
         document.add(table);
@@ -213,6 +236,7 @@ public class ReportService {
     }
 
     private void addStatusTable(Document document, DashboardSummaryDTO summary) throws DocumentException {
+        addSectionTitle(document, "Citas por estado");
         PdfPTable table = table(2, new float[]{2, 1});
         addHeaders(table, "Citas por estado", "Cantidad");
         summary.appointmentsByStatus().forEach(status -> addCells(table, status.label(), String.valueOf(status.value())));
@@ -220,8 +244,7 @@ public class ReportService {
     }
 
     private void addServiceTable(Document document, List<DashboardServiceMetricDTO> services) throws DocumentException {
-        document.add(new Paragraph(" "));
-        document.add(new Paragraph("Servicios más vendidos", FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12)));
+        addSectionTitle(document, "Servicios más vendidos");
         PdfPTable table = table(3, new float[]{2, 1, 1});
         addHeaders(table, "Servicio", "Unidades", "Ingresos");
         services.forEach(row -> addCells(table, row.serviceName(), String.valueOf(row.units()), String.valueOf(row.revenue())));
@@ -229,8 +252,7 @@ public class ReportService {
     }
 
     private void addEmployeeTable(Document document, List<DashboardEmployeeMetricDTO> employees) throws DocumentException {
-        document.add(new Paragraph(" "));
-        document.add(new Paragraph("Rendimiento de empleados", FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12)));
+        addSectionTitle(document, "Rendimiento de empleados");
         PdfPTable table = table(3, new float[]{2, 1, 1});
         addHeaders(table, "Empleado", "Citas", "Ingresos");
         employees.forEach(row -> addCells(table, row.employeeName(), String.valueOf(row.appointments()), String.valueOf(row.revenue())));
@@ -252,8 +274,9 @@ public class ReportService {
         Font font = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 9, Color.WHITE);
         for (String header : headers) {
             PdfPCell cell = new PdfPCell(new Phrase(header, font));
-            cell.setBackgroundColor(new Color(75, 85, 99));
-            cell.setPadding(5);
+            cell.setBackgroundColor(BRAND_PURPLE);
+            cell.setBorderColor(BRAND_PURPLE);
+            cell.setPadding(7);
             table.addCell(cell);
         }
     }
@@ -261,16 +284,29 @@ public class ReportService {
     private void addCells(PdfPTable table, String... values) {
         for (String value : values) {
             PdfPCell cell = new PdfPCell(new Phrase(value == null ? "" : value));
-            cell.setPadding(4);
+            cell.setBackgroundColor(new Color(252, 250, 255));
+            cell.setBorderColor(new Color(218, 213, 226));
+            cell.setPadding(7);
             table.addCell(cell);
         }
+    }
+
+    private void addSectionTitle(Document document, String title) throws DocumentException {
+        Paragraph heading = new Paragraph(title, FontFactory.getFont(FontFactory.HELVETICA_BOLD, 12, BRAND_PURPLE));
+        heading.setSpacingBefore(10);
+        heading.setSpacingAfter(6);
+        document.add(heading);
+    }
+
+    private static String formatAmount(long amount) {
+        return NumberFormat.getNumberInstance(new Locale("es", "CO")).format(amount);
     }
 
     private void addExcelTitle(org.apache.poi.ss.usermodel.Sheet sheet, String title, Period period,
                                int columns, ExcelStyles styles) {
         Row titleRow = sheet.createRow(0);
         Cell cell = titleRow.createCell(0);
-        cell.setCellValue(title + " | " + period.fromDate().format(DATE_FORMAT) + " - "
+        cell.setCellValue(BRAND_NAME + " | " + title + " | " + period.fromDate().format(DATE_FORMAT) + " - "
                 + period.toDate().format(DATE_FORMAT));
         cell.setCellStyle(styles.title());
         sheet.addMergedRegion(new org.apache.poi.ss.util.CellRangeAddress(0, 0, 0, columns - 1));
@@ -345,7 +381,10 @@ public class ReportService {
             org.apache.poi.ss.usermodel.Font font = workbook.createFont();
             font.setBold(true);
             font.setFontHeightInPoints((short) 14);
+            font.setColor(org.apache.poi.ss.usermodel.IndexedColors.WHITE.getIndex());
             style.setFont(font);
+            style.setFillForegroundColor(org.apache.poi.ss.usermodel.IndexedColors.VIOLET.getIndex());
+            style.setFillPattern(org.apache.poi.ss.usermodel.FillPatternType.SOLID_FOREGROUND);
             return style;
         }
 
@@ -353,8 +392,9 @@ public class ReportService {
             CellStyle style = workbook.createCellStyle();
             org.apache.poi.ss.usermodel.Font font = workbook.createFont();
             font.setBold(true);
+            font.setColor(org.apache.poi.ss.usermodel.IndexedColors.WHITE.getIndex());
             style.setFont(font);
-            style.setFillForegroundColor(org.apache.poi.ss.usermodel.IndexedColors.GREY_25_PERCENT.getIndex());
+            style.setFillForegroundColor(org.apache.poi.ss.usermodel.IndexedColors.VIOLET.getIndex());
             style.setFillPattern(org.apache.poi.ss.usermodel.FillPatternType.SOLID_FOREGROUND);
             return style;
         }

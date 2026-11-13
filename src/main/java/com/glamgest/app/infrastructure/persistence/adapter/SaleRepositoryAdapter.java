@@ -45,8 +45,8 @@ public class SaleRepositoryAdapter implements SaleRepository {
     }
 
     @Override
-    public void voidById(Integer id) {
-        jpaSalesRepository.voidSale(id);
+    public int voidById(Integer id) {
+        return jpaSalesRepository.voidSale(id);
     }
 
     @Override

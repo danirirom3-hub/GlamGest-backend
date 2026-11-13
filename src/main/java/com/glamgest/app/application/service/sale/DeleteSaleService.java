@@ -5,6 +5,7 @@ import com.glamgest.app.common.exception.ResourceNotFoundException;
 import com.glamgest.app.common.exception.OperationNotAllowedException;
 import com.glamgest.app.domain.repository.SaleRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class DeleteSaleService implements DeleteSaleUseCase {
@@ -16,12 +17,15 @@ public class DeleteSaleService implements DeleteSaleUseCase {
     }
 
     @Override
+    @Transactional
     public void execute(Integer id) {
         var sale = saleRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Sale not found with id " + id));
         if ("VOIDED".equals(sale.getStatus())) {
             throw new OperationNotAllowedException("La venta ya está anulada");
         }
-        saleRepository.voidById(id);
+        if (saleRepository.voidById(id) == 0) {
+            throw new OperationNotAllowedException("La venta no pudo ser anulada");
+        }
     }
 }

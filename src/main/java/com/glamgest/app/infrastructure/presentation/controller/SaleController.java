@@ -91,7 +91,7 @@ public class SaleController {
     public ResponseEntity<?> deleteSale(@PathVariable Integer id) {
         deleteSaleUseCase.execute(id);
         auditLogContext.setResource(id.toString(), auditLogResourceNameResolver.sale(id));
-        return BuilderHelper.buildResponse(null, "Venta anulada", HttpStatus.NO_CONTENT, true);
+        return BuilderHelper.buildResponse(null, "Venta anulada", HttpStatus.OK, true);
     }
 
     private ResponseEntity<?> validation(BindingResult result) {

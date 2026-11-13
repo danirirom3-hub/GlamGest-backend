@@ -184,9 +184,6 @@ public class BusinessScheduleService {
 
         LocalDateTime dayStart = date.atStartOfDay();
         LocalDateTime dayEnd = date.plusDays(1).atStartOfDay();
-        List<Appointment> clientAppointments = clientId == null
-                ? List.of()
-                : appointmentRepository.findAllByClientId(clientId);
         List<EmployeeUnavailability> blocks = unavailabilityRepository
                 .findByStartsAtLessThanAndEndsAtGreaterThanOrderByStartsAtAsc(dayEnd, dayStart);
         List<EmployeeAvailableSlotsDTO> employeeSlots = new ArrayList<>();
@@ -198,7 +195,6 @@ public class BusinessScheduleService {
                 LocalDateTime endsAt = startsAt.plusMinutes(duration);
                 if (startsAt.atZone(businessZone).isBefore(java.time.ZonedDateTime.now(businessZone))) continue;
                 if (hasAppointmentOverlap(existing, startsAt, endsAt, ignoredAppointmentId)) continue;
-                if (clientId != null && hasAppointmentOverlap(clientAppointments, startsAt, endsAt, ignoredAppointmentId)) continue;
                 if (blocks.stream().anyMatch(block -> block.getEmployee().getEmployeeId().equals(employee.getId())
                         && overlaps(startsAt, endsAt, block.getStartsAt(), block.getEndsAt()))) continue;
                 availableStarts.add(slot);
@@ -231,10 +227,6 @@ public class BusinessScheduleService {
         if (hasAppointmentOverlap(appointmentRepository.findAllByEmployeeId(employeeId), startsAt, endsAt,
                 ignoredAppointmentId)) {
             throw new ScheduleConflictException("El empleado ya tiene una cita en ese horario.");
-        }
-        if (clientId != null && hasAppointmentOverlap(appointmentRepository.findAllByClientId(clientId),
-                startsAt, endsAt, ignoredAppointmentId)) {
-            throw new ScheduleConflictException("El cliente ya tiene otra cita en ese horario.");
         }
     }
 

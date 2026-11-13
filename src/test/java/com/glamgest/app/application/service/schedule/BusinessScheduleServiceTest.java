@@ -1,6 +1,7 @@
 package com.glamgest.app.application.service.schedule;
 
 import com.glamgest.app.domain.model.Employee;
+import com.glamgest.app.domain.model.Appointment;
 import com.glamgest.app.domain.model.Service;
 import com.glamgest.app.domain.repository.AppointmentRepository;
 import com.glamgest.app.domain.repository.EmployeeRepository;
@@ -24,6 +25,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
@@ -84,6 +86,46 @@ class BusinessScheduleServiceTest {
 
         assertThrows(ScheduleConflictException.class,
                 () -> scheduleService.validateAppointment(offGridStart, 1, 2, 30, null));
+    }
+
+    @Test
+    void keepsOtherEmployeeAvailableWhenClientHasAppointmentWithSelectedEmployee() {
+        LocalDate date = LocalDate.now(ZoneId.of("America/Bogota")).plusDays(10);
+        BusinessHours hours = hours(date, LocalTime.of(9, 0), LocalTime.of(10, 0), false);
+        when(hoursRepository.count()).thenReturn(7L);
+        when(hoursRepository.findByDayOfWeek(date.getDayOfWeek().getValue())).thenReturn(Optional.of(hours));
+        when(exceptionRepository.findByExceptionDate(date)).thenReturn(Optional.empty());
+        when(serviceRepository.findById(4)).thenReturn(Optional.of(
+                new Service(4, "Corte", "", 20000, 30, true)));
+        when(employeeRepository.findAll()).thenReturn(List.of(
+                new Employee(2, "Luis", "3000000000", true),
+                new Employee(3, "Ana", "3000000001", true)));
+
+        Appointment existing = new Appointment();
+        existing.setId(10);
+        existing.setClientId(1);
+        existing.setEmployeeId(2);
+        existing.setAppointmentDatetime(Date.from(date.atTime(9, 0)
+                .atZone(ZoneId.of("America/Bogota")).toInstant()));
+        existing.setDurationMinutes(30);
+        existing.setStatus("PENDING");
+
+        when(appointmentRepository.findAllByEmployeeId(2)).thenReturn(List.of(existing));
+        when(appointmentRepository.findAllByEmployeeId(3)).thenReturn(List.of());
+        when(unavailabilityRepository.findByStartsAtLessThanAndEndsAtGreaterThanOrderByStartsAtAsc(
+                date.plusDays(1).atStartOfDay(), date.atStartOfDay())).thenReturn(List.of());
+
+        var availability = scheduleService.getAvailability(date, List.of(4), null, 1);
+
+        assertEquals(List.of(LocalTime.of(9, 30)), availability.employees().get(0).startsAt());
+        assertEquals(List.of(LocalTime.of(9, 0), LocalTime.of(9, 15), LocalTime.of(9, 30)),
+                availability.employees().get(1).startsAt());
+
+        Date sameSlot = Date.from(date.atTime(9, 0).atZone(ZoneId.of("America/Bogota")).toInstant());
+        when(exceptionRepository.findByExceptionDate(date)).thenReturn(Optional.empty());
+        when(hoursRepository.count()).thenReturn(7L);
+        when(hoursRepository.findByDayOfWeek(date.getDayOfWeek().getValue())).thenReturn(Optional.of(hours));
+        assertDoesNotThrow(() -> scheduleService.validateAppointment(sameSlot, 1, 3, 30, null));
     }
 
     private BusinessHours hours(LocalDate date, LocalTime open, LocalTime close, boolean closed) {

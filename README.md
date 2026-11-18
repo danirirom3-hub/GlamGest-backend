@@ -77,8 +77,10 @@ La creación de usuarios internos permanece restringida a `ADMIN`. El rol de un 
 Las pruebas usan H2 y se ejecutan con:
 
 ```text
-./mvnw test
+./mvnw clean verify
 ```
+
+En Windows PowerShell se puede ejecutar con `.\mvnw.cmd clean verify`. El comando ejecuta las pruebas unitarias y E2E automatizadas. La guía de pruebas, los casos cubiertos y la evidencia sugerida están en [`docs/PRUEBAS_AUTOMATIZADAS.md`](docs/PRUEBAS_AUTOMATIZADAS.md). GitHub Actions ejecuta la misma verificación en cada push y pull request.
 
 ## Despliegue con Docker
 
